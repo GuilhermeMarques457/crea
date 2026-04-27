@@ -1,4 +1,4 @@
-<h2 mat-dialog-title class="flex items-center gap-2">
+﻿<h2 mat-dialog-title class="flex items-center gap-2">
   <mat-icon>info</mat-icon> Detalhes da Alteração
 </h2>
 <mat-dialog-content class="min-w-[500px] max-h-[70vh]">

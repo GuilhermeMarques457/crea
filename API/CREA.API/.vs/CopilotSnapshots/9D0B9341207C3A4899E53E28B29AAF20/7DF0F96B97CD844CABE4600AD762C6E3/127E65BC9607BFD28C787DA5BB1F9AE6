@@ -1,0 +1,31 @@
+﻿import { Component, inject } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+
+export interface AuditoriaDetalhesData {
+  dadosAntigos?: string;
+  dadosNovos?: string;
+}
+
+function formatarJson(value: string | undefined): string {
+  if (!value) return '';
+  try {
+    return JSON.stringify(JSON.parse(value), null, 2);
+  } catch {
+    return value;
+  }
+}
+
+@Component({
+  selector: 'app-auditoria-detalhes-dialog',
+  standalone: true,
+  imports: [MatDialogModule, MatButtonModule, MatIconModule],
+  templateUrl: `./auditoria-detalhes-dialog.component.html`,
+})
+export class AuditoriaDetalhesDialogComponent {
+  private readonly data = inject<AuditoriaDetalhesData>(MAT_DIALOG_DATA);
+
+  antigosFormatado = formatarJson(this.data.dadosAntigos);
+  novosFormatado = formatarJson(this.data.dadosNovos);
+}
