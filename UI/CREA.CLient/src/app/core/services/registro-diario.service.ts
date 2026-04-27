@@ -1,0 +1,38 @@
+import { Injectable, inject } from '@angular/core';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { RegistroDiarioDto, CreateRegistroDiarioDto } from '../../shared/models/api.models';
+import { environment } from '../../../environments/environment';
+
+@Injectable({ providedIn: 'root' })
+export class RegistroDiarioService {
+  private readonly http = inject(HttpClient);
+  private readonly base = `${environment.apiUrl}/api/RegistrosDiarios`;
+
+  porObra(obraId: string) {
+    return this.http.get<RegistroDiarioDto[]>(`${this.base}/por-obra/${obraId}`);
+  }
+  porObraPeriodo(obraId: string, inicio: string, fim: string) {
+    const params = new HttpParams().set('inicio', inicio).set('fim', fim);
+    return this.http.get<RegistroDiarioDto[]>(`${this.base}/por-obra/${obraId}/periodo`, {
+      params,
+    });
+  }
+  obter(id: string) {
+    return this.http.get<RegistroDiarioDto>(`${this.base}/${id}`);
+  }
+  criar(dto: CreateRegistroDiarioDto) {
+    return this.http.post<RegistroDiarioDto>(this.base, dto);
+  }
+  atualizar(id: string, dto: CreateRegistroDiarioDto) {
+    return this.http.put<void>(`${this.base}/${id}`, dto);
+  }
+  excluir(id: string) {
+    return this.http.delete<void>(`${this.base}/${id}`);
+  }
+  pendentesAssinatura() {
+    return this.http.get<RegistroDiarioDto[]>(`${this.base}/pendentes-assinatura`);
+  }
+  assinar(id: string, imagemAssinatura: string) {
+    return this.http.post<RegistroDiarioDto>(`${this.base}/${id}/assinar`, { imagemAssinatura });
+  }
+}

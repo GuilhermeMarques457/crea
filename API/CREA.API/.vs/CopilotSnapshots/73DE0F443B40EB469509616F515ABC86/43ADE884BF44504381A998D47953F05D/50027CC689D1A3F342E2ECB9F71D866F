@@ -1,0 +1,19 @@
+﻿namespace CREA.Domain.Entities;
+
+public class Profissional : BaseEntity
+{
+    public string Nome { get; set; } = string.Empty;
+    public string Cpf { get; set; } = string.Empty;
+    public string NumeroRegistro { get; set; } = string.Empty;
+    public string TipoRegistro { get; set; } = string.Empty; // CREA ou CAU
+    public string Especialidade { get; set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
+    public string Telefone { get; set; } = string.Empty;
+
+    public Guid? UsuarioId { get; set; }
+    public Usuario? Usuario { get; set; }
+
+    public ICollection<Obra> ObrasComoResponsavel { get; set; } = [];
+    public ICollection<AssinaturaDigital> Assinaturas { get; set; } = [];
+    public ICollection<TermoConclusao> TermosConclusao { get; set; } = [];
+}

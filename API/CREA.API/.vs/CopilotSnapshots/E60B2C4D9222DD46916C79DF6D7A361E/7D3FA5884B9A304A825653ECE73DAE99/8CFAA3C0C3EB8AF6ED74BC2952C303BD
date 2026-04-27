@@ -1,0 +1,40 @@
+﻿import { Routes } from '@angular/router';
+import { authGuard } from './core/guards/auth.guard';
+
+export const routes: Routes = [
+  { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+  {
+    path: 'auth',
+    children: [
+      { path: 'login', loadComponent: () => import('./features/auth/login/login.component').then(m => m.LoginComponent) },
+      { path: '', redirectTo: 'login', pathMatch: 'full' },
+    ],
+  },
+  {
+    path: '',
+    loadComponent: () => import('./layout/main-layout/main-layout.component').then(m => m.MainLayoutComponent),
+    canActivate: [authGuard],
+    children: [
+      { path: 'dashboard', loadComponent: () => import('./features/dashboard/dashboard.component').then(m => m.DashboardComponent) },
+      { path: 'obras', loadComponent: () => import('./features/obras/obras-list/obras-list.component').then(m => m.ObrasListComponent) },
+      { path: 'obras/nova', loadComponent: () => import('./features/obras/obra-form/obra-form.component').then(m => m.ObraFormComponent) },
+      { path: 'obras/:id', loadComponent: () => import('./features/obras/obra-detail/obra-detail.component').then(m => m.ObraDetailComponent) },
+      { path: 'obras/:id/editar', loadComponent: () => import('./features/obras/obra-form/obra-form.component').then(m => m.ObraFormComponent) },
+      { path: 'obras/:obraId/registros/novo', loadComponent: () => import('./features/registros-diarios/registro-form/registro-form.component').then(m => m.RegistroDiarioFormComponent) },
+      { path: 'registros/:id/editar', loadComponent: () => import('./features/registros-diarios/registro-form/registro-form.component').then(m => m.RegistroDiarioFormComponent) },
+      { path: 'obras/:obraId/ocorrencias/nova', loadComponent: () => import('./features/ocorrencias/ocorrencia-form/ocorrencia-form.component').then(m => m.OcorrenciaFormComponent) },
+      { path: 'ocorrencias/:id/editar', loadComponent: () => import('./features/ocorrencias/ocorrencia-form/ocorrencia-form.component').then(m => m.OcorrenciaFormComponent) },
+      { path: 'obras/:obraId/termo', loadComponent: () => import('./features/termos-conclusao/termo-form/termo-form.component').then(m => m.TermoFormComponent) },
+      { path: 'profissionais', loadComponent: () => import('./features/profissionais/profissionais-list/profissionais-list.component').then(m => m.ProfissionaisListComponent) },
+      { path: 'profissionais/novo', loadComponent: () => import('./features/profissionais/profissional-form/profissional-form.component').then(m => m.ProfissionalFormComponent) },
+      { path: 'profissionais/:id/editar', loadComponent: () => import('./features/profissionais/profissional-form/profissional-form.component').then(m => m.ProfissionalFormComponent) },
+      { path: 'pendencias', loadComponent: () => import('./features/pendencias/pendencias.component').then(m => m.PendenciasComponent) },
+      { path: 'relatorios', loadComponent: () => import('./features/relatorios/relatorios.component').then(m => m.RelatoriosComponent) },
+      { path: 'usuarios', loadComponent: () => import('./features/usuarios/usuarios-list/usuarios-list.component').then(m => m.UsuariosListComponent) },
+      { path: 'usuarios/novo', loadComponent: () => import('./features/usuarios/usuario-form/usuario-form.component').then(m => m.UsuarioFormComponent) },
+      { path: 'usuarios/:id/editar', loadComponent: () => import('./features/usuarios/usuario-form/usuario-form.component').then(m => m.UsuarioFormComponent) },
+      { path: 'auditoria', loadComponent: () => import('./features/auditoria/auditoria.component').then(m => m.AuditoriaComponent) },
+    ],
+  },
+  { path: '**', redirectTo: 'dashboard' },
+];

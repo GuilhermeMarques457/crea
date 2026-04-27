@@ -1,0 +1,64 @@
+﻿<div class="page-container max-w-2xl">
+  <app-page-header
+    [title]="isEdit() ? 'Editar Profissional' : 'Novo Profissional'"
+    icon="engineering"
+  >
+    <button mat-button (click)="voltar()"><mat-icon>arrow_back</mat-icon> Voltar</button>
+  </app-page-header>
+
+  <mat-card>
+    <mat-card-content class="p-6">
+      <form [formGroup]="form" (ngSubmit)="submit()" class="space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <mat-form-field appearance="outline" class="md:col-span-2">
+            <mat-label>Nome Completo</mat-label>
+            <input matInput formControlName="nome" />
+            <mat-error>Nome é obrigatório</mat-error>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>CPF</mat-label>
+            <input matInput formControlName="cpf" placeholder="000.000.000-00" />
+            <mat-error>CPF é obrigatório</mat-error>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>E-mail</mat-label>
+            <input matInput formControlName="email" type="email" />
+            <mat-error>E-mail inválido</mat-error>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Número de Registro (CREA/CAU)</mat-label>
+            <input matInput formControlName="numeroRegistro" />
+            <mat-error>Registro é obrigatório</mat-error>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Tipo de Registro</mat-label>
+            <input matInput formControlName="tipoRegistro" placeholder="CREA, CAU ou CRT" />
+            <mat-error>Tipo é obrigatório</mat-error>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="md:col-span-2">
+            <mat-label>Empresa</mat-label>
+            <input matInput formControlName="empresa" />
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Especialidade</mat-label>
+            <input matInput formControlName="especialidade" />
+            <mat-error>Especialidade é obrigatória</mat-error>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Telefone</mat-label>
+            <input matInput formControlName="telefone" placeholder="(00) 00000-0000" />
+          </mat-form-field>
+        </div>
+        <div class="flex justify-end gap-3">
+          <button mat-button type="button" (click)="voltar()">Cancelar</button>
+          <button mat-flat-button color="primary" type="submit" [disabled]="saving()">
+            @if (saving()) {
+              <mat-spinner diameter="18" class="inline-block mr-2"></mat-spinner>
+            }
+            {{ saving() ? 'Salvando...' : isEdit() ? 'Salvar' : 'Cadastrar' }}
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

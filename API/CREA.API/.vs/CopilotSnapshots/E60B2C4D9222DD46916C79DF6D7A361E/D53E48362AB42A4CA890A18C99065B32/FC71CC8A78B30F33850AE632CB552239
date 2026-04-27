@@ -1,0 +1,47 @@
+﻿<nav class="flex flex-col h-full bg-slate-900 text-white w-64 shrink-0">
+  <div class="flex items-center gap-3 px-6 py-5 border-b border-slate-700">
+    <div class="w-9 h-9 bg-blue-600 rounded-lg flex items-center justify-center shrink-0">
+      <mat-icon class="text-white text-lg">business</mat-icon>
+    </div>
+    <div>
+      <p class="font-bold text-sm leading-tight">Caderneta</p>
+      <p class="text-slate-400 text-xs">de Obras – CREA</p>
+    </div>
+  </div>
+
+  <ul class="flex-1 overflow-y-auto py-4 px-3 space-y-1 list-none m-0 p-3">
+    @for (item of visibleItems(); track item.route) {
+      <li>
+        <a
+          [routerLink]="item.route"
+          routerLinkActive="bg-blue-600 text-white"
+          class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition-colors no-underline text-sm font-medium"
+        >
+          <mat-icon class="text-xl w-5 h-5 shrink-0">{{ item.icon }}</mat-icon>
+          {{ item.label }}
+        </a>
+      </li>
+    }
+  </ul>
+
+  <div class="border-t border-slate-700 p-4">
+    <div class="flex items-center gap-3 mb-3">
+      <div
+        class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-xs font-bold"
+      >
+        {{ userInitial() }}
+      </div>
+      <div class="min-w-0">
+        <p class="text-sm font-medium truncate leading-tight">{{ userName() }}</p>
+        <p class="text-slate-400 text-xs truncate">{{ userEmail() }}</p>
+      </div>
+    </div>
+    <button
+      (click)="logout()"
+      class="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-colors text-sm cursor-pointer border-0 bg-transparent"
+    >
+      <mat-icon class="text-lg w-5 h-5">logout</mat-icon>
+      Sair
+    </button>
+  </div>
+</nav>

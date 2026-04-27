@@ -1,0 +1,26 @@
+﻿import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { UsuarioDto, UpdateUsuarioDto, TipoUsuario } from '../../shared/models/api.models';
+import { environment } from '../../../environments/environment';
+
+@Injectable({ providedIn: 'root' })
+export class UsuarioService {
+  private readonly http = inject(HttpClient);
+  private readonly base = `${environment.apiUrl}/api/Usuarios`;
+
+  listar() {
+    return this.http.get<UsuarioDto[]>(this.base);
+  }
+  obter(id: string) {
+    return this.http.get<UsuarioDto>(`${this.base}/${id}`);
+  }
+  atualizar(id: string, dto: UpdateUsuarioDto) {
+    return this.http.put<void>(`${this.base}/${id}`, dto);
+  }
+  excluir(id: string) {
+    return this.http.delete<void>(`${this.base}/${id}`);
+  }
+  porTipo(tipo: TipoUsuario) {
+    return this.http.get<UsuarioDto[]>(`${this.base}/por-tipo/${tipo}`);
+  }
+}

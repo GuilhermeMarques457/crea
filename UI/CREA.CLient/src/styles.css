@@ -1,0 +1,65 @@
+@import 'tailwindcss';
+@import '@angular/material/prebuilt-themes/azure-blue.css';
+
+:root {
+  --primary: #1565c0;
+  --primary-light: #1e88e5;
+  --accent: #ff8f00;
+  --warn: #d32f2f;
+  --surface: #f8fafc;
+  --border: #e2e8f0;
+}
+
+* {
+  font-family: 'Inter', sans-serif;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  background: var(--surface);
+}
+
+.mat-mdc-card {
+  border-radius: 12px !important;
+}
+.page-container {
+  padding: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+.mat-mdc-snack-bar-container.success-snack {
+  --mdc-snackbar-container-color: #1b5e20;
+}
+.mat-mdc-snack-bar-container.error-snack {
+  --mdc-snackbar-container-color: #b71c1c;
+}
+
+.noResultsBox {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  padding: 38px;
+}
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #relatorio-print,
+  #relatorio-print * {
+    visibility: visible;
+  }
+  #relatorio-print {
+    position: fixed;
+    inset: 0;
+    padding: 24px;
+    background: white;
+  }
+  .no-print {
+    display: none !important;
+  }
+}

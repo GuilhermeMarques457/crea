@@ -1,0 +1,145 @@
+<div class="page-container">
+  <app-page-header
+    title="Pendências"
+    subtitle="Termos e registros aguardando sua assinatura"
+    icon="pending_actions"
+  />
+
+  @if (loading()) {
+    <div class="flex justify-center py-16"><mat-spinner /></div>
+  } @else if (pendentes().length === 0 && registrosPendentes().length === 0) {
+    <app-empty-state
+      icon="check_circle"
+      message="Nenhuma pendência"
+      description="Todos os termos e registros estão assinados."
+    />
+  } @else {
+    <!-- Termos de Conclusão -->
+    @if (pendentes().length > 0) {
+      <h2 class="text-lg font-semibold text-slate-700 mb-3 flex items-center gap-2">
+        <mat-icon class="text-orange-500">description</mat-icon>
+        Termos de Conclusão ({{ pendentes().length }})
+      </h2>
+      <div class="space-y-4 mb-8">
+        @for (t of pendentes(); track t.id) {
+          <mat-card>
+            <mat-card-content class="p-5">
+              <div class="flex items-start justify-between gap-4">
+                <div class="flex-1">
+                  <div class="flex items-center gap-3 mb-2">
+                    <mat-icon class="text-orange-500">description</mat-icon>
+                    <a
+                      [routerLink]="['/obras', t.obraId]"
+                      class="text-lg font-semibold text-slate-800 hover:text-blue-600 no-underline"
+                    >
+                      {{ t.nomeObra }}
+                    </a>
+                  </div>
+                  <p class="text-sm text-slate-600 mb-2">{{ t.descricao }}</p>
+                  <div class="flex flex-wrap gap-4 text-xs text-slate-500">
+                    <span><strong>Conclusão:</strong> {{ t.dataConclusao | date: 'dd/MM/yyyy' }}</span>
+                    <span><strong>Profissional:</strong> {{ t.nomeProfissional }}</span>
+                    <span><strong>Emitido em:</strong> {{ t.criadoEm | date: 'dd/MM/yyyy' }}</span>
+                  </div>
+
+                  <div class="mt-3 flex items-center gap-2">
+                    <span
+                      class="text-xs px-2.5 py-1 rounded-full font-medium"
+                      [class]="
+                        t.assinadoPeloResponsavel
+                          ? 'bg-green-100 text-green-700'
+                          : 'bg-yellow-100 text-yellow-700'
+                      "
+                    >
+                      Responsável: {{ t.assinadoPeloResponsavel ? 'Assinado ✓' : 'Pendente' }}
+                    </span>
+                    <span
+                      class="text-xs px-2.5 py-1 rounded-full font-medium"
+                      [class]="
+                        t.assinadoPeloAdmin
+                          ? 'bg-green-100 text-green-700'
+                          : 'bg-yellow-100 text-yellow-700'
+                      "
+                    >
+                      Administrador: {{ t.assinadoPeloAdmin ? 'Assinado ✓' : 'Pendente' }}
+                    </span>
+                  </div>
+
+                  @if (t.assinaturas.length > 0) {
+                    <div class="mt-3 text-xs text-slate-400">
+                      @for (a of t.assinaturas; track a.id) {
+                        <div class="flex items-center gap-1">
+                          <p>
+                            {{ a.nomeUsuario }} ({{ a.tipoAssinante }}) —
+                            {{ a.dataAssinatura | date: 'dd/MM/yyyy HH:mm' }}
+                          </p>
+                          @if (a.imagemAssinatura) {
+                            <button mat-icon-button class="!w-10 !h-10" (click)="verAssinatura(a)">
+                              <mat-icon class="text-blue-600 !text-md">draw</mat-icon>
+                            </button>
+                          }
+                        </div>
+                      }
+                    </div>
+                  }
+                </div>
+
+                @if (podeAssinar(t)) {
+                  <button mat-flat-button color="primary" (click)="assinar(t)">
+                    <mat-icon>draw</mat-icon> Assinar
+                  </button>
+                }
+              </div>
+            </mat-card-content>
+          </mat-card>
+        }
+      </div>
+    }
+
+    <!-- Registros Diários -->
+    @if (registrosPendentes().length > 0) {
+      <h2 class="text-lg font-semibold text-slate-700 mb-3 flex items-center gap-2">
+        <mat-icon class="text-blue-500">edit_note</mat-icon>
+        Registros Diários ({{ registrosPendentes().length }})
+      </h2>
+      <div class="space-y-4">
+        @for (r of registrosPendentes(); track r.id) {
+          <mat-card>
+            <mat-card-content class="p-5">
+              <div class="flex items-start justify-between gap-4">
+                <div class="flex-1">
+                  <div class="flex items-center gap-3 mb-2">
+                    <mat-icon class="text-blue-500">edit_note</mat-icon>
+                    <a
+                      [routerLink]="['/obras', r.obraId]"
+                      class="text-lg font-semibold text-slate-800 hover:text-blue-600 no-underline"
+                    >
+                      {{ r.nomeObra }}
+                    </a>
+                    <span class="text-xs bg-slate-200 text-slate-600 px-1.5 py-0.5 rounded">#{{ r.numeroSequencial }}</span>
+                  </div>
+                  <p class="text-sm text-slate-600 mb-2 line-clamp-2">{{ r.atividades }}</p>
+                  <div class="flex flex-wrap gap-4 text-xs text-slate-500">
+                    <span><strong>Data:</strong> {{ r.data | date: 'dd/MM/yyyy' }}</span>
+                    <span><strong>Equipe:</strong> {{ r.equipePresente }}</span>
+                    <span><strong>Registrado por:</strong> {{ r.nomeUsuario }}</span>
+                  </div>
+
+                  <div class="mt-3">
+                    <span class="text-xs px-2.5 py-1 rounded-full font-medium bg-yellow-100 text-yellow-700">
+                      Assinatura Pendente
+                    </span>
+                  </div>
+                </div>
+
+                <button mat-flat-button color="primary" (click)="assinarRegistro(r)">
+                  <mat-icon>draw</mat-icon> Assinar
+                </button>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        }
+      </div>
+    }
+  }
+</div>

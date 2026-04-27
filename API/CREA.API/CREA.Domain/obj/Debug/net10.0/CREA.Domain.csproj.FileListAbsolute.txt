@@ -1,0 +1,11 @@
+C:\Dev\SistemaCREA\API\CREA.API\CREA.Domain\obj\Debug\net10.0\CREA.Domain.GeneratedMSBuildEditorConfig.editorconfig
+C:\Dev\SistemaCREA\API\CREA.API\CREA.Domain\obj\Debug\net10.0\CREA.Domain.AssemblyInfoInputs.cache
+C:\Dev\SistemaCREA\API\CREA.API\CREA.Domain\obj\Debug\net10.0\CREA.Domain.AssemblyInfo.cs
+C:\Dev\SistemaCREA\API\CREA.API\CREA.Domain\obj\Debug\net10.0\CREA.Domain.csproj.CoreCompileInputs.cache
+C:\Dev\SistemaCREA\API\CREA.API\CREA.Domain\bin\Debug\net10.0\CREA.Domain.deps.json
+C:\Dev\SistemaCREA\API\CREA.API\CREA.Domain\bin\Debug\net10.0\CREA.Domain.dll
+C:\Dev\SistemaCREA\API\CREA.API\CREA.Domain\bin\Debug\net10.0\CREA.Domain.pdb
+C:\Dev\SistemaCREA\API\CREA.API\CREA.Domain\obj\Debug\net10.0\CREA.Domain.dll
+C:\Dev\SistemaCREA\API\CREA.API\CREA.Domain\obj\Debug\net10.0\refint\CREA.Domain.dll
+C:\Dev\SistemaCREA\API\CREA.API\CREA.Domain\obj\Debug\net10.0\CREA.Domain.pdb
+C:\Dev\SistemaCREA\API\CREA.API\CREA.Domain\obj\Debug\net10.0\ref\CREA.Domain.dll

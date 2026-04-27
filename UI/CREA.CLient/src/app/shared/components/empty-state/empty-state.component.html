@@ -1,0 +1,8 @@
+<div class="flex flex-col items-center justify-center py-16 text-slate-400">
+  <mat-icon class="text-6xl w-16 h-16 mb-4 opacity-40">{{ icon() }}</mat-icon>
+  <p class="text-lg font-medium text-slate-500">{{ message() }}</p>
+  @if (description()) {
+    <p class="text-sm text-slate-400 mt-1">{{ description() }}</p>
+  }
+  <ng-content></ng-content>
+</div>

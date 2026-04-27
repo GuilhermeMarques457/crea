@@ -1,0 +1,66 @@
+﻿using CREA.Application.DTOs.Common;
+using CREA.Application.Interfaces.Repositories;
+using CREA.Domain.Entities;
+using CREA.Infrastructure;
+using Microsoft.EntityFrameworkCore;
+
+namespace CREA.Insfrastructure.Repositories;
+
+public class LogAuditoriaRepository(ApplicationDbContext context) : Repository<LogAuditoria>(context), ILogAuditoriaRepository
+{
+    public async Task<PagedResult<LogAuditoria>> GetPagedAsync(
+        int page, int pageSize,
+        string? entidade = null, string? acao = null,
+        Guid? usuarioId = null, DateTime? inicio = null, DateTime? fim = null)
+    {
+        var query = _dbSet.AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(entidade))
+            query = query.Where(l => l.Entidade == entidade);
+
+        if (!string.IsNullOrWhiteSpace(acao))
+            query = query.Where(l => l.Acao == acao);
+
+        if (usuarioId.HasValue)
+            query = query.Where(l => l.UsuarioId == usuarioId);
+
+        if (inicio.HasValue)
+            query = query.Where(l => l.DataAcao >= inicio.Value);
+
+        if (fim.HasValue)
+            query = query.Where(l => l.DataAcao <= fim.Value);
+
+        var total = await query.CountAsync();
+        var items = await query
+            .OrderByDescending(l => l.DataAcao)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+
+        return new PagedResult<LogAuditoria>
+        {
+            Items = items,
+            TotalItems = total,
+            Page = page,
+            PageSize = pageSize
+        };
+    }
+
+    public async Task<IEnumerable<LogAuditoria>> GetByUsuarioAsync(Guid usuarioId) =>
+        await _dbSet
+            .Where(l => l.UsuarioId == usuarioId)
+            .OrderByDescending(l => l.DataAcao)
+            .ToListAsync();
+
+    public async Task<IEnumerable<LogAuditoria>> GetByEntidadeAsync(string entidade, string entidadeId) =>
+        await _dbSet
+            .Where(l => l.Entidade == entidade && l.EntidadeId == entidadeId)
+            .OrderByDescending(l => l.DataAcao)
+            .ToListAsync();
+
+    public async Task<IEnumerable<LogAuditoria>> GetByPeriodoAsync(DateTime inicio, DateTime fim) =>
+        await _dbSet
+            .Where(l => l.DataAcao >= inicio && l.DataAcao <= fim)
+            .OrderByDescending(l => l.DataAcao)
+            .ToListAsync();
+}

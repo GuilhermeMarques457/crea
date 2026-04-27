@@ -1,0 +1,15 @@
+C:\Dev\SistemaCREA\API\CREA.API\CREA.Application\obj\Debug\net10.0\CREA.Application.GeneratedMSBuildEditorConfig.editorconfig
+C:\Dev\SistemaCREA\API\CREA.API\CREA.Application\obj\Debug\net10.0\CREA.Application.AssemblyInfoInputs.cache
+C:\Dev\SistemaCREA\API\CREA.API\CREA.Application\obj\Debug\net10.0\CREA.Application.AssemblyInfo.cs
+C:\Dev\SistemaCREA\API\CREA.API\CREA.Application\obj\Debug\net10.0\CREA.Application.csproj.CoreCompileInputs.cache
+C:\Dev\SistemaCREA\API\CREA.API\CREA.Application\obj\Debug\net10.0\CREA.Application.csproj.AssemblyReference.cache
+C:\Dev\SistemaCREA\API\CREA.API\CREA.Application\bin\Debug\net10.0\CREA.Application.deps.json
+C:\Dev\SistemaCREA\API\CREA.API\CREA.Application\bin\Debug\net10.0\CREA.Application.dll
+C:\Dev\SistemaCREA\API\CREA.API\CREA.Application\bin\Debug\net10.0\CREA.Application.pdb
+C:\Dev\SistemaCREA\API\CREA.API\CREA.Application\bin\Debug\net10.0\CREA.Domain.dll
+C:\Dev\SistemaCREA\API\CREA.API\CREA.Application\bin\Debug\net10.0\CREA.Domain.pdb
+C:\Dev\SistemaCREA\API\CREA.API\CREA.Application\obj\Debug\net10.0\CREA.App.5C738E25.Up2Date
+C:\Dev\SistemaCREA\API\CREA.API\CREA.Application\obj\Debug\net10.0\CREA.Application.dll
+C:\Dev\SistemaCREA\API\CREA.API\CREA.Application\obj\Debug\net10.0\refint\CREA.Application.dll
+C:\Dev\SistemaCREA\API\CREA.API\CREA.Application\obj\Debug\net10.0\CREA.Application.pdb
+C:\Dev\SistemaCREA\API\CREA.API\CREA.Application\obj\Debug\net10.0\ref\CREA.Application.dll

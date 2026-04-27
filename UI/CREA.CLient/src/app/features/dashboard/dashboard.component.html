@@ -1,0 +1,60 @@
+<div class="page-container">
+  <app-page-header title="Dashboard" subtitle="Visão geral das obras" icon="dashboard" />
+
+  @if (loading()) {
+    <div class="flex justify-center py-16"><mat-spinner /></div>
+  } @else {
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      @for (stat of stats(); track stat.label) {
+        <mat-card class="border-l-4 {{ stat.border }}">
+          <mat-card-content class="p-5">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-sm text-slate-500 font-medium">{{ stat.label }}</p>
+                <p class="text-3xl font-bold text-slate-800 mt-1">{{ stat.value }}</p>
+              </div>
+              <div class="w-12 h-12 {{ stat.bg }} rounded-xl flex items-center justify-center">
+                <mat-icon class="{{ stat.color }}">{{ stat.icon }}</mat-icon>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      }
+    </div>
+
+    <mat-card>
+      <mat-card-header class="px-6 pt-5 pb-0">
+        <mat-card-title class="text-lg font-semibold text-slate-800">Obras Recentes</mat-card-title>
+        <div class="ml-auto">
+          <a mat-button color="primary" routerLink="/obras">Ver todas</a>
+        </div>
+      </mat-card-header>
+      <mat-card-content class="p-0">
+        <div class="divide-y divide-slate-100">
+          @for (obra of recentObras(); track obra.id) {
+            <a
+              [routerLink]="['/obras', obra.id]"
+              class="flex items-center gap-4 px-6 py-4 hover:bg-slate-50 transition-colors no-underline"
+            >
+              <div
+                class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center shrink-0"
+              >
+                <mat-icon class="text-blue-600 text-lg">construction</mat-icon>
+              </div>
+              <div class="min-w-0 flex-1">
+                <p class="font-medium text-slate-800 truncate">{{ obra.nome }}</p>
+                <p class="text-sm text-slate-500">{{ obra.cidade }}/{{ obra.estado }}</p>
+              </div>
+              <app-status-badge [status]="obra.status" />
+              <p class="text-xs text-slate-400 ml-2 shrink-0">
+                {{ obra.dataInicio | date: 'dd/MM/yyyy' }}
+              </p>
+            </a>
+          } @empty {
+            <p class="text-center text-slate-400 py-8">Nenhuma obra encontrada.</p>
+          }
+        </div>
+      </mat-card-content>
+    </mat-card>
+  }
+</div>
