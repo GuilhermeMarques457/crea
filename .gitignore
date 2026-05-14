@@ -1,0 +1,105 @@
+# =========================================
+# Root
+# =========================================
+
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# =========================================
+# Visual Studio / VS Code / Rider
+# =========================================
+
+.vs/
+.vscode/
+.idea/
+
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.rsuser
+
+_ReSharper*/
+*.DotSettings.user
+
+# =========================================
+# Logs
+# =========================================
+
+*.log
+logs/
+
+# =========================================
+# NuGet
+# =========================================
+
+*.nupkg
+packages/
+.nuget/
+
+# =========================================
+# ASP.NET / .NET 10
+# =========================================
+
+**/bin/
+**/obj/
+
+publish/
+artifacts/
+
+TestResults/
+BenchmarkDotNet.Artifacts/
+
+# Entity Framework
+*.dbmdl
+
+# ASP.NET Scaffolding
+ScaffoldingReadMe.txt
+
+# Local secrets
+secrets.json
+
+# Environment-specific configs
+appsettings.Development.json
+appsettings.Local.json
+
+# IIS Express
+.vs/
+iisexpress/
+
+# =========================================
+# Angular
+# =========================================
+
+**/node_modules/
+**/dist/
+**/.angular/
+**/coverage/
+**/.nx/
+**/.sass-cache/
+**/.cache/
+
+# Angular environments
+**/src/environments/*.local.ts
+
+# Package managers
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# =========================================
+# Temporary files
+# =========================================
+
+*.tmp
+*.temp
+*.swp
+*.cache
+
+# =========================================
+# OS generated
+# =========================================
+
+ehthumbs.db
+Icon?
