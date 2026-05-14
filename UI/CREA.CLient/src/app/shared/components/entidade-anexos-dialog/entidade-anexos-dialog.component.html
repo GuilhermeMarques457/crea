@@ -1,0 +1,36 @@
+<h2 mat-dialog-title class="m-0 text-lg font-semibold text-slate-800">{{ data.titulo }}</h2>
+<mat-dialog-content class="!max-h-[min(70vh,480px)]">
+  @if (loading()) {
+    <div class="flex justify-center py-12">
+      <mat-spinner diameter="40" />
+    </div>
+  } @else if (anexos().length === 0) {
+    <p class="py-8 text-center text-sm text-slate-500">Nenhum anexo neste item.</p>
+  } @else {
+    <ul class="m-0 list-none space-y-2 p-0 pt-2">
+      @for (a of anexos(); track a.id) {
+        <li
+          class="flex items-center gap-3 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5"
+        >
+          <mat-icon class="shrink-0 text-slate-400">insert_drive_file</mat-icon>
+          <div class="min-w-0 flex-1">
+            <p class="truncate text-sm font-medium text-slate-800">{{ a.nomeArquivoOriginal }}</p>
+            <p class="text-xs text-slate-400">{{ tamanhoKb(a.tamanhoBytes) }} KB</p>
+          </div>
+          <a
+            [href]="a.urlDownload"
+            target="_blank"
+            rel="noopener noreferrer"
+            mat-icon-button
+            matTooltip="Abrir ou baixar"
+          >
+            <mat-icon>open_in_new</mat-icon>
+          </a>
+        </li>
+      }
+    </ul>
+  }
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close type="button">Fechar</button>
+</mat-dialog-actions>

@@ -465,9 +465,6 @@ namespace CREA.Insfrastructure.Migrations
                     b.Property<bool>("Alvenarias")
                         .HasColumnType("bit");
 
-                    b.Property<string>("AssinaturaProprietario")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Atividades")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -488,9 +485,6 @@ namespace CREA.Insfrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("Data")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("DataAssinaturaProprietario")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("DataAssinaturaResponsavel")

@@ -79,24 +79,12 @@ namespace CREA.Insfrastructure.Migrations
                 nullable: false,
                 defaultValue: false);
 
-            migrationBuilder.AddColumn<string>(
-                name: "AssinaturaProprietario",
-                table: "RegistrosDiarios",
-                type: "nvarchar(max)",
-                nullable: true);
-
             migrationBuilder.AddColumn<bool>(
                 name: "Cobertura",
                 table: "RegistrosDiarios",
                 type: "bit",
                 nullable: false,
                 defaultValue: false);
-
-            migrationBuilder.AddColumn<DateTime>(
-                name: "DataAssinaturaProprietario",
-                table: "RegistrosDiarios",
-                type: "datetime2",
-                nullable: true);
 
             migrationBuilder.AddColumn<string>(
                 name: "DecisoesTecnicas",
@@ -300,15 +288,7 @@ namespace CREA.Insfrastructure.Migrations
                 table: "RegistrosDiarios");
 
             migrationBuilder.DropColumn(
-                name: "AssinaturaProprietario",
-                table: "RegistrosDiarios");
-
-            migrationBuilder.DropColumn(
                 name: "Cobertura",
-                table: "RegistrosDiarios");
-
-            migrationBuilder.DropColumn(
-                name: "DataAssinaturaProprietario",
                 table: "RegistrosDiarios");
 
             migrationBuilder.DropColumn(

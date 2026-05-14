@@ -69,48 +69,125 @@
           </mat-form-field>
         </div>
 
-        <h3 class="text-base font-semibold text-slate-700 mb-4">Assinatura do Proprietário / Construtor</h3>
-        <div class="mb-6">
-          <mat-form-field appearance="outline" class="w-full">
-            <mat-label>Nome do assinante (proprietário ou construtor)</mat-label>
-            <input matInput formControlName="assinaturaProprietario" />
-          </mat-form-field>
+        <h3 class="mb-2 text-base font-semibold text-slate-700">Anexos</h3>
+        <p class="mb-3 text-xs text-slate-500">
+          Imagens (JPEG, PNG, GIF), PDF ou Word. Até 10 MB por arquivo. Você pode adicionar quantos quiser.
+        </p>
+        <div class="mb-6 rounded-xl border border-dashed border-slate-300 p-4">
+          <input
+            #anexoInput
+            type="file"
+            multiple
+            class="hidden"
+            [accept]="acceptAnexos"
+            (change)="onAnexosSelecionados($event)"
+          />
+          <button
+            mat-stroked-button
+            type="button"
+            color="primary"
+            (click)="anexoInput.click()"
+            [disabled]="saving()"
+          >
+            <mat-icon>attach_file</mat-icon>
+            Adicionar arquivos
+          </button>
+          @if (arquivosPendentes().length > 0) {
+            <p class="mt-3 text-xs font-medium text-slate-600">Serão enviados ao salvar o registro:</p>
+            <ul class="mt-2 space-y-2">
+              @for (f of arquivosPendentes(); track $index) {
+                <li
+                  class="flex items-center justify-between gap-2 rounded-lg bg-slate-50 px-3 py-2 text-sm"
+                >
+                  <span class="min-w-0 truncate">{{ f.name }}</span>
+                  <button
+                    mat-icon-button
+                    type="button"
+                    matTooltip="Remover da fila"
+                    (click)="removerPendente($index)"
+                  >
+                    <mat-icon>close</mat-icon>
+                  </button>
+                </li>
+              }
+            </ul>
+          }
+          @if (anexos().length > 0) {
+            <p class="mt-3 text-xs font-medium text-slate-600">Anexos salvos:</p>
+            <ul class="mt-2 space-y-2">
+              @for (a of anexos(); track a.id) {
+                <li
+                  class="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2"
+                >
+                  <mat-icon class="shrink-0 text-slate-400">insert_drive_file</mat-icon>
+                  <div class="min-w-0 flex-1">
+                    <p class="truncate text-sm font-medium text-slate-800">
+                      {{ a.nomeArquivoOriginal }}
+                    </p>
+                    <p class="text-xs text-slate-400">{{ tamanhoKb(a.tamanhoBytes) }} KB</p>
+                  </div>
+                  <a
+                    [href]="a.urlDownload"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    mat-icon-button
+                    matTooltip="Abrir ou baixar"
+                  >
+                    <mat-icon>open_in_new</mat-icon>
+                  </a>
+                  <button
+                    mat-icon-button
+                    type="button"
+                    matTooltip="Excluir"
+                    (click)="confirmarExcluirAnexo(a)"
+                  >
+                    <mat-icon class="text-red-600">delete</mat-icon>
+                  </button>
+                </li>
+              }
+            </ul>
+          }
         </div>
 
-        @if (isResponsavel()) {
-          <h3 class="text-base font-semibold text-slate-700 mb-4">Assinatura do Responsável Técnico</h3>
-          <div class="mb-6">
-            @if (imagemAssinaturaResponsavel()) {
-              <div class="border border-green-200 bg-green-50 rounded-xl p-4">
-                <div class="flex items-center justify-between mb-3">
-                  <div class="flex items-center gap-2">
-                    <mat-icon class="text-green-600">verified</mat-icon>
-                    <span class="text-sm font-medium text-green-800">Assinatura registrada</span>
-                  </div>
-                  <div class="flex gap-1">
-                    <button mat-icon-button type="button" (click)="verAssinatura()" matTooltip="Visualizar">
-                      <mat-icon class="text-blue-600">visibility</mat-icon>
-                    </button>
-                    <button mat-icon-button type="button" (click)="limparAssinatura()" matTooltip="Refazer">
-                      <mat-icon class="text-orange-600">refresh</mat-icon>
-                    </button>
-                  </div>
+        <h3 class="text-base font-semibold text-slate-700 mb-4">Assinatura do Responsável Técnico</h3>
+        <div class="mb-6">
+          @if (imagemAssinaturaResponsavel()) {
+            <div class="border border-green-200 bg-green-50 rounded-xl p-4">
+              <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-2">
+                  <mat-icon class="text-green-600">verified</mat-icon>
+                  <span class="text-sm font-medium text-green-800">Assinatura registrada</span>
                 </div>
-                <div class="flex justify-center bg-white rounded-lg border border-slate-200 p-2">
-                  <img [src]="imagemAssinaturaResponsavel()" alt="Assinatura" class="max-h-24 object-contain" />
+                <div class="flex gap-1">
+                  <button mat-icon-button type="button" (click)="verAssinatura()" matTooltip="Visualizar">
+                    <mat-icon class="text-blue-600">visibility</mat-icon>
+                  </button>
+                  <button mat-icon-button type="button" (click)="limparAssinatura()" matTooltip="Refazer">
+                    <mat-icon class="text-orange-600">refresh</mat-icon>
+                  </button>
                 </div>
               </div>
-            } @else {
-              <div class="border-2 border-dashed border-slate-300 rounded-xl p-6 text-center">
-                <mat-icon class="text-slate-400 !text-4xl mb-2">draw</mat-icon>
-                <p class="text-sm text-slate-500 mb-3">Clique para desenhar sua assinatura</p>
-                <button mat-flat-button color="primary" type="button" (click)="abrirAssinatura()">
-                  <mat-icon>draw</mat-icon> Assinar
-                </button>
+              <div class="flex justify-center bg-white rounded-lg border border-slate-200 p-2">
+                <img [src]="imagemAssinaturaResponsavel()" alt="Assinatura" class="max-h-24 object-contain" />
               </div>
-            }
-          </div>
-        }
+            </div>
+          } @else if (isResponsavel()) {
+            <div class="border-2 border-dashed border-slate-300 rounded-xl p-6 text-center">
+              <mat-icon class="text-slate-400 !text-4xl mb-2 !w-full">draw</mat-icon>
+              <p class="text-sm text-slate-500 mb-3">Clique para desenhar sua assinatura</p>
+              <button mat-flat-button color="primary" type="button" (click)="abrirAssinatura()">
+                <mat-icon>draw</mat-icon> Assinar
+              </button>
+            </div>
+          } @else {
+            <div class="border-2 border-dashed border-slate-300 rounded-xl p-6 text-center">
+              <mat-icon class="text-slate-400 !text-4xl mb-2 !w-full">lock</mat-icon>
+              <p class="text-sm text-slate-500 mb-3">Você não é o responsável técnico desta obra</p>
+              <p>Não existe assinatura registrada para este registro.</p>
+            </div>
+          }
+        </div>
+        
 
         <div class="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end sm:gap-3">
           <button mat-button type="button" (click)="voltar()">Cancelar</button>

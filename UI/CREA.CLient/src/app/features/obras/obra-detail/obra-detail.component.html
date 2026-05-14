@@ -171,7 +171,19 @@
                           <span class="text-xs bg-slate-200 text-slate-600 px-1.5 py-0.5 rounded mr-2">#{{ r.numeroSequencial }}</span>
                           {{ r.data | date: 'dd/MM/yyyy' }}
                         </p>
-                        <div class="flex items-center gap-2">
+                        <div class="flex items-center gap-1">
+                          <button
+                            mat-icon-button
+                            type="button"
+                            matTooltip="Anexos"
+                            (click)="abrirAnexosRegistro(r)"
+                            [matBadge]="qtdAnexosRegistro(r)"
+                            [matBadgeHidden]="qtdAnexosRegistro(r) === 0"
+                            matBadgeSize="medium"
+                            matBadgeColor="primary"
+                          >
+                            <mat-icon class="text-lg">attach_file</mat-icon>
+                          </button>
                           <span class="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">
                             {{ r.totalAssinaturas }} assinatura(s)
                           </span>
@@ -185,8 +197,8 @@
                       @if (posicaoObraLabel(r)) {
                         <p class="text-xs text-slate-500 mt-1"><strong>Posição:</strong> {{ posicaoObraLabel(r) }}</p>
                       }
-                      @if (r.assinaturaProprietario) {
-                        <p class="text-xs text-green-600 mt-1">✓ Assinado por: {{ r.assinaturaProprietario }}</p>
+                      @if (r.dataAssinaturaResponsavel) {
+                        <p class="text-xs text-green-600 mt-1">✓ Assinado por: {{ obra()!.nomeProfissionalResponsavel }}</p>
                       }
                     </div>
                   }
@@ -215,10 +227,24 @@
                 @for (oc of ocorrencias(); track oc.id) {
                   <div class="border border-slate-200 rounded-lg p-4 hover:bg-slate-50">
                     <div class="mb-1 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                      <p class="font-semibold text-slate-800">{{ oc.titulo }}</p>
-                      <span class="text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full">
-                        {{ tipoOcorrenciaLabel(oc) }}
-                      </span>
+                      <p class="min-w-0 flex-1 font-semibold text-slate-800">{{ oc.titulo }}</p>
+                      <div class="flex shrink-0 items-center gap-1 sm:gap-2">
+                        <span class="text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full">
+                          {{ tipoOcorrenciaLabel(oc) }}
+                        </span>
+                        <button
+                          mat-icon-button
+                          type="button"
+                          matTooltip="Anexos"
+                          (click)="abrirAnexosOcorrencia(oc)"
+                          [matBadge]="qtdAnexosOcorrencia(oc)"
+                          [matBadgeHidden]="qtdAnexosOcorrencia(oc) === 0"
+                          matBadgeSize="medium"
+                          matBadgeColor="primary"
+                        >
+                          <mat-icon class="text-lg">attach_file</mat-icon>
+                        </button>
+                      </div>
                     </div>
                     <p class="text-sm text-slate-600 line-clamp-2">{{ oc.descricao }}</p>
                     <p class="text-xs text-slate-400 mt-1">

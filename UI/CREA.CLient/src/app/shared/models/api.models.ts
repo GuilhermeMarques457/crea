@@ -256,6 +256,7 @@ export interface RegistroDiarioDto {
   usuarioId: string;
   nomeUsuario: string;
   totalAssinaturas: number;
+  quantidadeAnexos?: number;
   ativo: boolean;
   criadoEm: string;
 }
@@ -296,6 +297,7 @@ export interface OcorrenciaDto {
   nomeUsuario: string;
   ativo: boolean;
   criadoEm: string;
+  quantidadeAnexos?: number;
 }
 export interface CreateOcorrenciaDto {
   obraId: string;

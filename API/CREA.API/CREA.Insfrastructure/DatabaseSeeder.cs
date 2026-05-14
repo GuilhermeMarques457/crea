@@ -269,8 +269,6 @@ public static class DatabaseSeeder
                 Alvenarias = true,
                 PosicaoObra = PosicaoObra.DeAcordoComProjeto,
                 DecisoesTecnicas = "Conferir prumo e nível das paredes no próximo dia.",
-                AssinaturaProprietario = "Roberto Silva",
-                DataAssinaturaProprietario = DateTime.UtcNow.AddDays(-7).AddHours(17),
                 UsuarioId = usuarioOperacional.Id,
                 CriadoEm = DateTime.UtcNow.AddDays(-7)
             },
@@ -302,8 +300,6 @@ public static class DatabaseSeeder
                 Superestrutura = true,
                 PosicaoObra = PosicaoObra.DeAcordoComProjeto,
                 DecisoesTecnicas = "Manter escoramento por no mínimo 21 dias. Iniciar cura úmida.",
-                AssinaturaProprietario = "Construtora Alpha Ltda",
-                DataAssinaturaProprietario = DateTime.UtcNow.AddDays(-5).AddHours(18),
                 UsuarioId = usuarioOperacional.Id,
                 CriadoEm = DateTime.UtcNow.AddDays(-5)
             },

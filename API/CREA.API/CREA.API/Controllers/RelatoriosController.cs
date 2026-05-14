@@ -92,12 +92,12 @@ public class RelatoriosController(
                 ServicosComplementares = r.ServicosComplementares,
                 PosicaoObra = r.PosicaoObra,
                 DecisoesTecnicas = r.DecisoesTecnicas,
-                AssinaturaProprietario = r.AssinaturaProprietario,
-                DataAssinaturaProprietario = r.DataAssinaturaProprietario,
                 UsuarioId = r.UsuarioId,
                 NomeUsuario = r.Usuario?.Nome ?? string.Empty,
                 Ativo = r.Ativo,
-                CriadoEm = r.CriadoEm
+                CriadoEm = r.CriadoEm,
+                TotalAssinaturas = r.DataAssinaturaResponsavel.HasValue ? 1 : 0,
+                QuantidadeAnexos = r.Anexos?.Count(a => a.Ativo) ?? 0
             }),
             Ocorrencias = ocorrencias.Select(o => new Application.DTOs.Ocorrencias.OcorrenciaDto
             {
@@ -112,7 +112,8 @@ public class RelatoriosController(
                 UsuarioId = o.UsuarioId,
                 NomeUsuario = o.Usuario?.Nome ?? string.Empty,
                 Ativo = o.Ativo,
-                CriadoEm = o.CriadoEm
+                CriadoEm = o.CriadoEm,
+                QuantidadeAnexos = o.Anexos?.Count(a => a.Ativo) ?? 0
             }),
             GeradoEm = DateTime.UtcNow
         };

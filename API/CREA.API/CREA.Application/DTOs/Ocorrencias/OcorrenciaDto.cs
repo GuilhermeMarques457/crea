@@ -16,4 +16,5 @@ public class OcorrenciaDto
     public string NomeUsuario { get; set; } = string.Empty;
     public bool Ativo { get; set; }
     public DateTime CriadoEm { get; set; }
+    public int QuantidadeAnexos { get; set; }
 }

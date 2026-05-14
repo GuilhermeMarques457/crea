@@ -72,8 +72,6 @@ public class RegistrosDiariosController(
             ServicosComplementares = dto.ServicosComplementares,
             PosicaoObra = dto.PosicaoObra,
             DecisoesTecnicas = dto.DecisoesTecnicas,
-            AssinaturaProprietario = dto.AssinaturaProprietario,
-            DataAssinaturaProprietario = dto.DataAssinaturaProprietario,
             ImagemAssinaturaResponsavel = dto.ImagemAssinaturaResponsavel,
             DataAssinaturaResponsavel = dto.ImagemAssinaturaResponsavel != null ? DateTime.UtcNow : null,
             UsuarioId = usuarioId
@@ -106,8 +104,6 @@ public class RegistrosDiariosController(
         registro.ServicosComplementares = dto.ServicosComplementares;
         registro.PosicaoObra = dto.PosicaoObra;
         registro.DecisoesTecnicas = dto.DecisoesTecnicas;
-        registro.AssinaturaProprietario = dto.AssinaturaProprietario;
-        registro.DataAssinaturaProprietario = dto.DataAssinaturaProprietario;
         if (dto.ImagemAssinaturaResponsavel != null)
         {
             registro.ImagemAssinaturaResponsavel = dto.ImagemAssinaturaResponsavel;
@@ -180,13 +176,13 @@ public class RegistrosDiariosController(
         ServicosComplementares = r.ServicosComplementares,
         PosicaoObra = r.PosicaoObra,
         DecisoesTecnicas = r.DecisoesTecnicas,
-        AssinaturaProprietario = r.AssinaturaProprietario,
-        DataAssinaturaProprietario = r.DataAssinaturaProprietario,
         ImagemAssinaturaResponsavel = r.ImagemAssinaturaResponsavel,
         DataAssinaturaResponsavel = r.DataAssinaturaResponsavel,
         UsuarioId = r.UsuarioId,
         NomeUsuario = r.Usuario?.Nome ?? string.Empty,
         Ativo = r.Ativo,
-        CriadoEm = r.CriadoEm
+        CriadoEm = r.CriadoEm,
+        TotalAssinaturas = r.DataAssinaturaResponsavel.HasValue ? 1 : 0,
+        QuantidadeAnexos = r.Anexos?.Count(a => a.Ativo) ?? 0
     };
 }

@@ -40,6 +40,7 @@ public class RegistroDiarioDto
     public Guid UsuarioId { get; set; }
     public string NomeUsuario { get; set; } = string.Empty;
     public int TotalAssinaturas { get; set; }
+    public int QuantidadeAnexos { get; set; }
     public bool Ativo { get; set; }
     public DateTime CriadoEm { get; set; }
 }

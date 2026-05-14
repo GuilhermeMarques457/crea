@@ -31,10 +31,6 @@ public class RegistroDiario : BaseEntity
     // Decisões técnicas e orientações executivas
     public string? DecisoesTecnicas { get; set; }
 
-    // Assinatura do proprietário ou construtor
-    public string? AssinaturaProprietario { get; set; }
-    public DateTime? DataAssinaturaProprietario { get; set; }
-
     // Assinatura do responsável técnico (imagem Base64)
     public string? ImagemAssinaturaResponsavel { get; set; }
     public DateTime? DataAssinaturaResponsavel { get; set; }

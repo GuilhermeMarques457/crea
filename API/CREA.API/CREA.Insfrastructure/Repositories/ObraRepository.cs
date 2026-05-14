@@ -12,6 +12,7 @@ public class ObraRepository(ApplicationDbContext context) : Repository<Obra>(con
         await _dbSet
             .Include(o => o.Proprietario)
             .Include(o => o.ProfissionalResponsavel)
+            .Include(o => o.Anexos)
             .Include(o => o.UsuarioCriador)
             .FirstOrDefaultAsync(o => o.Id == id && o.Ativo);
 

@@ -7,6 +7,8 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatBadgeModule } from '@angular/material/badge';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDialog } from '@angular/material/dialog';
 import { DatePipe } from '@angular/common';
 import { ObraService } from '../../../core/services/obra.service';
@@ -39,6 +41,10 @@ import { SignatureViewDialogComponent } from '../../../shared/components/signatu
 import { ToastService } from '../../../core/services/toast.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { NotificacaoService } from '../../../core/services/notificacao.service';
+import {
+  EntidadeAnexosDialogComponent,
+  EntidadeAnexosDialogData,
+} from '../../../shared/components/entidade-anexos-dialog/entidade-anexos-dialog.component';
 
 @Component({
   selector: 'app-obra-detail',
@@ -52,6 +58,8 @@ import { NotificacaoService } from '../../../core/services/notificacao.service';
     MatMenuModule,
     MatProgressSpinnerModule,
     MatDividerModule,
+    MatBadgeModule,
+    MatTooltipModule,
     DatePipe,
     PageHeaderComponent,
     StatusBadgeComponent,
@@ -187,6 +195,40 @@ export class ObraDetailComponent implements OnInit {
         dataAssinatura: a.dataAssinatura,
         imagemAssinatura: a.imagemAssinatura,
       },
+    });
+  }
+
+  qtdAnexosRegistro(r: RegistroDiarioDto): number {
+    return r.quantidadeAnexos ?? 0;
+  }
+
+  qtdAnexosOcorrencia(oc: OcorrenciaDto): number {
+    return oc.quantidadeAnexos ?? 0;
+  }
+
+  abrirAnexosRegistro(r: RegistroDiarioDto) {
+    const dataFmt = new Date(r.data).toLocaleDateString('pt-BR');
+    this.abrirAnexosDialog({
+      tipo: 'registro',
+      entidadeId: r.id,
+      titulo: `Registro #${r.numeroSequencial} — ${dataFmt}`,
+    });
+  }
+
+  abrirAnexosOcorrencia(oc: OcorrenciaDto) {
+    const dataFmt = new Date(oc.dataOcorrencia).toLocaleDateString('pt-BR');
+    this.abrirAnexosDialog({
+      tipo: 'ocorrencia',
+      entidadeId: oc.id,
+      titulo: `${oc.titulo} — ${dataFmt}`,
+    });
+  }
+
+  private abrirAnexosDialog(data: EntidadeAnexosDialogData) {
+    this.dialog.open(EntidadeAnexosDialogComponent, {
+      width: '520px',
+      maxWidth: '95vw',
+      data,
     });
   }
 }

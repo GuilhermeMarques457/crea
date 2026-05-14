@@ -101,6 +101,7 @@ public class OcorrenciasController(
         UsuarioId = o.UsuarioId,
         NomeUsuario = o.Usuario?.Nome ?? string.Empty,
         Ativo = o.Ativo,
-        CriadoEm = o.CriadoEm
+        CriadoEm = o.CriadoEm,
+        QuantidadeAnexos = o.Anexos?.Count(a => a.Ativo) ?? 0
     };
 }

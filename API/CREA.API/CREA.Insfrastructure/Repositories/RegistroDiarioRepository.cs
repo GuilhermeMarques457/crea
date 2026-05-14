@@ -10,6 +10,7 @@ public class RegistroDiarioRepository(ApplicationDbContext context) : Repository
     public async Task<IEnumerable<RegistroDiario>> GetByObraAsync(Guid obraId) =>
         await _dbSet
             .Include(r => r.Usuario)
+            .Include(r => r.Anexos)
             .Where(r => r.ObraId == obraId && r.Ativo)
             .OrderByDescending(r => r.Data)
             .ToListAsync();
@@ -17,6 +18,7 @@ public class RegistroDiarioRepository(ApplicationDbContext context) : Repository
     public async Task<IEnumerable<RegistroDiario>> GetByObraAndPeriodoAsync(Guid obraId, DateTime inicio, DateTime fim) =>
         await _dbSet
             .Include(r => r.Usuario)
+            .Include(r => r.Anexos)
             .Where(r => r.ObraId == obraId && r.Data >= inicio && r.Data <= fim && r.Ativo)
             .OrderByDescending(r => r.Data)
             .ToListAsync();
@@ -32,6 +34,7 @@ public class RegistroDiarioRepository(ApplicationDbContext context) : Repository
         await _dbSet
             .Include(r => r.Obra)
             .Include(r => r.Usuario)
+            .Include(r => r.Anexos)
             .Where(r => r.Ativo
                 && r.ImagemAssinaturaResponsavel == null
                 && r.Obra.ProfissionalResponsavel.UsuarioId == usuarioId)

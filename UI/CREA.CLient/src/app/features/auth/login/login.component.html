@@ -1,62 +1,170 @@
-<div
-  class="min-h-screen bg-gradient-to-br from-slate-900 to-blue-900 flex items-center justify-center p-4"
->
-  <mat-card class="w-full max-w-sm shadow-2xl">
-    <mat-card-content class="p-8">
-      <div class="flex flex-col items-center mb-8">
-        <div class="w-14 h-14 bg-blue-600 rounded-2xl flex items-center justify-center mb-4">
-          <mat-icon class="text-white text-3xl">business</mat-icon>
-        </div>
-        <h1 class="text-2xl font-bold text-slate-800">Caderneta de Obras</h1>
-        <p class="text-slate-500 text-sm mt-1">Acesse sua conta para continuar</p>
-      </div>
+<div class="relative min-h-screen overflow-hidden bg-slate-950 text-slate-100">
+  <!-- Fundo: gradientes + orbs + grade discreta -->
+  <div class="pointer-events-none absolute inset-0" aria-hidden="true">
+    <div
+      class="absolute -left-32 -top-32 h-96 w-96 rounded-full bg-blue-600/30 blur-3xl sm:h-[28rem] sm:w-[28rem]"
+    ></div>
+    <div
+      class="absolute -bottom-40 -right-32 h-[22rem] w-[22rem] rounded-full bg-cyan-500/20 blur-3xl sm:h-[26rem] sm:w-[26rem]"
+    ></div>
+    <div
+      class="absolute left-1/2 top-1/3 h-64 w-64 -translate-x-1/2 rounded-full bg-indigo-500/10 blur-3xl"
+    ></div>
+    <div
+      class="absolute inset-0 bg-gradient-to-br from-slate-950 via-slate-900/95 to-blue-950/90"
+    ></div>
+    <div
+      class="absolute inset-0 opacity-[0.35] bg-[linear-gradient(rgba(148,163,184,0.07)_1px,transparent_1px),linear-gradient(90deg,rgba(148,163,184,0.07)_1px,transparent_1px)] [background-size:40px_40px]"
+    ></div>
+    <div
+      class="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent"
+    ></div>
+  </div>
 
-      <form [formGroup]="form" (ngSubmit)="submit()" class="space-y-4">
-        <mat-form-field appearance="outline" class="w-full">
-          <mat-label>E-mail</mat-label>
-          <mat-icon matPrefix class="mr-2 text-slate-400">email</mat-icon>
-          <input matInput formControlName="email" type="email" placeholder="seu@email.com" />
-          @if (form.get('email')?.hasError('required') && form.get('email')?.touched) {
-            <mat-error>E-mail é obrigatório</mat-error>
-          }
-        </mat-form-field>
-
-        <mat-form-field appearance="outline" class="w-full">
-          <mat-label>Senha</mat-label>
-          <mat-icon matPrefix class="mr-2 text-slate-400">lock</mat-icon>
-          <input matInput formControlName="senha" [type]="showPassword() ? 'text' : 'password'" />
-          <button
-            mat-icon-button
-            matSuffix
-            type="button"
-            (click)="showPassword.set(!showPassword())"
-          >
-            <mat-icon>{{ showPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
-          </button>
-          @if (form.get('senha')?.hasError('required') && form.get('senha')?.touched) {
-            <mat-error>Senha é obrigatória</mat-error>
-          }
-        </mat-form-field>
-
-        @if (error()) {
-          <div class="bg-red-50 border border-red-200 rounded-lg p-3 text-sm text-red-700">
-            {{ error() }}
-          </div>
-        }
-
-        <button
-          mat-flat-button
-          color="primary"
-          type="submit"
-          class="w-full h-12 text-base"
-          [disabled]="loading()"
+  <div
+    class="relative z-10 mx-auto flex min-h-screen w-full max-w-6xl flex-col lg:flex-row lg:items-stretch"
+  >
+    <!-- Painel de marca -->
+    <section
+      class="flex flex-1 flex-col justify-center px-6 pb-2 pt-10 text-center sm:px-10 lg:max-w-xl lg:px-12 lg:pb-16 lg:pt-16 lg:text-left"
+    >
+      <div class="mb-6 flex justify-center lg:justify-start">
+        <div
+          class="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-400 shadow-lg shadow-blue-500/25 ring-1 ring-white/20"
         >
-          @if (loading()) {
-            <mat-spinner diameter="20" class="inline-block mr-2"></mat-spinner>
-          }
-          {{ loading() ? 'Entrando...' : 'Entrar' }}
-        </button>
-      </form>
-    </mat-card-content>
-  </mat-card>
+          <mat-icon class="!h-9 !w-9 !text-[2.25rem] leading-none text-white">engineering</mat-icon>
+        </div>
+      </div>
+      <p
+        class="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-cyan-300/90 sm:text-sm"
+      >
+        CREA · Obras
+      </p>
+      <h1 class="text-balance text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-[2.75rem] lg:leading-tight">
+        Caderneta de Obras
+      </h1>
+      <p class="mx-auto mt-4 max-w-md text-pretty text-sm leading-relaxed text-slate-400 sm:text-base lg:mx-0">
+        Controle digital de visitas, registros diários e ocorrências — com rastro claro para
+        auditoria e relatórios.
+      </p>
+
+      <ul class="mx-auto mt-8 hidden max-w-md space-y-4 text-left text-sm text-slate-300 sm:block lg:mx-0">
+        <li class="flex gap-3">
+          <span
+            class="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/5 ring-1 ring-white/10"
+          >
+            <mat-icon class="text-lg text-cyan-400">fact_check</mat-icon>
+          </span>
+          <span>
+            <span class="font-medium text-white">Registro padronizado</span>
+            <span class="block text-slate-400">Relatos de visita e equipe em um fluxo só.</span>
+          </span>
+        </li>
+        <li class="flex gap-3">
+          <span
+            class="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/5 ring-1 ring-white/10"
+          >
+            <mat-icon class="text-lg text-cyan-400">shield</mat-icon>
+          </span>
+          <span>
+            <span class="font-medium text-white">Rastreabilidade</span>
+            <span class="block text-slate-400">Assinaturas e histórico quando você precisar provar.</span>
+          </span>
+        </li>
+        <li class="flex gap-3">
+          <span
+            class="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/5 ring-1 ring-white/10"
+          >
+            <mat-icon class="text-lg text-cyan-400">summarize</mat-icon>
+          </span>
+          <span>
+            <span class="font-medium text-white">Relatórios</span>
+            <span class="block text-slate-400">Consolide informações da obra sem retrabalho.</span>
+          </span>
+        </li>
+      </ul>
+    </section>
+
+    <!-- Cartão de login -->
+    <section
+      class="flex flex-1 items-center justify-center px-4 pb-10 pt-4 sm:px-8 lg:py-16 lg:pl-4 lg:pr-10"
+    >
+      <mat-card
+        class="w-full max-w-md overflow-hidden rounded-2xl border border-slate-200/80 bg-white/95 shadow-2xl shadow-slate-900/20 backdrop-blur-sm dark:border-slate-700/50"
+      >
+        <mat-card-content class="p-6 sm:p-8">
+          <div class="mb-6 sm:mb-8">
+            <h2 class="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
+              Bem-vindo de volta
+            </h2>
+            <p class="mt-1 text-sm text-slate-500">Entre com seu e-mail corporativo para continuar.</p>
+          </div>
+
+          <form [formGroup]="form" (ngSubmit)="submit()" class="space-y-4">
+            <mat-form-field appearance="outline" class="w-full">
+              <mat-label>E-mail</mat-label>
+              <mat-icon matPrefix class="mr-2 text-slate-400">email</mat-icon>
+              <input matInput formControlName="email" type="email" placeholder="seu@email.com" autocomplete="email" />
+              @if (form.get('email')?.hasError('required') && form.get('email')?.touched) {
+                <mat-error>E-mail é obrigatório</mat-error>
+              }
+              @if (form.get('email')?.hasError('email') && form.get('email')?.touched) {
+                <mat-error>E-mail inválido</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="w-full">
+              <mat-label>Senha</mat-label>
+              <mat-icon matPrefix class="mr-2 text-slate-400">lock</mat-icon>
+              <input
+                matInput
+                formControlName="senha"
+                [type]="showPassword() ? 'text' : 'password'"
+                autocomplete="current-password"
+              />
+              <button
+                mat-icon-button
+                matSuffix
+                type="button"
+                (click)="showPassword.set(!showPassword())"
+                [attr.aria-label]="showPassword() ? 'Ocultar senha' : 'Mostrar senha'"
+              >
+                <mat-icon>{{ showPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+              </button>
+              @if (form.get('senha')?.hasError('required') && form.get('senha')?.touched) {
+                <mat-error>Senha é obrigatória</mat-error>
+              }
+            </mat-form-field>
+
+            @if (error()) {
+              <div
+                class="flex gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800"
+                role="alert"
+              >
+                <mat-icon class="shrink-0 text-red-600">error_outline</mat-icon>
+                <span>{{ error() }}</span>
+              </div>
+            }
+
+            <button
+              mat-flat-button
+              color="primary"
+              type="submit"
+              class="!mt-2 w-full !min-h-12 !rounded-xl !text-base font-medium shadow-md shadow-blue-600/25"
+              [disabled]="loading()"
+            >
+              @if (loading()) {
+                <mat-spinner diameter="20" class="inline-block mr-2"></mat-spinner>
+              }
+              {{ loading() ? 'Entrando...' : 'Entrar' }}
+            </button>
+          </form>
+
+          <p class="mt-6 text-center text-xs text-slate-400">
+            Acesso restrito a usuários autorizados.
+          </p>
+        </mat-card-content>
+      </mat-card>
+    </section>
+  </div>
 </div>

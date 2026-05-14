@@ -11,6 +11,7 @@ public class OcorrenciaRepository(ApplicationDbContext context) : Repository<Oco
     public async Task<IEnumerable<Ocorrencia>> GetByObraAsync(Guid obraId) =>
         await _dbSet
             .Include(o => o.Usuario)
+            .Include(o => o.Anexos)
             .Where(o => o.ObraId == obraId && o.Ativo)
             .OrderByDescending(o => o.DataOcorrencia)
             .ToListAsync();
@@ -18,6 +19,7 @@ public class OcorrenciaRepository(ApplicationDbContext context) : Repository<Oco
     public async Task<IEnumerable<Ocorrencia>> GetByObraAndTipoAsync(Guid obraId, TipoOcorrencia tipo) =>
         await _dbSet
             .Include(o => o.Usuario)
+            .Include(o => o.Anexos)
             .Where(o => o.ObraId == obraId && o.Tipo == tipo && o.Ativo)
             .OrderByDescending(o => o.DataOcorrencia)
             .ToListAsync();

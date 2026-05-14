@@ -20,21 +20,21 @@ public class AnexosController(IAnexoRepository anexoRepository) : ControllerBase
     public async Task<ActionResult<IEnumerable<AnexoDto>>> GetByObra(Guid obraId)
     {
         var anexos = await anexoRepository.GetByObraAsync(obraId);
-        return Ok(anexos.Select(a => ToDto(a, Request)));
+        return Ok(anexos.Select(a => ToDto(a, Request, null)));
     }
 
     [HttpGet("por-registro/{registroDiarioId:guid}")]
     public async Task<ActionResult<IEnumerable<AnexoDto>>> GetByRegistro(Guid registroDiarioId)
     {
         var anexos = await anexoRepository.GetByRegistroDiarioAsync(registroDiarioId);
-        return Ok(anexos.Select(a => ToDto(a, Request)));
+        return Ok(anexos.Select(a => ToDto(a, Request, null)));
     }
 
     [HttpGet("por-ocorrencia/{ocorrenciaId:guid}")]
     public async Task<ActionResult<IEnumerable<AnexoDto>>> GetByOcorrencia(Guid ocorrenciaId)
     {
         var anexos = await anexoRepository.GetByOcorrenciaAsync(ocorrenciaId);
-        return Ok(anexos.Select(a => ToDto(a, Request)));
+        return Ok(anexos.Select(a => ToDto(a, Request, null)));
     }
 
     [HttpGet("download/{id:guid}")]
@@ -93,7 +93,8 @@ public class AnexosController(IAnexoRepository anexoRepository) : ControllerBase
         };
 
         await anexoRepository.AddAsync(anexo);
-        return CreatedAtAction(nameof(Download), new { id = anexo.Id }, ToDto(anexo, Request));
+        var nomeUsuario = User.FindFirstValue(ClaimTypes.Name) ?? string.Empty;
+        return CreatedAtAction(nameof(Download), new { id = anexo.Id }, ToDto(anexo, Request, nomeUsuario));
     }
 
     [HttpDelete("{id:guid}")]
@@ -110,9 +111,10 @@ public class AnexosController(IAnexoRepository anexoRepository) : ControllerBase
         return NoContent();
     }
 
-    private static AnexoDto ToDto(Anexo a, HttpRequest request) => new()
+    private static AnexoDto ToDto(Anexo a, HttpRequest request, string? nomeUsuarioFallback) => new()
     {
         Id = a.Id,
+        NomeArquivo = a.NomeArquivo,
         NomeArquivoOriginal = a.NomeArquivoOriginal,
         TipoArquivo = a.TipoArquivo,
         TamanhoBytes = a.TamanhoBytes,
@@ -120,7 +122,7 @@ public class AnexosController(IAnexoRepository anexoRepository) : ControllerBase
         RegistroDiarioId = a.RegistroDiarioId,
         OcorrenciaId = a.OcorrenciaId,
         UsuarioId = a.UsuarioId,
-        NomeUsuario = a.Usuario?.Nome ?? string.Empty,
+        NomeUsuario = a.Usuario?.Nome ?? nomeUsuarioFallback ?? string.Empty,
         UrlDownload = $"{request.Scheme}://{request.Host}/uploads/{a.NomeArquivo}",
         CriadoEm = a.CriadoEm
     };
