@@ -1,0 +1,10 @@
+<Solution>
+  <Project Path="../../UI/CREA.CLient/CREA.CLient.esproj">
+    <Build />
+    <Deploy />
+  </Project>
+  <Project Path="CREA.API/CREA.API.csproj" />
+  <Project Path="CREA.Application/CREA.Application.csproj" />
+  <Project Path="CREA.Domain/CREA.Domain.csproj" />
+  <Project Path="CREA.Insfrastructure/CREA.Infrastructure.csproj" />
+</Solution>

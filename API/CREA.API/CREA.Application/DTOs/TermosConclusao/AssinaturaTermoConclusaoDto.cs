@@ -1,0 +1,14 @@
+namespace CREA.Application.DTOs.TermosConclusao;
+
+public class AssinaturaTermoConclusaoDto
+{
+    public Guid Id { get; set; }
+    public Guid TermoConclusaoId { get; set; }
+    public Guid UsuarioId { get; set; }
+    public string NomeUsuario { get; set; } = string.Empty;
+    public string TipoAssinante { get; set; } = string.Empty;
+    public string HashAssinatura { get; set; } = string.Empty;
+    public DateTime DataAssinatura { get; set; }
+    public string ImagemAssinatura { get; set; } = string.Empty;
+    public string IpAssinante { get; set; } = string.Empty;
+}

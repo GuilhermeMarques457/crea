@@ -1,0 +1,106 @@
+<div class="page-container">
+  <app-page-header title="Obras" subtitle="Gerencie todas as obras cadastradas" icon="construction">
+    <a mat-flat-button color="primary" routerLink="/obras/nova">
+      <mat-icon>add</mat-icon> Nova Obra
+    </a>
+  </app-page-header>
+
+  <mat-card class="mb-4">
+    <mat-card-content class="p-3 sm:p-4">
+      <div class="flex flex-col gap-4 md:flex-row md:flex-wrap">
+        <mat-form-field appearance="outline" class="w-full min-w-0 md:flex-1 md:min-w-48">
+          <mat-label>Buscar</mat-label>
+          <mat-icon matPrefix>search</mat-icon>
+          <input matInput [(ngModel)]="search" placeholder="Nome, cidade, proprietário..." />
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="w-full shrink-0 md:w-48">
+          <mat-label>Status</mat-label>
+          <mat-select [(ngModel)]="filterStatus">
+            <mat-option [value]="null">Todos</mat-option>
+            @for (s of statusOptions; track s.value) {
+              <mat-option [value]="s.value">{{ s.label }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  @if (loading()) {
+    <div class="flex justify-center py-16"><mat-spinner /></div>
+  } @else if (filtered().length === 0) {
+    <app-empty-state
+      icon="construction"
+      message="Nenhuma obra encontrada"
+      description="Cadastre a primeira obra clicando em 'Nova Obra'"
+    >
+      <a mat-flat-button color="primary" routerLink="/obras/nova" class="mt-4">
+        <mat-icon>add</mat-icon> Nova Obra
+      </a>
+    </app-empty-state>
+  } @else {
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+      @for (obra of filtered(); track obra.id) {
+        <mat-card class="hover:shadow-md transition-shadow cursor-pointer">
+          <mat-card-content class="p-5">
+            <div class="flex items-start justify-between mb-3">
+              <div class="flex items-center gap-3 min-w-0">
+                <div
+                  class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center shrink-0"
+                >
+                  <mat-icon class="text-blue-600">construction</mat-icon>
+                </div>
+                <div class="min-w-0">
+                  <h3 class="font-semibold text-slate-800 truncate m-0 leading-tight">
+                    {{ obra.nome }}
+                  </h3>
+                  <p class="text-sm text-slate-500 mt-0.5">{{ tipoLabel(obra) }}</p>
+                </div>
+              </div>
+              <button mat-icon-button [matMenuTriggerFor]="menu" (click)="$event.stopPropagation()">
+                <mat-icon>more_vert</mat-icon>
+              </button>
+              <mat-menu #menu>
+                <a mat-menu-item [routerLink]="['/obras', obra.id]">
+                  <mat-icon>visibility</mat-icon> Ver detalhes
+                </a>
+                <a mat-menu-item [routerLink]="['/obras', obra.id, 'editar']">
+                  <mat-icon>edit</mat-icon> Editar
+                </a>
+                <button mat-menu-item (click)="confirmarExcluir(obra)" class="text-red-600">
+                  <mat-icon class="text-red-600">delete</mat-icon> Excluir
+                </button>
+              </mat-menu>
+            </div>
+
+            <div class="space-y-1.5 mb-4">
+              <p class="text-sm text-slate-600 flex items-center gap-1.5">
+                <mat-icon class="text-base w-4 h-4 text-slate-400">location_on</mat-icon>
+                {{ obra.cidade }}/{{ obra.estado }}
+              </p>
+              <p class="text-sm text-slate-600 flex items-center gap-1.5">
+                <mat-icon class="text-base w-4 h-4 text-slate-400">person</mat-icon>
+                {{ obra.nomeProprietario }}
+              </p>
+              <p class="text-sm text-slate-600 flex items-center gap-1.5">
+                <mat-icon class="text-base w-4 h-4 text-slate-400">engineering</mat-icon>
+                {{ obra.nomeProfissionalResponsavel }}
+              </p>
+              <p class="text-sm text-slate-600 flex items-center gap-1.5">
+                <mat-icon class="text-base w-4 h-4 text-slate-400">calendar_today</mat-icon>
+                Início: {{ obra.dataInicio | date: 'dd/MM/yyyy' }}
+              </p>
+            </div>
+
+            <div class="flex items-center justify-between">
+              <app-status-badge [status]="obra.status" />
+              <a mat-button color="primary" [routerLink]="['/obras', obra.id]" class="text-xs">
+                Ver detalhes
+              </a>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      }
+    </div>
+  }
+</div>

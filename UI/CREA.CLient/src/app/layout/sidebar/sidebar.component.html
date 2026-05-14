@@ -1,0 +1,93 @@
+<!-- Mobile top bar -->
+<header
+  class="fixed top-0 right-0 left-0 z-[60] flex h-14 shrink-0 items-center gap-3 border-b border-slate-700 bg-slate-900 px-3 text-white md:hidden"
+>
+  <button
+    type="button"
+    (click)="toggleMobileMenu()"
+    class="flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-lg border-0 bg-transparent text-white hover:bg-slate-800"
+    [attr.aria-expanded]="mobileMenuOpen()"
+    aria-controls="app-sidebar-nav"
+    aria-label="Abrir ou fechar menu"
+  >
+    <mat-icon class="text-2xl">{{ mobileMenuOpen() ? 'close' : 'menu' }}</mat-icon>
+  </button>
+  <div class="flex min-w-0 flex-1 items-center gap-2">
+    <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-600">
+      <mat-icon class="text-lg text-white">business</mat-icon>
+    </div>
+    <div class="min-w-0">
+      <p class="truncate text-sm font-bold leading-tight">Caderneta</p>
+      <p class="truncate text-xs text-slate-400">de Obras – CREA</p>
+    </div>
+  </div>
+</header>
+
+<!-- Mobile overlay -->
+@if (mobileMenuOpen()) {
+  <div
+    class="fixed inset-0 z-40 bg-black/50 md:hidden"
+    aria-hidden="true"
+    (click)="closeMobileMenu()"
+  ></div>
+}
+
+<nav
+  id="app-sidebar-nav"
+  class="fixed top-0 bottom-0 left-0 z-50 flex h-full max-h-screen w-64 max-w-[min(100vw,20rem)] shrink-0 flex-col bg-slate-900 pt-14 text-white shadow-xl transition-transform duration-300 ease-out md:relative md:inset-auto md:z-auto md:max-h-none md:max-w-none md:translate-x-0 md:pt-0 md:shadow-none"
+  [ngClass]="mobileMenuOpen() ? 'max-md:translate-x-0' : 'max-md:-translate-x-full'"
+>
+  <div class="hidden items-center gap-3 border-b border-slate-700 px-6 py-5 md:flex">
+    <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-600">
+      <mat-icon class="text-lg text-white">business</mat-icon>
+    </div>
+    <div>
+      <p class="text-sm font-bold leading-tight">Caderneta</p>
+      <p class="text-xs text-slate-400">de Obras – CREA</p>
+    </div>
+  </div>
+
+  <ul class="m-0 flex-1 list-none space-y-1 overflow-y-auto p-3 py-4">
+    @for (item of visibleItems(); track item.route) {
+      <li>
+        <a
+          [routerLink]="item.route"
+          routerLinkActive="bg-blue-600 text-white"
+          class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-300 no-underline transition-colors hover:bg-slate-800 hover:text-white"
+        >
+          <mat-icon
+            class="h-5 w-5 shrink-0 text-xl"
+            [matBadge]="item.badge ? pendingCount() : null"
+            [matBadgeHidden]="!item.badge || pendingCount() === 0"
+            matBadgeColor="warn"
+            matBadgeSize="medium"
+            >{{ item.icon }}</mat-icon
+          >
+          {{ item.label }}
+        </a>
+      </li>
+    }
+  </ul>
+
+  <div class="border-t border-slate-700 p-4">
+    <div class="mb-3 flex items-center gap-3">
+      <div
+        class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-600 text-xs font-bold"
+      >
+        {{ userInitial() }}
+      </div>
+      <div class="min-w-0">
+        <p class="truncate text-sm font-medium leading-tight">{{ userName() }}</p>
+        <p class="truncate text-xs text-slate-400">{{ userEmail() }}</p>
+      </div>
+    </div>
+    <button
+      type="button"
+      (click)="logout()"
+      class="flex w-full cursor-pointer items-center gap-2 rounded-lg border-0 bg-transparent px-3 py-2 text-sm text-slate-400 transition-colors hover:bg-slate-800 hover:text-white"
+    >
+      <mat-icon class="h-5 w-5 text-lg">logout</mat-icon>
+      Sair
+    </button>
+  </div>
+</nav>

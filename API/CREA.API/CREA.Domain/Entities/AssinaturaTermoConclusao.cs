@@ -1,0 +1,16 @@
+namespace CREA.Domain.Entities;
+
+public class AssinaturaTermoConclusao : BaseEntity
+{
+    public Guid TermoConclusaoId { get; set; }
+    public TermoConclusao TermoConclusao { get; set; } = null!;
+
+    public Guid UsuarioId { get; set; }
+    public Usuario Usuario { get; set; } = null!;
+
+    public string TipoAssinante { get; set; } = string.Empty; // "Responsavel" ou "Administrador"
+    public string HashAssinatura { get; set; } = string.Empty;
+    public DateTime DataAssinatura { get; set; } = DateTime.UtcNow;
+    public string ImagemAssinatura { get; set; } = string.Empty; // Base64 PNG da assinatura desenhada
+    public string IpAssinante { get; set; } = string.Empty;
+}
