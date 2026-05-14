@@ -35,6 +35,16 @@ public class RelatorioObraDto
     public bool AssinadoPeloResponsavel { get; set; }
     public bool AssinadoPeloAdmin { get; set; }
     public bool TermoConcluido { get; set; }
+
+    /// <summary>Detalhes extras do termo (PDF / relatório completo).</summary>
+    public int? TermoNumero { get; set; }
+    public string? TermoDescricao { get; set; }
+    public string? TermoObservacoes { get; set; }
+    public string? TermoLocalObra { get; set; }
+    public string? TermoDeclaracaoTexto { get; set; }
+    public string? TermoAssinaturaProprietario { get; set; }
+    public DateTime? TermoDataAssinaturaProprietario { get; set; }
+
     public List<AssinaturaTermoConclusaoDto> Assinaturas { get; set; } = [];
     public IEnumerable<RegistroDiarioDto> RegistrosDiarios { get; set; } = [];
     public IEnumerable<OcorrenciaDto> Ocorrencias { get; set; } = [];

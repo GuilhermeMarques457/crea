@@ -11,6 +11,7 @@ import { DatePipe } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
 import { RelatorioService } from '../../core/services/relatorio.service';
 import { ObraService } from '../../core/services/obra.service';
+import { ToastService } from '../../core/services/toast.service';
 import { SignatureViewDialogComponent } from '../../shared/components/signature-view-dialog/signature-view-dialog.component';
 import { AssinaturaTermoConclusaoDto } from '../../shared/models/api.models';
 import {
@@ -48,9 +49,11 @@ export class RelatoriosComponent implements OnInit {
   private readonly relatorioService = inject(RelatorioService);
   private readonly fb = inject(FormBuilder);
   private readonly dialog = inject(MatDialog);
+  private readonly toast = inject(ToastService);
 
   obras = signal<ObraDto[]>([]);
   loading = signal(false);
+  pdfLoading = signal(false);
   relatorio = signal<RelatorioObraDto | null>(null);
 
   form = this.fb.nonNullable.group({ obraId: ['', Validators.required] });
@@ -93,7 +96,41 @@ export class RelatoriosComponent implements OnInit {
   }
 
   exportarPdf() {
-    window.print();
+    const obraId = this.form.getRawValue().obraId;
+    if (!obraId) return;
+    this.pdfLoading.set(true);
+    this.relatorioService.baixarPdfObra(obraId).subscribe({
+      next: (res) => {
+        const blob = res.body;
+        if (!blob?.size) {
+          this.toast.error('Resposta vazia do servidor ao gerar o PDF.');
+          this.pdfLoading.set(false);
+          return;
+        }
+        const cd = res.headers.get('Content-Disposition');
+        let fileName = `Relatorio_${obraId.slice(0, 8)}.pdf`;
+        if (cd) {
+          const utf = /filename\*=UTF-8''([^;\n]+)/i.exec(cd);
+          if (utf?.[1]) fileName = decodeURIComponent(utf[1].trim());
+          else {
+            const m = /filename="?([^";\n]+)"?/i.exec(cd);
+            if (m?.[1]) fileName = m[1].trim();
+          }
+        }
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        a.rel = 'noopener';
+        a.click();
+        URL.revokeObjectURL(url);
+        this.pdfLoading.set(false);
+      },
+      error: () => {
+        this.toast.error('Não foi possível baixar o PDF. Verifique sua conexão e tente de novo.');
+        this.pdfLoading.set(false);
+      },
+    });
   }
 
   verAssinatura(a: AssinaturaTermoConclusaoDto) {

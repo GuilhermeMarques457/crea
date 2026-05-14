@@ -90,7 +90,7 @@
       class="flex flex-1 items-center justify-center px-4 pb-10 pt-4 sm:px-8 lg:py-16 lg:pl-4 lg:pr-10"
     >
       <mat-card
-        class="w-full max-w-md overflow-hidden rounded-2xl border border-slate-200/80 bg-white/95 shadow-2xl shadow-slate-900/20 backdrop-blur-sm dark:border-slate-700/50"
+        class="w-full p-6 max-w-md overflow-hidden rounded-2xl border border-slate-200/80 bg-white/95 shadow-2xl shadow-slate-900/20 backdrop-blur-sm dark:border-slate-700/50"
       >
         <mat-card-content class="p-6 sm:p-8">
           <div class="mb-6 sm:mb-8">
@@ -150,13 +150,12 @@
               mat-flat-button
               color="primary"
               type="submit"
-              class="!mt-2 w-full !min-h-12 !rounded-xl !text-base font-medium shadow-md shadow-blue-600/25"
+              class="!mt-2 w-full !min-h-12 !rounded-xl !text-base font-medium shadow-md shadow-blue-600/25 flex items-center justify-center gap-2"
               [disabled]="loading()"
             >
-              @if (loading()) {
-                <mat-spinner diameter="20" class="inline-block mr-2"></mat-spinner>
-              }
-              {{ loading() ? 'Entrando...' : 'Entrar' }}
+              <span>
+                {{ loading() ? 'Entrando...' : 'Entrar' }}
+              </span>
             </button>
           </form>
 

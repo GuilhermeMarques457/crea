@@ -7,7 +7,7 @@
 
   <mat-card class="mb-6 no-print">
     <mat-card-content class="p-4 sm:p-5">
-      <form [formGroup]="form" (ngSubmit)="gerar()" class="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-end">
+      <form [formGroup]="form" (ngSubmit)="gerar()" class="flex flex-col gap-4 sm:flex-row sm:flex-wrap">
         <mat-form-field appearance="outline" class="min-w-0 w-full flex-1 sm:min-w-64">
           <mat-label>Selecione a Obra</mat-label>
           <mat-select formControlName="obraId">
@@ -50,11 +50,19 @@
                 Gerado em {{ relatorio()!.geradoEm | date: 'dd/MM/yyyy HH:mm' }}
               </p>
               <button
-                mat-stroked-button
-                class="no-print mt-3 w-full !border-white !text-white md:w-auto"
+                mat-button
+                class="no-print mt-3 w-full !bg-white text-slate-700 md:w-auto"
+                type="button"
+                [disabled]="pdfLoading()"
                 (click)="exportarPdf()"
               >
-                <mat-icon>picture_as_pdf</mat-icon> Exportar PDF
+                @if (pdfLoading()) {
+                  <mat-spinner diameter="18" class="inline-block mr-2"></mat-spinner>
+                } @else {
+                  <mat-icon class="mr-2">download</mat-icon>
+                }
+              
+                {{ pdfLoading() ? 'Gerando PDF...' : 'Baixar PDF completo' }}
               </button>
             </div>
           </div>

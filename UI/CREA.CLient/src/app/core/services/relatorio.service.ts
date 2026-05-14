@@ -11,4 +11,12 @@ export class RelatorioService {
   gerarRelatorioObra(obraId: string) {
     return this.http.get<RelatorioObraDto>(`${this.base}/obra/${obraId}`);
   }
+
+  /** PDF completo da obra (registros, ocorrências, assinaturas com imagens, termo). */
+  baixarPdfObra(obraId: string) {
+    return this.http.get(`${this.base}/obra/${obraId}/pdf`, {
+      responseType: 'blob',
+      observe: 'response',
+    });
+  }
 }

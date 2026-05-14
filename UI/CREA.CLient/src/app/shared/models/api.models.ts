@@ -429,6 +429,14 @@ export interface RelatorioObraDto {
   assinadoPeloResponsavel: boolean;
   assinadoPeloAdmin: boolean;
   termoConcluido: boolean;
+  /** Detalhes extras do termo (API / PDF). */
+  termoNumero?: number;
+  termoDescricao?: string;
+  termoObservacoes?: string;
+  termoLocalObra?: string;
+  termoDeclaracaoTexto?: string;
+  termoAssinaturaProprietario?: string;
+  termoDataAssinaturaProprietario?: string;
   assinaturas: AssinaturaTermoConclusaoDto[];
   registrosDiarios: RegistroDiarioDto[];
   ocorrencias: OcorrenciaDto[];

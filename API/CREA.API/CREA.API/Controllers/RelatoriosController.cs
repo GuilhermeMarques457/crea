@@ -1,4 +1,8 @@
+using CREA.API.Services;
+using CREA.Application.DTOs.Ocorrencias;
+using CREA.Application.DTOs.RegistrosDiarios;
 using CREA.Application.DTOs.Relatorios;
+using CREA.Application.DTOs.TermosConclusao;
 using CREA.Application.Interfaces.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -18,15 +22,37 @@ public class RelatoriosController(
     [HttpGet("obra/{obraId:guid}")]
     public async Task<ActionResult<RelatorioObraDto>> GetRelatorioObra(Guid obraId)
     {
+        var relatorio = await BuildRelatorioAsync(obraId);
+        return relatorio is null ? NotFound(new { mensagem = "Obra não encontrada." }) : Ok(relatorio);
+    }
+
+    [HttpGet("obra/{obraId:guid}/pdf")]
+    public async Task<IActionResult> GetRelatorioObraPdf(Guid obraId)
+    {
+        var relatorio = await BuildRelatorioAsync(obraId);
+        if (relatorio is null)
+            return NotFound(new { mensagem = "Obra não encontrada." });
+
+        var bytes = RelatorioObraPdfComposer.Generate(relatorio);
+        var safeName = string.Join("_", relatorio.NomeObra.Split(Path.GetInvalidFileNameChars(), StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+            .Trim();
+        if (string.IsNullOrEmpty(safeName))
+            safeName = "obra";
+        var fileName = $"Relatorio_{safeName}_{DateTime.UtcNow:yyyyMMdd}.pdf";
+        return File(bytes, "application/pdf", fileDownloadName: fileName);
+    }
+
+    private async Task<RelatorioObraDto?> BuildRelatorioAsync(Guid obraId)
+    {
         var obra = await obraRepository.GetByIdWithDetailsAsync(obraId);
-        if (obra is null) return NotFound(new { mensagem = "Obra não encontrada." });
+        if (obra is null) return null;
 
         var registros = (await registroDiarioRepository.GetByObraAsync(obraId)).ToList();
         var ocorrencias = (await ocorrenciaRepository.GetByObraAsync(obraId)).ToList();
         var anexos = (await anexoRepository.GetByObraAsync(obraId)).ToList();
         var termo = await termoConclusaoRepository.GetByObraAsync(obraId);
 
-        var relatorio = new RelatorioObraDto
+        return new RelatorioObraDto
         {
             ObraId = obra.Id,
             NomeObra = obra.Nome,
@@ -58,19 +84,26 @@ public class RelatoriosController(
             AssinadoPeloResponsavel = termo?.AssinadoPeloResponsavel ?? false,
             AssinadoPeloAdmin = termo?.AssinadoPeloAdmin ?? false,
             TermoConcluido = termo is not null && termo.AssinadoPeloResponsavel && termo.AssinadoPeloAdmin,
-            Assinaturas = termo?.Assinaturas?.Where(a => a.Ativo).Select(a => new Application.DTOs.TermosConclusao.AssinaturaTermoConclusaoDto
+            TermoNumero = termo?.NumeroTermo,
+            TermoDescricao = termo?.Descricao,
+            TermoObservacoes = termo?.Observacoes,
+            TermoLocalObra = termo?.LocalObra,
+            TermoDeclaracaoTexto = termo?.DeclaracaoTexto,
+            TermoAssinaturaProprietario = termo?.AssinaturaProprietario,
+            TermoDataAssinaturaProprietario = termo?.DataAssinaturaProprietario,
+            Assinaturas = termo?.Assinaturas?.Where(a => a.Ativo).Select(a => new AssinaturaTermoConclusaoDto
             {
                 Id = a.Id,
                 TermoConclusaoId = a.TermoConclusaoId,
                 UsuarioId = a.UsuarioId,
                 NomeUsuario = a.Usuario?.Nome ?? string.Empty,
-                TipoAssinante = a.TipoAssinante.ToString(),
+                TipoAssinante = a.TipoAssinante,
                 HashAssinatura = a.HashAssinatura,
                 DataAssinatura = a.DataAssinatura,
-                ImagemAssinatura = a.ImagemAssinatura,
-                IpAssinante = a.IpAssinante
+                ImagemAssinatura = a.ImagemAssinatura ?? string.Empty,
+                IpAssinante = a.IpAssinante ?? string.Empty
             }).ToList() ?? [],
-            RegistrosDiarios = registros.Select(r => new Application.DTOs.RegistrosDiarios.RegistroDiarioDto
+            RegistrosDiarios = registros.Select(r => new RegistroDiarioDto
             {
                 Id = r.Id,
                 ObraId = r.ObraId,
@@ -92,14 +125,16 @@ public class RelatoriosController(
                 ServicosComplementares = r.ServicosComplementares,
                 PosicaoObra = r.PosicaoObra,
                 DecisoesTecnicas = r.DecisoesTecnicas,
+                ImagemAssinaturaResponsavel = r.ImagemAssinaturaResponsavel,
+                DataAssinaturaResponsavel = r.DataAssinaturaResponsavel,
                 UsuarioId = r.UsuarioId,
                 NomeUsuario = r.Usuario?.Nome ?? string.Empty,
                 Ativo = r.Ativo,
                 CriadoEm = r.CriadoEm,
-                TotalAssinaturas = r.DataAssinaturaResponsavel.HasValue ? 1 : 0,
+                TotalAssinaturas = (r.DataAssinaturaResponsavel.HasValue ? 1 : 0),
                 QuantidadeAnexos = r.Anexos?.Count(a => a.Ativo) ?? 0
             }),
-            Ocorrencias = ocorrencias.Select(o => new Application.DTOs.Ocorrencias.OcorrenciaDto
+            Ocorrencias = ocorrencias.Select(o => new OcorrenciaDto
             {
                 Id = o.Id,
                 ObraId = o.ObraId,
@@ -117,7 +152,5 @@ public class RelatoriosController(
             }),
             GeradoEm = DateTime.UtcNow
         };
-
-        return Ok(relatorio);
     }
 }
