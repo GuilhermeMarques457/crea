@@ -117,11 +117,13 @@ export class ObraDetailComponent implements OnInit {
 
   ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id')!;
+    const assinar = this.route.snapshot.queryParamMap.get('assinar');
+    const registroId = this.route.snapshot.queryParamMap.get('r');
     this.obraService.obter(id).subscribe({
       next: (obra) => {
         this.obra.set(obra);
         this.loading.set(false);
-        this.loadRelated(id);
+        this.loadRelated(id, assinar, registroId);
       },
       error: () => {
         this.loading.set(false);
@@ -130,12 +132,27 @@ export class ObraDetailComponent implements OnInit {
     });
   }
 
-  private loadRelated(id: string) {
-    this.registroService.porObra(id).subscribe((r) => this.registros.set(r));
+  private loadRelated(id: string, assinar?: string | null, registroId?: string | null) {
+    this.registroService.porObra(id).subscribe((r) => {
+      this.registros.set(r);
+      if (assinar === 'registro' && registroId) {
+        const target = r.find((reg) => reg.id === registroId);
+        if (target && this.podeAssinarRegistro(target)) this.assinarRegistro(target);
+      }
+    });
     this.anexoService.porObra(id).subscribe((a) => this.anexos.set(a));
-    this.termoService.porObra(id).subscribe({ next: (t) => this.termo.set(t), error: () => {} });
+    this.termoService.porObra(id).subscribe({
+      next: (t) => {
+        this.termo.set(t);
+        if (assinar === 'termo' && t && this.podeAssinarTermo()) this.assinarTermo();
+      },
+      error: () => {},
+    });
     this.assinaturaService.porEntidade(TipoEntidadeAssinatura.Obra, id).subscribe({
-      next: (list) => this.assinaturasObra.set(list),
+      next: (list) => {
+        this.assinaturasObra.set(list);
+        if (assinar === 'obra' && this.podeAssinarObra()) this.assinarObra();
+      },
       error: () => this.assinaturasObra.set([]),
     });
   }
@@ -172,7 +189,8 @@ export class ObraDetailComponent implements OnInit {
 
   podeAssinarRegistro(r: RelatoVisitaDto): boolean {
     const tipo = this.userType();
-    if (!tipo || !usuarioPodeAssinarEntidade(tipo, TipoEntidadeAssinatura.RelatoVisita)) return false;
+    if (!tipo || !usuarioPodeAssinarEntidade(tipo, TipoEntidadeAssinatura.RelatoVisita))
+      return false;
     const papel = tipoAssinanteDoUsuario(tipo);
     if (!papel) return false;
     if (papel === TipoAssinante.Profissional) return !r.assinadoPeloProfissional;
@@ -192,7 +210,11 @@ export class ObraDetailComponent implements OnInit {
     });
   }
 
-  assinarEntidade(tipoEntidade: TipoEntidadeAssinatura, entidadeId: string, onSuccess?: () => void) {
+  assinarEntidade(
+    tipoEntidade: TipoEntidadeAssinatura,
+    entidadeId: string,
+    onSuccess?: () => void,
+  ) {
     const dialogRef = this.dialog.open(SignaturePadDialogComponent, {
       width: '560px',
       disableClose: true,
@@ -256,6 +278,16 @@ export class ObraDetailComponent implements OnInit {
 
   labelAssinante(tipo: TipoAssinante): string {
     return labelTipoAssinante(tipo);
+  }
+
+  copiarLink(tipo: 'obra' | 'registro' | 'termo', registroId?: string): void {
+    const obraId = this.obra()!.id;
+    let url = `${window.location.origin}/obras/${obraId}?assinar=${tipo}`;
+    if (tipo === 'registro' && registroId) url += `&r=${registroId}`;
+    navigator.clipboard.writeText(url).then(
+      () => this.toast.success('Link de assinatura copiado!'),
+      () => this.toast.error('Não foi possível copiar o link.'),
+    );
   }
 
   qtdAnexosRegistro(r: RelatoVisitaDto): number {

@@ -1,5 +1,4 @@
 using CREA.Application.DTOs.Proprietarios;
-using CREA.Application.Helpers;
 using CREA.Application.Interfaces.Repositories;
 using CREA.Domain.Entities;
 using CREA.Domain.Enums;
@@ -35,36 +34,24 @@ public class ProprietariosController(
     [Authorize(Roles = "Administrador")]
     public async Task<ActionResult<ProprietarioDto>> Create([FromBody] CreateProprietarioDto dto)
     {
-        if (!string.IsNullOrWhiteSpace(dto.SenhaAcesso) && string.IsNullOrWhiteSpace(dto.Email))
-            return BadRequest(new { mensagem = "E-mail é obrigatório para criar acesso de assinatura do proprietário." });
+        var usuario = await usuarioRepository.GetByIdAsync(dto.UsuarioId);
+        if (usuario is null)
+            return BadRequest(new { mensagem = "Usuário não encontrado." });
+        if (usuario.TipoUsuario != TipoUsuario.Proprietario)
+            return BadRequest(new { mensagem = "O usuário selecionado não é do tipo Proprietário." });
 
-        if (!string.IsNullOrWhiteSpace(dto.Email))
-        {
-            var emailExistente = await usuarioRepository.GetByEmailAsync(dto.Email);
-            if (emailExistente is not null)
-                return Conflict(new { mensagem = "Já existe um usuário com este e-mail." });
-        }
+        var jaVinculado = await proprietarioRepository.GetByUsuarioIdAsync(dto.UsuarioId);
+        if (jaVinculado is not null)
+            return Conflict(new { mensagem = "Este usuário já está vinculado a outro proprietário." });
 
         var entity = new Proprietario
         {
             Nome = dto.Nome,
             Cpf = dto.Cpf ?? string.Empty,
             Email = dto.Email ?? string.Empty,
-            Telefone = dto.Telefone ?? string.Empty
+            Telefone = dto.Telefone ?? string.Empty,
+            UsuarioId = dto.UsuarioId
         };
-
-        if (!string.IsNullOrWhiteSpace(dto.SenhaAcesso) && !string.IsNullOrWhiteSpace(dto.Email))
-        {
-            var usuario = new Usuario
-            {
-                Nome = dto.Nome,
-                Email = dto.Email!,
-                SenhaHash = SenhaHashHelper.Hash(dto.SenhaAcesso),
-                TipoUsuario = TipoUsuario.Proprietario
-            };
-            await usuarioRepository.AddAsync(usuario);
-            entity.UsuarioId = usuario.Id;
-        }
 
         await proprietarioRepository.AddAsync(entity);
         return CreatedAtAction(nameof(GetById), new { id = entity.Id }, ToDto(entity));
@@ -77,10 +64,21 @@ public class ProprietariosController(
         var p = await proprietarioRepository.GetByIdAsync(id);
         if (p is null) return NotFound();
 
+        var usuario = await usuarioRepository.GetByIdAsync(dto.UsuarioId);
+        if (usuario is null)
+            return BadRequest(new { mensagem = "Usuário não encontrado." });
+        if (usuario.TipoUsuario != TipoUsuario.Proprietario)
+            return BadRequest(new { mensagem = "O usuário selecionado não é do tipo Proprietário." });
+
+        var jaVinculado = await proprietarioRepository.GetByUsuarioIdAsync(dto.UsuarioId);
+        if (jaVinculado is not null && jaVinculado.Id != id)
+            return Conflict(new { mensagem = "Este usuário já está vinculado a outro proprietário." });
+
         p.Nome = dto.Nome;
         p.Cpf = dto.Cpf ?? string.Empty;
         p.Email = dto.Email ?? string.Empty;
         p.Telefone = dto.Telefone ?? string.Empty;
+        p.UsuarioId = dto.UsuarioId;
 
         await proprietarioRepository.UpdateAsync(p);
         return NoContent();

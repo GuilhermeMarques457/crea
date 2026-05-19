@@ -102,5 +102,102 @@
     <button mat-flat-button color="primary" class="w-full shrink-0 sm:w-auto" (click)="assinar(p)">
       <mat-icon>draw</mat-icon> Assinar
     </button>
+    <button
+      mat-stroked-button
+      class="w-full shrink-0 sm:w-auto"
+      matTooltip="Copiar link para enviar a quem precisa assinar"
+      (click)="copiarLink(p)"
+    >
+      <mat-icon>link</mat-icon> Copiar link
+    </button>
   </div>
 </ng-template>
+
+@if (!loading() && minhasAguardando().length > 0) {
+  <div class="page-container mt-2">
+    <h2 class="text-lg font-semibold text-slate-700 mb-3 flex items-center gap-2">
+      <mat-icon class="text-blue-500">hourglass_top</mat-icon>
+      Aguardando outros assinarem ({{ minhasAguardando().length }})
+    </h2>
+    <p class="text-sm text-slate-500 mb-4">
+      Você já assinou. Copie o link e envie à próxima pessoa que precisa assinar.
+    </p>
+    <div class="space-y-3">
+      @for (m of minhasAguardando(); track m.entidadeId + '-' + m.tipoAssinante) {
+        <div
+          class="flex flex-col gap-3 rounded-lg border border-blue-100 bg-blue-50 p-4 sm:flex-row sm:items-center sm:justify-between"
+        >
+          <div class="min-w-0 flex-1">
+            <div class="mb-1 flex flex-wrap items-center gap-2">
+              <mat-icon [class]="corEntidade(m.tipoEntidade)">{{
+                iconeEntidade(m.tipoEntidade)
+              }}</mat-icon>
+              <span class="font-semibold text-slate-800">{{ m.titulo }}</span>
+            </div>
+            @if (m.subtitulo) {
+              <p class="text-sm text-slate-600">{{ m.subtitulo }}</p>
+            }
+            <div class="mt-1 flex flex-wrap gap-3 text-xs text-slate-500">
+              <span><strong>Tipo:</strong> {{ labelEntidade(m.tipoEntidade) }}</span>
+              <span><strong>Assinado como:</strong> {{ labelAssinante(m) }}</span>
+              <span><strong>Em:</strong> {{ m.dataAssinatura | date: 'dd/MM/yyyy HH:mm' }}</span>
+            </div>
+          </div>
+          <button
+            mat-stroked-button
+            class="w-full shrink-0 sm:w-auto"
+            matTooltip="Copiar link para enviar à próxima pessoa que precisa assinar"
+            (click)="copiarLink(m)"
+          >
+            <mat-icon>link</mat-icon> Copiar link
+          </button>
+        </div>
+      }
+    </div>
+  </div>
+}
+
+@if (!loading() && minhasAssinadas().length > 0) {
+  <div class="page-container mt-2">
+    <h2 class="text-lg font-semibold text-slate-700 mb-3 flex items-center gap-2">
+      <mat-icon class="text-green-600">verified</mat-icon>
+      Assinados ({{ minhasAssinadas().length }})
+    </h2>
+    <div class="space-y-3">
+      @for (m of minhasAssinadas(); track m.entidadeId + '-' + m.tipoAssinante) {
+        <div
+          class="flex flex-col gap-3 rounded-lg border border-green-100 bg-green-50 p-4 sm:flex-row sm:items-center sm:justify-between"
+        >
+          <div class="min-w-0 flex-1">
+            <div class="mb-1 flex flex-wrap items-center gap-2">
+              <mat-icon [class]="corEntidade(m.tipoEntidade)">{{
+                iconeEntidade(m.tipoEntidade)
+              }}</mat-icon>
+              <span class="font-semibold text-slate-800">{{ m.titulo }}</span>
+              <span
+                class="text-xs px-2 py-0.5 rounded-full font-medium bg-green-100 text-green-700"
+              >
+                Todos assinaram
+              </span>
+            </div>
+            @if (m.subtitulo) {
+              <p class="text-sm text-slate-600">{{ m.subtitulo }}</p>
+            }
+            <div class="mt-1 flex flex-wrap gap-3 text-xs text-slate-500">
+              <span><strong>Tipo:</strong> {{ labelEntidade(m.tipoEntidade) }}</span>
+              <span><strong>Assinado como:</strong> {{ labelAssinante(m) }}</span>
+              <span><strong>Em:</strong> {{ m.dataAssinatura | date: 'dd/MM/yyyy HH:mm' }}</span>
+            </div>
+          </div>
+          <a
+            mat-stroked-button
+            [routerLink]="['/obras', m.obraId]"
+            class="w-full shrink-0 sm:w-auto"
+          >
+            <mat-icon>open_in_new</mat-icon> Ver obra
+          </a>
+        </div>
+      }
+    </div>
+  </div>
+}

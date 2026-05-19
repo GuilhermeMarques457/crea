@@ -12,10 +12,13 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTableModule } from '@angular/material/table';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDialog } from '@angular/material/dialog';
 import { DatePipe } from '@angular/common';
+import { forkJoin } from 'rxjs';
 import { UsuarioService } from '../../../core/services/usuario.service';
-import { UsuarioDto, TIPO_USUARIO_LABELS } from '../../../shared/models/api.models';
+import { ProprietarioService } from '../../../core/services/proprietario.service';
+import { UsuarioDto, TIPO_USUARIO_LABELS, TipoUsuario } from '../../../shared/models/api.models';
 import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
 import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
 import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
@@ -35,6 +38,7 @@ import { ToastService } from '../../../core/services/toast.service';
     MatProgressSpinnerModule,
     MatMenuModule,
     MatTableModule,
+    MatTooltipModule,
     DatePipe,
     PageHeaderComponent,
     EmptyStateComponent,
@@ -43,6 +47,7 @@ import { ToastService } from '../../../core/services/toast.service';
 })
 export class UsuariosListComponent implements OnInit {
   private readonly service = inject(UsuarioService);
+  private readonly proprietarioService = inject(ProprietarioService);
   private readonly dialog = inject(MatDialog);
   private readonly toast = inject(ToastService);
   private readonly breakpoint = inject(BreakpointObserver);
@@ -54,15 +59,25 @@ export class UsuariosListComponent implements OnInit {
 
   loading = signal(true);
   usuarios = signal<UsuarioDto[]>([]);
+  /** IDs de usuários do tipo Proprietário que ainda não têm cadastro de proprietário vinculado */
+  semCadastroIds = signal<Set<string>>(new Set());
   search = '';
 
   displayedColumns = computed(() =>
-    this.isNarrow()
-      ? ['nome', 'status', 'acoes']
-      : ['nome', 'tipo', 'status', 'criadoEm', 'acoes'],
+    this.isNarrow() ? ['nome', 'status', 'acoes'] : ['nome', 'tipo', 'status', 'criadoEm', 'acoes'],
   );
 
   tipoLabel = (u: UsuarioDto) => TIPO_USUARIO_LABELS[u.tipoUsuario];
+
+  semCadastroCount = computed(
+    () =>
+      this.usuarios().filter(
+        (u) => u.tipoUsuario === TipoUsuario.Proprietario && this.semCadastroIds().has(u.id),
+      ).length,
+  );
+
+  semCadastro = (u: UsuarioDto) =>
+    u.tipoUsuario === TipoUsuario.Proprietario && this.semCadastroIds().has(u.id);
 
   filtered = () => {
     const q = this.search.toLowerCase();
@@ -74,9 +89,21 @@ export class UsuariosListComponent implements OnInit {
   };
 
   ngOnInit() {
-    this.service.listar().subscribe({
-      next: (list) => {
-        this.usuarios.set(list);
+    forkJoin({
+      usuarios: this.service.listar(),
+      proprietarios: this.proprietarioService.listar(),
+    }).subscribe({
+      next: ({ usuarios, proprietarios }) => {
+        this.usuarios.set(usuarios);
+        const vinculados = new Set(
+          proprietarios.filter((p) => p.usuarioId).map((p) => p.usuarioId!),
+        );
+        const semCadastro = new Set(
+          usuarios
+            .filter((u) => u.tipoUsuario === TipoUsuario.Proprietario && !vinculados.has(u.id))
+            .map((u) => u.id),
+        );
+        this.semCadastroIds.set(semCadastro);
         this.loading.set(false);
       },
       error: () => this.loading.set(false),

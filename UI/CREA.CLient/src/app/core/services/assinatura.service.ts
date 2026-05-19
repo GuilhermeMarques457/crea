@@ -3,6 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import {
   AssinaturaDto,
   CreateAssinaturaDto,
+  MinhaAssinaturaDto,
   PendenteAssinaturaDto,
   TipoEntidadeAssinatura,
 } from '../../shared/models/api.models';
@@ -17,10 +18,12 @@ export class AssinaturaService {
     return this.http.get<PendenteAssinaturaDto[]>(`${this.base}/pendentes`);
   }
 
+  minhas() {
+    return this.http.get<MinhaAssinaturaDto[]>(`${this.base}/minhas`);
+  }
+
   porEntidade(tipoEntidade: TipoEntidadeAssinatura, entidadeId: string) {
-    const params = new HttpParams()
-      .set('tipoEntidade', tipoEntidade)
-      .set('entidadeId', entidadeId);
+    const params = new HttpParams().set('tipoEntidade', tipoEntidade).set('entidadeId', entidadeId);
     return this.http.get<AssinaturaDto[]>(`${this.base}/por-entidade`, { params });
   }
 

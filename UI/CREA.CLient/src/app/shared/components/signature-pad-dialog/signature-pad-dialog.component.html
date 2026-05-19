@@ -7,7 +7,9 @@
   <p class="text-sm text-slate-500 mb-3">
     Desenhe sua assinatura no campo abaixo usando o mouse ou toque na tela.
   </p>
-  <canvas #canvas class="signature-canvas w-full" [class.active]="!isEmpty()"></canvas>
+  <div #canvasWrapper class="w-full">
+    <canvas #canvas class="signature-canvas" [class.active]="!isEmpty()"></canvas>
+  </div>
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">

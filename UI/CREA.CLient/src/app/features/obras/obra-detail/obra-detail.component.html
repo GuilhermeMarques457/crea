@@ -7,7 +7,9 @@
       [subtitle]="obra()!.cidade + '/' + obra()!.estado"
       icon="construction"
     >
-      <div class="flex w-full min-w-0 flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap sm:justify-end">
+      <div
+        class="flex w-full min-w-0 flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap sm:justify-end"
+      >
         <button mat-button [routerLink]="['/obras', obra()!.id, 'editar']">
           <mat-icon>edit</mat-icon> Editar
         </button>
@@ -90,18 +92,28 @@
                 <p class="text-xs text-slate-500 uppercase tracking-wide">Áreas (m²)</p>
                 <div class="flex flex-wrap gap-4 mt-1">
                   @if (obra()!.areaConstruir) {
-                    <span class="text-sm"><strong>Construir:</strong> {{ obra()!.areaConstruir }} m²</span>
+                    <span class="text-sm"
+                      ><strong>Construir:</strong> {{ obra()!.areaConstruir }} m²</span
+                    >
                   }
                   @if (obra()!.areaRegularizar) {
-                    <span class="text-sm"><strong>Regularizar:</strong> {{ obra()!.areaRegularizar }} m²</span>
+                    <span class="text-sm"
+                      ><strong>Regularizar:</strong> {{ obra()!.areaRegularizar }} m²</span
+                    >
                   }
                   @if (obra()!.areaAmpliar) {
-                    <span class="text-sm"><strong>Ampliar:</strong> {{ obra()!.areaAmpliar }} m²</span>
+                    <span class="text-sm"
+                      ><strong>Ampliar:</strong> {{ obra()!.areaAmpliar }} m²</span
+                    >
                   }
                   @if (obra()!.areaReformar) {
-                    <span class="text-sm"><strong>Reformar:</strong> {{ obra()!.areaReformar }} m²</span>
+                    <span class="text-sm"
+                      ><strong>Reformar:</strong> {{ obra()!.areaReformar }} m²</span
+                    >
                   }
-                  <span class="text-sm"><strong>Total Edificada:</strong> {{ obra()!.areaTotalEdificada }} m²</span>
+                  <span class="text-sm"
+                    ><strong>Total Edificada:</strong> {{ obra()!.areaTotalEdificada }} m²</span
+                  >
                 </div>
               </div>
             }
@@ -165,72 +177,86 @@
             } @else {
               <div class="space-y-3">
                 @for (r of registros(); track r.id) {
-                    <div class="border border-slate-200 rounded-lg p-4 hover:bg-slate-50">
-                      <div class="mb-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                        <p class="font-semibold text-slate-800">
-                          <span class="text-xs bg-slate-200 text-slate-600 px-1.5 py-0.5 rounded mr-2">#{{ r.numeroSequencial }}</span>
-                          {{ r.data | date: 'dd/MM/yyyy' }}
-                        </p>
-                        <div class="flex items-center gap-1">
-                          <button
-                            mat-icon-button
-                            type="button"
-                            matTooltip="Anexos"
-                            (click)="abrirAnexosRegistro(r)"
-                            [matBadge]="qtdAnexosRegistro(r)"
-                            [matBadgeHidden]="qtdAnexosRegistro(r) === 0"
-                            matBadgeSize="medium"
-                            matBadgeColor="primary"
-                          >
-                            <mat-icon class="text-lg">attach_file</mat-icon>
-                          </button>
-                          <span class="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">
-                            {{ r.totalAssinaturas }} assinatura(s)
-                          </span>
-                          <a mat-icon-button [routerLink]="['/registros', r.id, 'editar']">
-                            <mat-icon class="text-lg">edit</mat-icon>
-                          </a>
-                        </div>
-                      </div>
-                      <p class="text-sm text-slate-600 line-clamp-2">{{ r.atividades }}</p>
-                      <p class="text-xs text-slate-400 mt-1">Equipe: {{ r.equipePresente }}</p>
-                      @if (posicaoObraLabel(r)) {
-                        <p class="text-xs text-slate-500 mt-1"><strong>Posição:</strong> {{ posicaoObraLabel(r) }}</p>
-                      }
-                      <div class="mt-2 flex flex-wrap gap-2">
-                        <span
-                          class="text-xs px-2 py-0.5 rounded-full"
-                          [class]="
-                            r.assinadoPeloProfissional
-                              ? 'bg-green-100 text-green-700'
-                              : 'bg-yellow-100 text-yellow-700'
-                          "
+                  <div class="border border-slate-200 rounded-lg p-4 hover:bg-slate-50">
+                    <div
+                      class="mb-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between"
+                    >
+                      <p class="font-semibold text-slate-800">
+                        <span class="text-xs bg-slate-200 text-slate-600 px-1.5 py-0.5 rounded mr-2"
+                          >#{{ r.numeroSequencial }}</span
                         >
-                          Profissional: {{ r.assinadoPeloProfissional ? '✓' : 'Pendente' }}
-                        </span>
-                        <span
-                          class="text-xs px-2 py-0.5 rounded-full"
-                          [class]="
-                            r.assinadoPeloProprietario
-                              ? 'bg-green-100 text-green-700'
-                              : 'bg-yellow-100 text-yellow-700'
-                          "
-                        >
-                          Proprietário: {{ r.assinadoPeloProprietario ? '✓' : 'Pendente' }}
-                        </span>
-                      </div>
-                      @if (podeAssinarRegistro(r)) {
+                        {{ r.data | date: 'dd/MM/yyyy' }}
+                      </p>
+                      <div class="flex items-center gap-1">
                         <button
-                          mat-stroked-button
-                          color="primary"
-                          class="mt-2 !text-xs"
-                          (click)="assinarRegistro(r)"
+                          mat-icon-button
+                          type="button"
+                          matTooltip="Anexos"
+                          (click)="abrirAnexosRegistro(r)"
+                          [matBadge]="qtdAnexosRegistro(r)"
+                          [matBadgeHidden]="qtdAnexosRegistro(r) === 0"
+                          matBadgeSize="medium"
+                          matBadgeColor="primary"
                         >
-                          <mat-icon class="!text-sm">draw</mat-icon> Assinar relato
+                          <mat-icon class="text-lg">attach_file</mat-icon>
                         </button>
-                      }
+                        <span class="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">
+                          {{ r.totalAssinaturas }} assinatura(s)
+                        </span>
+                        <a mat-icon-button [routerLink]="['/registros', r.id, 'editar']">
+                          <mat-icon class="text-lg">edit</mat-icon>
+                        </a>
+                      </div>
                     </div>
-                  }
+                    <p class="text-sm text-slate-600 line-clamp-2">{{ r.atividades }}</p>
+                    <p class="text-xs text-slate-400 mt-1">Equipe: {{ r.equipePresente }}</p>
+                    @if (posicaoObraLabel(r)) {
+                      <p class="text-xs text-slate-500 mt-1">
+                        <strong>Posição:</strong> {{ posicaoObraLabel(r) }}
+                      </p>
+                    }
+                    <div class="mt-2 flex flex-wrap gap-2">
+                      <span
+                        class="text-xs px-2 py-0.5 rounded-full"
+                        [class]="
+                          r.assinadoPeloProfissional
+                            ? 'bg-green-100 text-green-700'
+                            : 'bg-yellow-100 text-yellow-700'
+                        "
+                      >
+                        Profissional: {{ r.assinadoPeloProfissional ? '✓' : 'Pendente' }}
+                      </span>
+                      <span
+                        class="text-xs px-2 py-0.5 rounded-full"
+                        [class]="
+                          r.assinadoPeloProprietario
+                            ? 'bg-green-100 text-green-700'
+                            : 'bg-yellow-100 text-yellow-700'
+                        "
+                      >
+                        Proprietário: {{ r.assinadoPeloProprietario ? '✓' : 'Pendente' }}
+                      </span>
+                    </div>
+                    @if (podeAssinarRegistro(r)) {
+                      <button
+                        mat-stroked-button
+                        color="primary"
+                        class="mt-2 !text-xs"
+                        (click)="assinarRegistro(r)"
+                      >
+                        <mat-icon class="!text-sm">draw</mat-icon> Assinar relato
+                      </button>
+                    }
+                    <button
+                      mat-stroked-button
+                      class="mt-2 !text-xs"
+                      matTooltip="Copiar link para compartilhar com quem precisa assinar"
+                      (click)="copiarLink('registro', r.id)"
+                    >
+                      <mat-icon class="!text-sm">link</mat-icon> Copiar link
+                    </button>
+                  </div>
+                }
               </div>
             }
           </div>
@@ -253,7 +279,9 @@
               <span
                 class="text-xs px-2.5 py-1 rounded-full font-medium"
                 [class]="
-                  obraAssinadaCrea() ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'
+                  obraAssinadaCrea()
+                    ? 'bg-green-100 text-green-700'
+                    : 'bg-yellow-100 text-yellow-700'
                 "
               >
                 CREA: {{ obraAssinadaCrea() ? 'Assinado ✓' : 'Pendente' }}
@@ -263,7 +291,9 @@
             @if (assinaturasObra().length > 0) {
               <div class="space-y-2 mb-4">
                 @for (a of assinaturasObra(); track a.id) {
-                  <div class="flex items-center gap-2 text-sm text-slate-600 border border-slate-100 rounded-lg p-3">
+                  <div
+                    class="flex items-center gap-2 text-sm text-slate-600 border border-slate-100 rounded-lg p-3"
+                  >
                     <span>
                       {{ a.nomeUsuario }} ({{ labelAssinante(a.tipoAssinante) }}) —
                       {{ a.dataAssinatura | date: 'dd/MM/yyyy HH:mm' }}
@@ -285,6 +315,13 @@
                 <mat-icon>draw</mat-icon> Assinar obra
               </button>
             }
+            <button
+              mat-stroked-button
+              matTooltip="Copiar link para compartilhar com quem precisa assinar"
+              (click)="copiarLink('obra')"
+            >
+              <mat-icon>link</mat-icon> Copiar link
+            </button>
           </div>
         </mat-tab>
 
@@ -381,7 +418,8 @@
                         : 'bg-yellow-100 text-yellow-700'
                     "
                   >
-                    Profissional: {{ termo()!.assinadoPeloProfissional ? 'Assinado ✓' : 'Pendente' }}
+                    Profissional:
+                    {{ termo()!.assinadoPeloProfissional ? 'Assinado ✓' : 'Pendente' }}
                   </span>
                   <span
                     class="text-xs px-2.5 py-1 rounded-full font-medium"
@@ -391,7 +429,8 @@
                         : 'bg-yellow-100 text-yellow-700'
                     "
                   >
-                    Proprietário: {{ termo()!.assinadoPeloProprietario ? 'Assinado ✓' : 'Pendente' }}
+                    Proprietário:
+                    {{ termo()!.assinadoPeloProprietario ? 'Assinado ✓' : 'Pendente' }}
                   </span>
                 </div>
 
@@ -404,11 +443,7 @@
                           {{ a.dataAssinatura | date: 'dd/MM/yyyy HH:mm' }}
                         </p>
                         @if (a.imagemAssinatura) {
-                          <button
-                            mat-icon-button
-                            class="!w-6 !h-6"
-                            (click)="verAssinatura(a)"
-                          >
+                          <button mat-icon-button class="!w-6 !h-6" (click)="verAssinatura(a)">
                             <mat-icon class="text-blue-600 !text-sm">draw</mat-icon>
                           </button>
                         }
@@ -424,6 +459,15 @@
                     </button>
                   </div>
                 }
+                <div class="mt-3">
+                  <button
+                    mat-stroked-button
+                    matTooltip="Copiar link para compartilhar com quem precisa assinar"
+                    (click)="copiarLink('termo')"
+                  >
+                    <mat-icon>link</mat-icon> Copiar link
+                  </button>
+                </div>
               </div>
             } @else {
               <app-empty-state

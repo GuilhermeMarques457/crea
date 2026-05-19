@@ -10,4 +10,5 @@ public interface IAssinaturaRepository : IRepository<Assinatura>
     Task<Assinatura?> GetByEntidadeETipoAssinanteAsync(TipoEntidadeAssinatura tipoEntidade, Guid entidadeId, TipoAssinante tipoAssinante);
     Task<bool> ExisteAssinaturaAsync(TipoEntidadeAssinatura tipoEntidade, Guid entidadeId, TipoAssinante tipoAssinante);
     Task<IEnumerable<PendenteAssinaturaDto>> GetPendentesParaUsuarioAsync(Guid usuarioId, TipoUsuario tipoUsuario);
+    Task<IEnumerable<MinhaAssinaturaDto>> GetMinhasAsync(Guid usuarioId);
 }

@@ -46,6 +46,15 @@ public class AssinaturasController(
         return Ok(pendentes);
     }
 
+    [HttpGet("minhas")]
+    [Authorize(Roles = "ResponsavelTecnico,UsuarioCrea,Proprietario")]
+    public async Task<ActionResult<IEnumerable<MinhaAssinaturaDto>>> GetMinhas()
+    {
+        var usuarioId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var minhas = await assinaturaRepository.GetMinhasAsync(usuarioId);
+        return Ok(minhas);
+    }
+
     [HttpPost]
     [Authorize(Roles = "ResponsavelTecnico,UsuarioCrea,Proprietario")]
     public async Task<ActionResult<AssinaturaDto>> Assinar([FromBody] CreateAssinaturaDto dto)

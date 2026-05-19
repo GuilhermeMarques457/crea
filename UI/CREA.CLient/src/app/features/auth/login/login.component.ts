@@ -1,6 +1,6 @@
 import { Component, signal, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -29,6 +29,7 @@ export class LoginComponent {
   private readonly fb = inject(FormBuilder);
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
   private readonly toast = inject(ToastService);
 
   loading = signal(false);
@@ -49,12 +50,17 @@ export class LoginComponent {
     this.error.set('');
     this.auth.login(this.form.getRawValue()).subscribe({
       next: (res) => {
-        const destino =
-          res.tipoUsuario === TipoUsuario.Proprietario ||
-          res.tipoUsuario === TipoUsuario.UsuarioCrea
-            ? '/pendencias'
-            : '/dashboard';
-        this.router.navigate([destino]);
+        const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
+        if (returnUrl) {
+          this.router.navigateByUrl(returnUrl);
+        } else {
+          const destino =
+            res.tipoUsuario === TipoUsuario.Proprietario ||
+            res.tipoUsuario === TipoUsuario.UsuarioCrea
+              ? '/pendencias'
+              : '/dashboard';
+          this.router.navigate([destino]);
+        }
       },
       error: () => {
         this.error.set('E-mail ou senha inválidos.');

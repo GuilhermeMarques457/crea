@@ -19,11 +19,14 @@ import SignaturePad from 'signature_pad';
   templateUrl: './signature-pad-dialog.component.html',
   styles: `
     .signature-canvas {
+      display: block;
+      width: 100%;
       border: 2px dashed #cbd5e1;
       border-radius: 12px;
       cursor: crosshair;
       touch-action: none;
       background: #fff;
+      box-sizing: border-box;
     }
     .signature-canvas.active {
       border-color: #3b82f6;
@@ -36,6 +39,7 @@ export class SignaturePadDialogComponent implements AfterViewInit, OnDestroy {
   private resizeObserver!: ResizeObserver;
 
   @ViewChild('canvas', { static: true }) canvasRef!: ElementRef<HTMLCanvasElement>;
+  @ViewChild('canvasWrapper', { static: true }) wrapperRef!: ElementRef<HTMLDivElement>;
 
   isEmpty = signal(true);
 
@@ -52,7 +56,7 @@ export class SignaturePadDialogComponent implements AfterViewInit, OnDestroy {
 
     this.resizeCanvas();
     this.resizeObserver = new ResizeObserver(() => this.resizeCanvas());
-    this.resizeObserver.observe(canvas.parentElement!);
+    this.resizeObserver.observe(this.wrapperRef.nativeElement);
   }
 
   ngOnDestroy() {
@@ -62,7 +66,7 @@ export class SignaturePadDialogComponent implements AfterViewInit, OnDestroy {
   private resizeCanvas() {
     const canvas = this.canvasRef.nativeElement;
     const ratio = window.devicePixelRatio || 1;
-    const width = canvas.parentElement!.clientWidth;
+    const width = this.wrapperRef.nativeElement.clientWidth;
     const height = 200;
     canvas.width = width * ratio;
     canvas.height = height * ratio;

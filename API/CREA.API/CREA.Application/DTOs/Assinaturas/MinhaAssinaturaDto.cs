@@ -2,7 +2,7 @@ using CREA.Domain.Enums;
 
 namespace CREA.Application.DTOs.Assinaturas;
 
-public class PendenteAssinaturaDto
+public class MinhaAssinaturaDto
 {
     public TipoEntidadeAssinatura TipoEntidade { get; set; }
     public Guid EntidadeId { get; set; }
@@ -11,5 +11,7 @@ public class PendenteAssinaturaDto
     public TipoAssinante TipoAssinante { get; set; }
     public string Titulo { get; set; } = string.Empty;
     public string? Subtitulo { get; set; }
-    public DateTime CriadoEm { get; set; }
+    public DateTime DataAssinatura { get; set; }
+    /// <summary>True quando todos os assinantes requeridos já assinaram a entidade.</summary>
+    public bool TotalmenteAssinado { get; set; }
 }

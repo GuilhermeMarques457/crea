@@ -226,7 +226,7 @@ export interface CreateProprietarioDto {
   cpf?: string;
   email?: string;
   telefone?: string;
-  senhaAcesso?: string;
+  usuarioId: string;
 }
 
 // Registros Diários
@@ -311,10 +311,22 @@ export interface CreateAssinaturaDto {
 export interface PendenteAssinaturaDto {
   tipoEntidade: TipoEntidadeAssinatura;
   entidadeId: string;
+  obraId: string;
   tipoAssinante: TipoAssinante;
   titulo: string;
   subtitulo?: string;
   criadoEm: string;
+}
+
+export interface MinhaAssinaturaDto {
+  tipoEntidade: TipoEntidadeAssinatura;
+  entidadeId: string;
+  obraId: string;
+  tipoAssinante: TipoAssinante;
+  titulo: string;
+  subtitulo?: string;
+  dataAssinatura: string;
+  totalmenteAssinado: boolean;
 }
 
 // Anexos

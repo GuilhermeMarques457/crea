@@ -58,6 +58,7 @@ public class AssinaturaRepository(ApplicationDbContext context)
                     {
                         TipoEntidade = TipoEntidadeAssinatura.Obra,
                         EntidadeId = obra.Id,
+                        ObraId = obra.Id,
                         TipoAssinante = TipoAssinante.Profissional,
                         Titulo = obra.Nome,
                         Subtitulo = "Assinatura do profissional responsável",
@@ -82,6 +83,7 @@ public class AssinaturaRepository(ApplicationDbContext context)
                     {
                         TipoEntidade = TipoEntidadeAssinatura.RelatoVisita,
                         EntidadeId = relato.Id,
+                        ObraId = relato.ObraId,
                         TipoAssinante = TipoAssinante.Profissional,
                         Titulo = relato.Obra.Nome,
                         Subtitulo = $"Relato de visita #{relato.NumeroSequencial}",
@@ -107,6 +109,7 @@ public class AssinaturaRepository(ApplicationDbContext context)
                     {
                         TipoEntidade = TipoEntidadeAssinatura.TermoConclusao,
                         EntidadeId = termo.Id,
+                        ObraId = termo.ObraId,
                         TipoAssinante = TipoAssinante.Profissional,
                         Titulo = termo.Obra.Nome,
                         Subtitulo = $"Termo de conclusão nº {termo.NumeroTermo}",
@@ -130,6 +133,7 @@ public class AssinaturaRepository(ApplicationDbContext context)
                     {
                         TipoEntidade = TipoEntidadeAssinatura.Obra,
                         EntidadeId = obra.Id,
+                        ObraId = obra.Id,
                         TipoAssinante = TipoAssinante.UsuarioCrea,
                         Titulo = obra.Nome,
                         Subtitulo = "Assinatura CREA",
@@ -161,6 +165,7 @@ public class AssinaturaRepository(ApplicationDbContext context)
                     {
                         TipoEntidade = TipoEntidadeAssinatura.RelatoVisita,
                         EntidadeId = relato.Id,
+                        ObraId = relato.ObraId,
                         TipoAssinante = TipoAssinante.Proprietario,
                         Titulo = relato.Obra.Nome,
                         Subtitulo = $"Relato de visita #{relato.NumeroSequencial}",
@@ -185,6 +190,7 @@ public class AssinaturaRepository(ApplicationDbContext context)
                     {
                         TipoEntidade = TipoEntidadeAssinatura.TermoConclusao,
                         EntidadeId = termo.Id,
+                        ObraId = termo.ObraId,
                         TipoAssinante = TipoAssinante.Proprietario,
                         Titulo = termo.Obra.Nome,
                         Subtitulo = $"Termo de conclusão nº {termo.NumeroTermo}",
@@ -195,5 +201,94 @@ public class AssinaturaRepository(ApplicationDbContext context)
         }
 
         return pendentes.OrderByDescending(p => p.CriadoEm);
+    }
+
+    private static TipoAssinante[] AssinantesRequeridos(TipoEntidadeAssinatura tipo) => tipo switch
+    {
+        TipoEntidadeAssinatura.Obra => [TipoAssinante.Profissional, TipoAssinante.UsuarioCrea],
+        _ => [TipoAssinante.Profissional, TipoAssinante.Proprietario],
+    };
+
+    public async Task<IEnumerable<MinhaAssinaturaDto>> GetMinhasAsync(Guid usuarioId)
+    {
+        var assinaturas = await _dbSet
+            .Where(a => a.Ativo && a.UsuarioId == usuarioId)
+            .OrderByDescending(a => a.DataAssinatura)
+            .ToListAsync();
+
+        // Batch-load all assinaturas for those same entities (by any user) to detect full completion
+        var entityIds = assinaturas.Select(a => a.EntidadeId).Distinct().ToList();
+        var todasAssinaturas = entityIds.Count > 0
+            ? await _dbSet
+                .Where(a => a.Ativo && entityIds.Contains(a.EntidadeId))
+                .Select(a => new { a.TipoEntidade, a.EntidadeId, a.TipoAssinante })
+                .ToListAsync()
+            : [];
+        var sigsByEntity = todasAssinaturas
+            .GroupBy(a => (a.TipoEntidade, a.EntidadeId))
+            .ToDictionary(g => g.Key, g => g.Select(x => x.TipoAssinante).ToHashSet());
+
+        var obraIds = assinaturas.Where(a => a.TipoEntidade == TipoEntidadeAssinatura.Obra)
+            .Select(a => a.EntidadeId).ToList();
+        var relatoIds = assinaturas.Where(a => a.TipoEntidade == TipoEntidadeAssinatura.RelatoVisita)
+            .Select(a => a.EntidadeId).ToList();
+        var termoIds = assinaturas.Where(a => a.TipoEntidade == TipoEntidadeAssinatura.TermoConclusao)
+            .Select(a => a.EntidadeId).ToList();
+
+        var obras = obraIds.Count > 0
+            ? await context.Obras.Where(o => obraIds.Contains(o.Id)).ToDictionaryAsync(o => o.Id)
+            : new Dictionary<Guid, CREA.Domain.Entities.Obra>();
+        var relatos = relatoIds.Count > 0
+            ? await context.RelatosVisita.Include(r => r.Obra)
+                .Where(r => relatoIds.Contains(r.Id)).ToDictionaryAsync(r => r.Id)
+            : new Dictionary<Guid, CREA.Domain.Entities.RelatoVisita>();
+        var termos = termoIds.Count > 0
+            ? await context.TermosConclusao.Include(t => t.Obra)
+                .Where(t => termoIds.Contains(t.Id)).ToDictionaryAsync(t => t.Id)
+            : new Dictionary<Guid, CREA.Domain.Entities.TermoConclusao>();
+
+        var result = new List<MinhaAssinaturaDto>();
+        foreach (var a in assinaturas)
+        {
+            string titulo = string.Empty;
+            string? subtitulo = null;
+            Guid obraId = Guid.Empty;
+
+            if (a.TipoEntidade == TipoEntidadeAssinatura.Obra && obras.TryGetValue(a.EntidadeId, out var obra))
+            {
+                titulo = obra.Nome;
+                obraId = obra.Id;
+            }
+            else if (a.TipoEntidade == TipoEntidadeAssinatura.RelatoVisita && relatos.TryGetValue(a.EntidadeId, out var relato))
+            {
+                titulo = relato.Obra.Nome;
+                subtitulo = $"Relato de visita #{relato.NumeroSequencial}";
+                obraId = relato.ObraId;
+            }
+            else if (a.TipoEntidade == TipoEntidadeAssinatura.TermoConclusao && termos.TryGetValue(a.EntidadeId, out var termo))
+            {
+                titulo = termo.Obra.Nome;
+                subtitulo = $"Termo de conclusão nº {termo.NumeroTermo}";
+                obraId = termo.ObraId;
+            }
+
+            if (obraId == Guid.Empty) continue;
+
+            var presentes = sigsByEntity.GetValueOrDefault((a.TipoEntidade, a.EntidadeId)) ?? [];
+            var totalmenteAssinado = AssinantesRequeridos(a.TipoEntidade).All(s => presentes.Contains(s));
+
+            result.Add(new MinhaAssinaturaDto
+            {
+                TipoEntidade = a.TipoEntidade,
+                EntidadeId = a.EntidadeId,
+                ObraId = obraId,
+                TipoAssinante = a.TipoAssinante,
+                Titulo = titulo,
+                Subtitulo = subtitulo,
+                DataAssinatura = a.DataAssinatura,
+                TotalmenteAssinado = totalmenteAssinado,
+            });
+        }
+        return result;
     }
 }

@@ -46,7 +46,6 @@
         <div class="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end sm:gap-3">
           <button mat-button type="button" (click)="voltar()">Cancelar</button>
           <button mat-flat-button color="primary" type="submit" [disabled]="saving()">
-            <mat-spinner diameter="18" class="inline-block mr-2"></mat-spinner>
             {{ saving() ? 'Salvando...' : isEdit() ? 'Salvar' : 'Cadastrar' }}
           </button>
         </div>

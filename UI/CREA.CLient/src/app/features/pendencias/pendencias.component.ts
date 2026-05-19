@@ -5,8 +5,10 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDialog } from '@angular/material/dialog';
 import { DatePipe } from '@angular/common';
+import { forkJoin } from 'rxjs';
 import { NotificacaoService } from '../../core/services/notificacao.service';
 import { AssinaturaService } from '../../core/services/assinatura.service';
 import { ToastService } from '../../core/services/toast.service';
@@ -14,13 +16,11 @@ import { EmptyStateComponent } from '../../shared/components/empty-state/empty-s
 import { PageHeaderComponent } from '../../shared/components/page-header/page-header.component';
 import { SignaturePadDialogComponent } from '../../shared/components/signature-pad-dialog/signature-pad-dialog.component';
 import {
+  MinhaAssinaturaDto,
   PendenteAssinaturaDto,
   TipoEntidadeAssinatura,
 } from '../../shared/models/api.models';
-import {
-  labelTipoAssinante,
-  TIPO_ENTIDADE_LABELS,
-} from '../../shared/utils/assinatura.utils';
+import { labelTipoAssinante, TIPO_ENTIDADE_LABELS } from '../../shared/utils/assinatura.utils';
 
 @Component({
   selector: 'app-pendencias',
@@ -32,6 +32,7 @@ import {
     MatButtonModule,
     MatIconModule,
     MatProgressSpinnerModule,
+    MatTooltipModule,
     DatePipe,
     PageHeaderComponent,
     EmptyStateComponent,
@@ -48,6 +49,10 @@ export class PendenciasComponent implements OnInit {
 
   loading = signal(true);
   pendentes = signal<PendenteAssinaturaDto[]>([]);
+  minhas = signal<MinhaAssinaturaDto[]>([]);
+
+  minhasAguardando = computed(() => this.minhas().filter((m) => !m.totalmenteAssinado));
+  minhasAssinadas = computed(() => this.minhas().filter((m) => m.totalmenteAssinado));
 
   obrasPendentes = computed(() =>
     this.pendentes().filter((p) => p.tipoEntidade === TipoEntidadeAssinatura.Obra),
@@ -65,9 +70,13 @@ export class PendenciasComponent implements OnInit {
 
   carregar() {
     this.loading.set(true);
-    this.assinaturaService.pendentes().subscribe({
-      next: (list) => {
-        this.pendentes.set(list);
+    forkJoin({
+      pendentes: this.assinaturaService.pendentes(),
+      minhas: this.assinaturaService.minhas(),
+    }).subscribe({
+      next: ({ pendentes, minhas }) => {
+        this.pendentes.set(pendentes);
+        this.minhas.set(minhas);
         this.loading.set(false);
       },
       error: () => {
@@ -107,13 +116,29 @@ export class PendenciasComponent implements OnInit {
     return TIPO_ENTIDADE_LABELS[tipo];
   }
 
-  labelAssinante(p: PendenteAssinaturaDto): string {
+  labelAssinante(p: PendenteAssinaturaDto | MinhaAssinaturaDto): string {
     return labelTipoAssinante(p.tipoAssinante);
   }
 
   linkObraId(p: PendenteAssinaturaDto): string | null {
     if (p.tipoEntidade === TipoEntidadeAssinatura.Obra) return p.entidadeId;
     return null;
+  }
+
+  copiarLink(p: PendenteAssinaturaDto | MinhaAssinaturaDto): void {
+    const obraId = p.obraId;
+    let url = `${window.location.origin}`;
+    if (p.tipoEntidade === TipoEntidadeAssinatura.Obra) {
+      url += `/obras/${obraId}?assinar=obra`;
+    } else if (p.tipoEntidade === TipoEntidadeAssinatura.RelatoVisita) {
+      url += `/obras/${obraId}?assinar=registro&r=${p.entidadeId}`;
+    } else {
+      url += `/obras/${obraId}?assinar=termo`;
+    }
+    navigator.clipboard.writeText(url).then(
+      () => this.toast.success('Link de assinatura copiado!'),
+      () => this.toast.error('Não foi possível copiar o link.'),
+    );
   }
 
   assinar(pendente: PendenteAssinaturaDto) {

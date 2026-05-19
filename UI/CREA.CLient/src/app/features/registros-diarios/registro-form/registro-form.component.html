@@ -1,4 +1,4 @@
-﻿<div class="page-container max-w-3xl">
+<div class="page-container max-w-3xl">
   <app-page-header
     [title]="isEdit() ? 'Editar Relato Visita' : 'Novo Relato Visita'"
     subtitle="Registre as atividades do dia (Relato de Visita)"
@@ -10,68 +10,97 @@
   <mat-card>
     <mat-card-content class="p-4 md:p-6">
       <form [formGroup]="form" (ngSubmit)="submit()">
-        <h3 class="text-base font-semibold text-slate-700 mb-4">InformaÃ§Ãµes do Dia</h3>
+        <h3 class="text-base font-semibold text-slate-700 mb-4">Informações do Dia</h3>
         <div class="space-y-4 mb-6">
           <mat-form-field appearance="outline" class="w-full">
             <mat-label>Data</mat-label>
             <input matInput [matDatepicker]="dp" formControlName="data" />
             <mat-datepicker-toggle matSuffix [for]="dp" />
             <mat-datepicker #dp />
-            <mat-error>Data Ã© obrigatÃ³ria</mat-error>
+            <mat-error>Data é obrigatória</mat-error>
           </mat-form-field>
           <mat-form-field appearance="outline" class="w-full">
             <mat-label>Atividades Realizadas</mat-label>
-            <textarea matInput formControlName="atividades" rows="4" placeholder="Descreva as atividades realizadas no dia..."></textarea>
-            <mat-error>Atividades sÃ£o obrigatÃ³rias</mat-error>
+            <textarea
+              matInput
+              formControlName="atividades"
+              rows="4"
+              placeholder="Descreva as atividades realizadas no dia..."
+            ></textarea>
+            <mat-error>Atividades são obrigatórias</mat-error>
           </mat-form-field>
           <mat-form-field appearance="outline" class="w-full">
             <mat-label>Equipe Presente</mat-label>
-            <input matInput formControlName="equipePresente" placeholder="Ex: JoÃ£o, Maria, Pedro..." />
-            <mat-error>Equipe presente Ã© obrigatÃ³ria</mat-error>
+            <input
+              matInput
+              formControlName="equipePresente"
+              placeholder="Ex: João, Maria, Pedro..."
+            />
+            <mat-error>Equipe presente é obrigatória</mat-error>
           </mat-form-field>
           <mat-form-field appearance="outline" class="w-full">
-            <mat-label>CondiÃ§Ã£o ClimÃ¡tica</mat-label>
-            <input matInput formControlName="condicaoClimatica" placeholder="Ex: Ensolarado, Chuvoso..." />
+            <mat-label>Condição Climática</mat-label>
+            <input
+              matInput
+              formControlName="condicaoClimatica"
+              placeholder="Ex: Ensolarado, Chuvoso..."
+            />
           </mat-form-field>
           <mat-form-field appearance="outline" class="w-full">
-            <mat-label>ObservaÃ§Ãµes</mat-label>
+            <mat-label>Observações</mat-label>
             <textarea matInput formControlName="observacoes" rows="3"></textarea>
           </mat-form-field>
         </div>
 
         <h3 class="text-base font-semibold text-slate-700 mb-4">Etapas da Obra</h3>
         <div class="mb-6 grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-3">
-          <mat-checkbox formControlName="servicosPreliminar" color="primary">ServiÃ§os Preliminares</mat-checkbox>
-          <mat-checkbox formControlName="fundacao" color="primary">FundaÃ§Ã£o</mat-checkbox>
+          <mat-checkbox formControlName="servicosPreliminar" color="primary"
+            >Serviços Preliminares</mat-checkbox
+          >
+          <mat-checkbox formControlName="fundacao" color="primary">Fundação</mat-checkbox>
           <mat-checkbox formControlName="alvenarias" color="primary">Alvenarias</mat-checkbox>
-          <mat-checkbox formControlName="superestrutura" color="primary">Superestrutura</mat-checkbox>
+          <mat-checkbox formControlName="superestrutura" color="primary"
+            >Superestrutura</mat-checkbox
+          >
           <mat-checkbox formControlName="cobertura" color="primary">Cobertura</mat-checkbox>
-          <mat-checkbox formControlName="esquadriasInstalacoesEletricasHidraulicas" color="primary">Esquadrias / Inst. ElÃ©tricas e HidrÃ¡ulicas</mat-checkbox>
-          <mat-checkbox formControlName="revestimentoForroParePiso" color="primary">Revestimento (forro, parede, piso)</mat-checkbox>
+          <mat-checkbox formControlName="esquadriasInstalacoesEletricasHidraulicas" color="primary"
+            >Esquadrias / Inst. Elétricas e Hidráulicas</mat-checkbox
+          >
+          <mat-checkbox formControlName="revestimentoForroParePiso" color="primary"
+            >Revestimento (forro, parede, piso)</mat-checkbox
+          >
           <mat-checkbox formControlName="pintura" color="primary">Pintura</mat-checkbox>
-          <mat-checkbox formControlName="servicosComplementares" color="primary">ServiÃ§os Complementares</mat-checkbox>
+          <mat-checkbox formControlName="servicosComplementares" color="primary"
+            >Serviços Complementares</mat-checkbox
+          >
         </div>
 
-        <h3 class="text-base font-semibold text-slate-700 mb-4">PosiÃ§Ã£o da Obra</h3>
+        <h3 class="text-base font-semibold text-slate-700 mb-4">Posição da Obra</h3>
         <div class="space-y-4 mb-6">
           <mat-form-field appearance="outline" class="w-full">
-            <mat-label>PosiÃ§Ã£o da Obra</mat-label>
+            <mat-label>Posição da Obra</mat-label>
             <mat-select formControlName="posicaoObra">
-              <mat-option [value]="null">â€”</mat-option>
+              <mat-option [value]="null">—</mat-option>
               @for (p of posicaoObraOptions; track p.value) {
                 <mat-option [value]="p.value">{{ p.label }}</mat-option>
               }
             </mat-select>
           </mat-form-field>
           <mat-form-field appearance="outline" class="w-full">
-            <mat-label>DecisÃµes tÃ©cnicas e orientaÃ§Ãµes executivas</mat-label>
-            <textarea matInput formControlName="decisoesTecnicas" rows="3" placeholder="Registre as decisÃµes tÃ©cnicas..."></textarea>
+            <mat-label>Decisões técnicas e orientações executivas</mat-label>
+            <textarea
+              matInput
+              formControlName="decisoesTecnicas"
+              rows="3"
+              placeholder="Registre as decisões técnicas..."
+            ></textarea>
           </mat-form-field>
         </div>
 
         <h3 class="mb-2 text-base font-semibold text-slate-700">Anexos</h3>
         <p class="mb-3 text-xs text-slate-500">
-          Imagens (JPEG, PNG, GIF), PDF ou Word. AtÃ© 10 MB por arquivo. VocÃª pode adicionar quantos quiser.
+          Imagens (JPEG, PNG, GIF), PDF ou Word. Até 10 MB por arquivo. Você pode adicionar
+          quantos quiser.
         </p>
         <div class="mb-6 rounded-xl border border-dashed border-slate-300 p-4">
           <input
@@ -93,7 +122,9 @@
             Adicionar arquivos
           </button>
           @if (arquivosPendentes().length > 0) {
-            <p class="mt-3 text-xs font-medium text-slate-600">SerÃ£o enviados ao salvar o registro:</p>
+            <p class="mt-3 text-xs font-medium text-slate-600">
+              Serão enviados ao salvar o registro:
+            </p>
             <ul class="mt-2 space-y-2">
               @for (f of arquivosPendentes(); track $index) {
                 <li
@@ -150,40 +181,59 @@
         </div>
 
         @if (isEdit()) {
-        <h3 class="text-base font-semibold text-slate-700 mb-4">Assinaturas digitais</h3>
-        <div class="mb-6">
-          <div class="flex flex-wrap gap-2 mb-3">
-            <span
-              class="text-xs px-2.5 py-1 rounded-full font-medium"
-              [class]="assinadoPelo(TipoAssinante.Profissional) ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'"
-            >
-              Profissional: {{ assinadoPelo(TipoAssinante.Profissional) ? 'Assinado âœ“' : 'Pendente' }}
-            </span>
-            <span
-              class="text-xs px-2.5 py-1 rounded-full font-medium"
-              [class]="assinadoPelo(TipoAssinante.Proprietario) ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'"
-            >
-              ProprietÃ¡rio: {{ assinadoPelo(TipoAssinante.Proprietario) ? 'Assinado âœ“' : 'Pendente' }}
-            </span>
-          </div>
-          @if (assinaturas().length > 0) {
-            <div class="space-y-2 mb-3">
-              @for (a of assinaturas(); track a.id) {
-                <div class="flex items-center justify-between border border-slate-200 rounded-lg p-3 text-sm">
-                  <span>{{ a.nomeUsuario }} ({{ labelAssinante(a.tipoAssinante) }}) â€” {{ a.dataAssinatura | date: 'dd/MM/yyyy HH:mm' }}</span>
-                  @if (a.imagemAssinatura) {
-                    <button mat-icon-button type="button" (click)="verAssinatura(a)"><mat-icon class="text-blue-600">draw</mat-icon></button>
-                  }
-                </div>
-              }
+          <h3 class="text-base font-semibold text-slate-700 mb-4">Assinaturas digitais</h3>
+          <div class="mb-6">
+            <div class="flex flex-wrap gap-2 mb-3">
+              <span
+                class="text-xs px-2.5 py-1 rounded-full font-medium"
+                [class]="
+                  assinadoPelo(TipoAssinante.Profissional)
+                    ? 'bg-green-100 text-green-700'
+                    : 'bg-yellow-100 text-yellow-700'
+                "
+              >
+                Profissional:
+                {{ assinadoPelo(TipoAssinante.Profissional) ? 'Assinado ✓' : 'Pendente' }}
+              </span>
+              <span
+                class="text-xs px-2.5 py-1 rounded-full font-medium"
+                [class]="
+                  assinadoPelo(TipoAssinante.Proprietario)
+                    ? 'bg-green-100 text-green-700'
+                    : 'bg-yellow-100 text-yellow-700'
+                "
+              >
+                Proprietário:
+                {{ assinadoPelo(TipoAssinante.Proprietario) ? 'Assinado ✓' : 'Pendente' }}
+              </span>
             </div>
-          } @else {
-            <p class="text-sm text-slate-500 mb-3">Nenhuma assinatura registrada ainda.</p>
-          }
-          @if (podeAssinar()) {
-            <button mat-flat-button color="primary" type="button" (click)="assinar()"><mat-icon>draw</mat-icon> Assinar relato</button>
-          }
-        </div>
+            @if (assinaturas().length > 0) {
+              <div class="space-y-2 mb-3">
+                @for (a of assinaturas(); track a.id) {
+                  <div
+                    class="flex items-center justify-between border border-slate-200 rounded-lg p-3 text-sm"
+                  >
+                    <span
+                      >{{ a.nomeUsuario }} ({{ labelAssinante(a.tipoAssinante) }}) —
+                      {{ a.dataAssinatura | date: 'dd/MM/yyyy HH:mm' }}</span
+                    >
+                    @if (a.imagemAssinatura) {
+                      <button mat-icon-button type="button" (click)="verAssinatura(a)">
+                        <mat-icon class="text-blue-600">draw</mat-icon>
+                      </button>
+                    }
+                  </div>
+                }
+              </div>
+            } @else {
+              <p class="text-sm text-slate-500 mb-3">Nenhuma assinatura registrada ainda.</p>
+            }
+            @if (podeAssinar()) {
+              <button mat-flat-button color="primary" type="button" (click)="assinar()">
+                <mat-icon>draw</mat-icon> Assinar relato
+              </button>
+            }
+          </div>
         }
 
         <div class="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end sm:gap-3">
