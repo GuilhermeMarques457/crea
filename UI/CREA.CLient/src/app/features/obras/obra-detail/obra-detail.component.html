@@ -197,8 +197,37 @@
                       @if (posicaoObraLabel(r)) {
                         <p class="text-xs text-slate-500 mt-1"><strong>Posição:</strong> {{ posicaoObraLabel(r) }}</p>
                       }
-                      @if (r.dataAssinaturaResponsavel) {
-                        <p class="text-xs text-green-600 mt-1">✓ Assinado por: {{ obra()!.nomeProfissionalResponsavel }}</p>
+                      <div class="mt-2 flex flex-wrap gap-2">
+                        <span
+                          class="text-xs px-2 py-0.5 rounded-full"
+                          [class]="
+                            r.assinadoPeloProfissional
+                              ? 'bg-green-100 text-green-700'
+                              : 'bg-yellow-100 text-yellow-700'
+                          "
+                        >
+                          Profissional: {{ r.assinadoPeloProfissional ? '✓' : 'Pendente' }}
+                        </span>
+                        <span
+                          class="text-xs px-2 py-0.5 rounded-full"
+                          [class]="
+                            r.assinadoPeloProprietario
+                              ? 'bg-green-100 text-green-700'
+                              : 'bg-yellow-100 text-yellow-700'
+                          "
+                        >
+                          Proprietário: {{ r.assinadoPeloProprietario ? '✓' : 'Pendente' }}
+                        </span>
+                      </div>
+                      @if (podeAssinarRegistro(r)) {
+                        <button
+                          mat-stroked-button
+                          color="primary"
+                          class="mt-2 !text-xs"
+                          (click)="assinarRegistro(r)"
+                        >
+                          <mat-icon class="!text-sm">draw</mat-icon> Assinar relato
+                        </button>
                       }
                     </div>
                   }
@@ -207,52 +236,54 @@
           </div>
         </mat-tab>
 
-        <!-- Ocorrências -->
-        <mat-tab label="Ocorrências ({{ ocorrencias().length }})">
+        <!-- Assinaturas da Obra -->
+        <mat-tab label="Assinaturas">
           <div class="p-4 md:p-5">
-            <div class="mb-4 flex flex-col gap-2 sm:flex-row sm:justify-end">
-              <a
-                mat-flat-button
-                color="primary"
-                class="w-full sm:w-auto"
-                [routerLink]="['/obras', obra()!.id, 'ocorrencias', 'nova']"
+            <div class="flex flex-wrap gap-2 mb-4">
+              <span
+                class="text-xs px-2.5 py-1 rounded-full font-medium"
+                [class]="
+                  obraAssinadaProfissional()
+                    ? 'bg-green-100 text-green-700'
+                    : 'bg-yellow-100 text-yellow-700'
+                "
               >
-                <mat-icon>add</mat-icon> Nova Ocorrência
-              </a>
+                Profissional: {{ obraAssinadaProfissional() ? 'Assinado ✓' : 'Pendente' }}
+              </span>
+              <span
+                class="text-xs px-2.5 py-1 rounded-full font-medium"
+                [class]="
+                  obraAssinadaCrea() ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'
+                "
+              >
+                CREA: {{ obraAssinadaCrea() ? 'Assinado ✓' : 'Pendente' }}
+              </span>
             </div>
-            @if (ocorrencias().length === 0) {
-              <app-empty-state icon="report_problem" message="Sem ocorrências registradas" />
-            } @else {
-              <div class="space-y-3">
-                @for (oc of ocorrencias(); track oc.id) {
-                  <div class="border border-slate-200 rounded-lg p-4 hover:bg-slate-50">
-                    <div class="mb-1 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                      <p class="min-w-0 flex-1 font-semibold text-slate-800">{{ oc.titulo }}</p>
-                      <div class="flex shrink-0 items-center gap-1 sm:gap-2">
-                        <span class="text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full">
-                          {{ tipoOcorrenciaLabel(oc) }}
-                        </span>
-                        <button
-                          mat-icon-button
-                          type="button"
-                          matTooltip="Anexos"
-                          (click)="abrirAnexosOcorrencia(oc)"
-                          [matBadge]="qtdAnexosOcorrencia(oc)"
-                          [matBadgeHidden]="qtdAnexosOcorrencia(oc) === 0"
-                          matBadgeSize="medium"
-                          matBadgeColor="primary"
-                        >
-                          <mat-icon class="text-lg">attach_file</mat-icon>
-                        </button>
-                      </div>
-                    </div>
-                    <p class="text-sm text-slate-600 line-clamp-2">{{ oc.descricao }}</p>
-                    <p class="text-xs text-slate-400 mt-1">
-                      {{ oc.dataOcorrencia | date: 'dd/MM/yyyy' }}
-                    </p>
+
+            @if (assinaturasObra().length > 0) {
+              <div class="space-y-2 mb-4">
+                @for (a of assinaturasObra(); track a.id) {
+                  <div class="flex items-center gap-2 text-sm text-slate-600 border border-slate-100 rounded-lg p-3">
+                    <span>
+                      {{ a.nomeUsuario }} ({{ labelAssinante(a.tipoAssinante) }}) —
+                      {{ a.dataAssinatura | date: 'dd/MM/yyyy HH:mm' }}
+                    </span>
+                    @if (a.imagemAssinatura) {
+                      <button mat-icon-button (click)="verAssinatura(a)">
+                        <mat-icon class="text-blue-600">draw</mat-icon>
+                      </button>
+                    }
                   </div>
                 }
               </div>
+            } @else {
+              <p class="text-sm text-slate-500 mb-4">Nenhuma assinatura registrada na obra.</p>
+            }
+
+            @if (podeAssinarObra()) {
+              <button mat-flat-button color="primary" (click)="assinarObra()">
+                <mat-icon>draw</mat-icon> Assinar obra
+              </button>
             }
           </div>
         </mat-tab>
@@ -345,22 +376,22 @@
                   <span
                     class="text-xs px-2.5 py-1 rounded-full font-medium"
                     [class]="
-                      termo()!.assinadoPeloResponsavel
+                      termo()!.assinadoPeloProfissional
                         ? 'bg-green-100 text-green-700'
                         : 'bg-yellow-100 text-yellow-700'
                     "
                   >
-                    Responsável: {{ termo()!.assinadoPeloResponsavel ? 'Assinado ✓' : 'Pendente' }}
+                    Profissional: {{ termo()!.assinadoPeloProfissional ? 'Assinado ✓' : 'Pendente' }}
                   </span>
                   <span
                     class="text-xs px-2.5 py-1 rounded-full font-medium"
                     [class]="
-                      termo()!.assinadoPeloAdmin
+                      termo()!.assinadoPeloProprietario
                         ? 'bg-green-100 text-green-700'
                         : 'bg-yellow-100 text-yellow-700'
                     "
                   >
-                    Administrador: {{ termo()!.assinadoPeloAdmin ? 'Assinado ✓' : 'Pendente' }}
+                    Proprietário: {{ termo()!.assinadoPeloProprietario ? 'Assinado ✓' : 'Pendente' }}
                   </span>
                 </div>
 
@@ -369,7 +400,7 @@
                     @for (a of termo()!.assinaturas; track a.id) {
                       <div class="flex items-center gap-1">
                         <p>
-                          {{ a.nomeUsuario }} ({{ a.tipoAssinante }}) —
+                          {{ a.nomeUsuario }} ({{ labelAssinante(a.tipoAssinante) }}) —
                           {{ a.dataAssinatura | date: 'dd/MM/yyyy HH:mm' }}
                         </p>
                         @if (a.imagemAssinatura) {
@@ -386,7 +417,7 @@
                   </div>
                 }
 
-                @if (podeAssinar()) {
+                @if (podeAssinarTermo()) {
                   <div class="mt-4">
                     <button mat-flat-button color="primary" (click)="assinarTermo()">
                       <mat-icon>draw</mat-icon> Assinar Termo

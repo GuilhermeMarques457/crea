@@ -73,8 +73,7 @@ export class AuditoriaComponent implements OnInit {
 
   entidades = [
     'Obra',
-    'RegistroDiario',
-    'Ocorrencia',
+    'RelatoVisita',
     'Profissional',
     'Usuario',
     'Anexo',

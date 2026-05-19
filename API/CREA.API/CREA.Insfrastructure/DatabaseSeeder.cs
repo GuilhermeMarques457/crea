@@ -68,7 +68,28 @@ public static class DatabaseSeeder
             CriadoEm = DateTime.UtcNow
         };
 
-        await context.Usuarios.AddRangeAsync(usuarioAdmin, usuarioEngenheiro, usuarioOperacional, usuarioArquiteta);
+        var usuarioCrea = new Usuario
+        {
+            Id = Guid.Parse("00000000-0000-0000-0000-000000000005"),
+            Nome = "Fiscal CREA",
+            Email = "crea@crea.com",
+            SenhaHash = HashSenha("Crea@123"),
+            TipoUsuario = TipoUsuario.UsuarioCrea,
+            CriadoEm = DateTime.UtcNow
+        };
+
+        var usuarioProprietarioTech = new Usuario
+        {
+            Id = Guid.Parse("00000000-0000-0000-0000-000000000006"),
+            Nome = "Tech Solutions S.A.",
+            Email = "proprietario.tech@empresa.com",
+            SenhaHash = HashSenha("Crea@123"),
+            TipoUsuario = TipoUsuario.Proprietario,
+            CriadoEm = DateTime.UtcNow
+        };
+
+        await context.Usuarios.AddRangeAsync(
+            usuarioAdmin, usuarioEngenheiro, usuarioOperacional, usuarioArquiteta, usuarioCrea, usuarioProprietarioTech);
         await context.SaveChangesAsync();
 
         // ----------------------------------------------------------------
@@ -135,8 +156,9 @@ public static class DatabaseSeeder
             Id = Guid.Parse("00000000-0000-0000-0000-000000000033"),
             Nome = "Tech Solutions S.A.",
             Cpf = string.Empty,
-            Email = string.Empty,
+            Email = "proprietario.tech@empresa.com",
             Telefone = "(11) 2222-5555",
+            UsuarioId = usuarioProprietarioTech.Id,
             CriadoEm = DateTime.UtcNow
         };
 
@@ -239,7 +261,7 @@ public static class DatabaseSeeder
         // ----------------------------------------------------------------
         // REGISTROS DIÁRIOS
         // ----------------------------------------------------------------
-        var registros = new List<RegistroDiario>
+        var registros = new List<RelatoVisita>
         {
             new()
             {
@@ -321,50 +343,7 @@ public static class DatabaseSeeder
             }
         };
 
-        await context.RegistrosDiarios.AddRangeAsync(registros);
-        await context.SaveChangesAsync();
-
-        // ----------------------------------------------------------------
-        // OCORRÊNCIAS
-        // ----------------------------------------------------------------
-        var ocorrencias = new List<Ocorrencia>
-        {
-            new()
-            {
-                ObraId = obraResidencial.Id,
-                DataOcorrencia = DateTime.UtcNow.AddDays(-8),
-                Tipo = TipoOcorrencia.Atraso,
-                Titulo = "Atraso na entrega de material",
-                Descricao = "Fornecedor não entregou os blocos cerâmicos na data acordada, causando paralisação da alvenaria por 1 dia.",
-                Providencias = "Contato com fornecedor alternativo. Novo prazo de entrega confirmado para o dia seguinte.",
-                UsuarioId = usuarioOperacional.Id,
-                CriadoEm = DateTime.UtcNow.AddDays(-8)
-            },
-            new()
-            {
-                ObraId = obraResidencial.Id,
-                DataOcorrencia = DateTime.UtcNow.AddDays(-4),
-                Tipo = TipoOcorrencia.AlteracaoProjeto,
-                Titulo = "Alteração no projeto hidráulico",
-                Descricao = "Proprietário solicitou mudança na localização do banheiro da suíte, impactando projeto hidráulico.",
-                Providencias = "Solicitado ao projetista a emissão de projeto revisado. ART complementar será emitida.",
-                UsuarioId = usuarioEngenheiro.Id,
-                CriadoEm = DateTime.UtcNow.AddDays(-4)
-            },
-            new()
-            {
-                ObraId = obraComercial.Id,
-                DataOcorrencia = DateTime.UtcNow.AddDays(-6),
-                Tipo = TipoOcorrencia.ProblemasTecnicos,
-                Titulo = "Fissura em viga do 2º pavimento",
-                Descricao = "Identificada fissura de aproximadamente 2mm na viga V-15 do 2º pavimento. Possível causa: retração do concreto.",
-                Providencias = "Área interditada para avaliação. Laudo técnico solicitado ao engenheiro estrutural. Previsão de análise em 48h.",
-                UsuarioId = usuarioEngenheiro.Id,
-                CriadoEm = DateTime.UtcNow.AddDays(-6)
-            }
-        };
-
-        await context.Ocorrencias.AddRangeAsync(ocorrencias);
+        await context.RelatosVisita.AddRangeAsync(registros);
         await context.SaveChangesAsync();
 
         // ----------------------------------------------------------------
@@ -385,16 +364,68 @@ public static class DatabaseSeeder
             LocalDeclaracao = "São Paulo",
             DataDeclaracao = DateTime.UtcNow.AddMonths(-2),
             ProfissionalId = profissionalAna.Id,
-            HashAssinatura = GerarHashTermoConclusao(obraConcluida.Id, profissionalAna.Id, DateTime.UtcNow.AddMonths(-2)),
-            DataAssinatura = DateTime.UtcNow.AddMonths(-2),
-            AssinaturaProprietario = "Tech Solutions S.A.",
-            DataAssinaturaProprietario = DateTime.UtcNow.AddMonths(-2),
-            AssinadoPeloResponsavel = true,
-            AssinadoPeloAdmin = true,
             CriadoEm = DateTime.UtcNow.AddMonths(-2)
         };
 
         await context.TermosConclusao.AddAsync(termoConclusao);
+        await context.SaveChangesAsync();
+
+        var dataAssinaturaObra = DateTime.UtcNow.AddMonths(-1);
+        await context.Assinaturas.AddRangeAsync(
+            new Assinatura
+            {
+                TipoEntidade = TipoEntidadeAssinatura.Obra,
+                EntidadeId = obraConcluida.Id,
+                TipoAssinante = TipoAssinante.Profissional,
+                UsuarioId = usuarioArquiteta.Id,
+                HashAssinatura = GerarHashAssinatura(TipoEntidadeAssinatura.Obra, obraConcluida.Id, usuarioArquiteta.Id, TipoAssinante.Profissional, dataAssinaturaObra),
+                DataAssinatura = dataAssinaturaObra,
+                ImagemAssinatura = "iVBORw0KGgo=",
+                IpAssinante = "127.0.0.1",
+                UserAgent = "Seed",
+                Navegador = "Seed",
+                CriadoEm = dataAssinaturaObra
+            },
+            new Assinatura
+            {
+                TipoEntidade = TipoEntidadeAssinatura.Obra,
+                EntidadeId = obraConcluida.Id,
+                TipoAssinante = TipoAssinante.UsuarioCrea,
+                UsuarioId = usuarioCrea.Id,
+                HashAssinatura = GerarHashAssinatura(TipoEntidadeAssinatura.Obra, obraConcluida.Id, usuarioCrea.Id, TipoAssinante.UsuarioCrea, dataAssinaturaObra),
+                DataAssinatura = dataAssinaturaObra,
+                ImagemAssinatura = "iVBORw0KGgo=",
+                IpAssinante = "127.0.0.1",
+                UserAgent = "Seed",
+                Navegador = "Seed",
+                CriadoEm = dataAssinaturaObra
+            },
+            new Assinatura
+            {
+                TipoEntidade = TipoEntidadeAssinatura.TermoConclusao,
+                EntidadeId = termoConclusao.Id,
+                TipoAssinante = TipoAssinante.Profissional,
+                UsuarioId = usuarioArquiteta.Id,
+                HashAssinatura = GerarHashAssinatura(TipoEntidadeAssinatura.TermoConclusao, termoConclusao.Id, usuarioArquiteta.Id, TipoAssinante.Profissional, dataAssinaturaObra),
+                DataAssinatura = dataAssinaturaObra,
+                ImagemAssinatura = "iVBORw0KGgo=",
+                IpAssinante = "127.0.0.1",
+                UserAgent = "Seed",
+                CriadoEm = dataAssinaturaObra
+            },
+            new Assinatura
+            {
+                TipoEntidade = TipoEntidadeAssinatura.TermoConclusao,
+                EntidadeId = termoConclusao.Id,
+                TipoAssinante = TipoAssinante.Proprietario,
+                UsuarioId = usuarioProprietarioTech.Id,
+                HashAssinatura = GerarHashAssinatura(TipoEntidadeAssinatura.TermoConclusao, termoConclusao.Id, usuarioProprietarioTech.Id, TipoAssinante.Proprietario, dataAssinaturaObra),
+                DataAssinatura = dataAssinaturaObra,
+                ImagemAssinatura = "iVBORw0KGgo=",
+                IpAssinante = "127.0.0.1",
+                UserAgent = "Seed",
+                CriadoEm = dataAssinaturaObra
+            });
         await context.SaveChangesAsync();
 
         logger.LogInformation("Seed concluído com sucesso!");
@@ -403,6 +434,8 @@ public static class DatabaseSeeder
         logger.LogInformation("Resp. Técnico:  carlos@crea.com / Crea@123");
         logger.LogInformation("Resp. Técnico:  ana@crea.com    / Crea@123");
         logger.LogInformation("Operacional:    joao@crea.com   / Crea@123");
+        logger.LogInformation("Usuário CREA:   crea@crea.com   / Crea@123");
+        logger.LogInformation("Proprietário:   proprietario.tech@empresa.com / Crea@123");
         logger.LogInformation("============================");
     }
 
@@ -412,17 +445,15 @@ public static class DatabaseSeeder
         return Convert.ToHexString(bytes).ToLower();
     }
 
-    private static string GerarHashAssinatura(Guid registroId, Guid profissionalId, DateTime data)
+    private static string GerarHashAssinatura(
+        TipoEntidadeAssinatura tipoEntidade,
+        Guid entidadeId,
+        Guid usuarioId,
+        TipoAssinante tipoAssinante,
+        DateTime data)
     {
-        var conteudo = $"{registroId}{profissionalId}{data:O}";
+        var conteudo = $"ASSINATURA:{tipoEntidade}:{entidadeId}:{usuarioId}:{tipoAssinante}:{data:O}";
         var bytes = SHA256.HashData(Encoding.UTF8.GetBytes(conteudo));
-        return Convert.ToHexString(bytes).ToLower();
-    }
-
-    private static string GerarHashTermoConclusao(Guid obraId, Guid profissionalId, DateTime data)
-    {
-        var conteudo = $"TERMO-CONCLUSAO:{obraId}{profissionalId}{data:O}";
-        var bytes = SHA256.HashData(Encoding.UTF8.GetBytes(conteudo));
-        return Convert.ToHexString(bytes).ToLower();
+        return Convert.ToHexString(bytes).ToLowerInvariant();
     }
 }

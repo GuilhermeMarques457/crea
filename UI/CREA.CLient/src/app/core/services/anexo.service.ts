@@ -16,24 +16,19 @@ export class AnexoService {
     return this.http.get<AnexoDto[]>(`${this.base}/por-registro/${registroDiarioId}`);
   }
 
-  porOcorrencia(ocorrenciaId: string) {
-    return this.http.get<AnexoDto[]>(`${this.base}/por-ocorrencia/${ocorrenciaId}`);
-  }
-
   excluir(id: string) {
     return this.http.delete<void>(`${this.base}/${id}`);
   }
 
   upload(
     arquivo: File,
-    params: { obraId?: string; registroDiarioId?: string; ocorrenciaId?: string },
+    params: { obraId?: string; registroDiarioId?: string } = {},
   ) {
     const formData = new FormData();
     formData.append('arquivo', arquivo);
     let query = '';
     if (params.obraId) query += `obraId=${params.obraId}&`;
     if (params.registroDiarioId) query += `registroDiarioId=${params.registroDiarioId}&`;
-    if (params.ocorrenciaId) query += `ocorrenciaId=${params.ocorrenciaId}&`;
     return this.http.post<AnexoDto>(`${this.base}/upload?${query}`, formData);
   }
 }

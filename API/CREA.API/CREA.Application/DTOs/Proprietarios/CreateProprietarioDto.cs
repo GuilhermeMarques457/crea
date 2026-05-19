@@ -16,4 +16,8 @@ public class CreateProprietarioDto
 
     [MaxLength(20)]
     public string? Telefone { get; set; }
+
+    /// <summary>Se informado, cria usuário de acesso (TipoUsuario.Proprietario) vinculado 1:1.</summary>
+    [MinLength(6)]
+    public string? SenhaAcesso { get; set; }
 }

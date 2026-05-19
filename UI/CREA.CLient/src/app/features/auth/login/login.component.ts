@@ -9,6 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AuthService } from '../../../core/services/auth.service';
 import { ToastService } from '../../../core/services/toast.service';
+import { TipoUsuario } from '../../../shared/models/api.models';
 
 @Component({
   selector: 'app-login',
@@ -47,8 +48,13 @@ export class LoginComponent {
     this.loading.set(true);
     this.error.set('');
     this.auth.login(this.form.getRawValue()).subscribe({
-      next: () => {
-        this.router.navigate(['/dashboard']);
+      next: (res) => {
+        const destino =
+          res.tipoUsuario === TipoUsuario.Proprietario ||
+          res.tipoUsuario === TipoUsuario.UsuarioCrea
+            ? '/pendencias'
+            : '/dashboard';
+        this.router.navigate([destino]);
       },
       error: () => {
         this.error.set('E-mail ou senha inválidos.');

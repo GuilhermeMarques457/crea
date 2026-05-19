@@ -1,4 +1,4 @@
-﻿using System.Security.Claims;
+using System.Security.Claims;
 using System.Text.Json;
 using CREA.Domain.Entities;
 using Microsoft.AspNetCore.Http;
@@ -16,11 +16,10 @@ public class ApplicationDbContext(
     public DbSet<Profissional> Profissionais => Set<Profissional>();
     public DbSet<Proprietario> Proprietarios => Set<Proprietario>();
     public DbSet<Obra> Obras => Set<Obra>();
-    public DbSet<RegistroDiario> RegistrosDiarios => Set<RegistroDiario>();
-    public DbSet<Ocorrencia> Ocorrencias => Set<Ocorrencia>();
+    public DbSet<RelatoVisita> RelatosVisita => Set<RelatoVisita>();
     public DbSet<Anexo> Anexos => Set<Anexo>();
     public DbSet<TermoConclusao> TermosConclusao => Set<TermoConclusao>();
-    public DbSet<AssinaturaTermoConclusao> AssinaturasTermoConclusao => Set<AssinaturaTermoConclusao>();
+    public DbSet<Assinatura> Assinaturas => Set<Assinatura>();
     public DbSet<LogAuditoria> LogsAuditoria => Set<LogAuditoria>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -30,6 +29,8 @@ public class ApplicationDbContext(
         modelBuilder.Entity<Usuario>(e =>
         {
             e.HasKey(u => u.Id);
+            e.Property(u => u.Id)
+                .HasColumnName("UsuarioId");
             e.HasIndex(u => u.Email).IsUnique();
             e.Property(u => u.Nome).HasMaxLength(150).IsRequired();
             e.Property(u => u.Email).HasMaxLength(200).IsRequired();
@@ -38,7 +39,9 @@ public class ApplicationDbContext(
 
         modelBuilder.Entity<Profissional>(e =>
         {
-            e.HasKey(p => p.Id);
+            e.HasKey(u => u.Id);
+            e.Property(u => u.Id)
+                .HasColumnName("ProfissionalId");
             e.HasIndex(p => p.NumeroRegistro).IsUnique();
             e.Property(p => p.Nome).HasMaxLength(150).IsRequired();
             e.Property(p => p.Cpf).HasMaxLength(14).IsRequired();
@@ -55,16 +58,25 @@ public class ApplicationDbContext(
 
         modelBuilder.Entity<Proprietario>(e =>
         {
-            e.HasKey(p => p.Id);
+            e.HasKey(u => u.Id);
+            e.Property(u => u.Id)
+                 .HasColumnName("ProprietarioId");
             e.Property(p => p.Nome).HasMaxLength(200).IsRequired();
             e.Property(p => p.Cpf).HasMaxLength(14);
             e.Property(p => p.Email).HasMaxLength(200);
             e.Property(p => p.Telefone).HasMaxLength(20);
+            e.HasIndex(p => p.UsuarioId).IsUnique().HasFilter("[UsuarioId] IS NOT NULL");
+            e.HasOne(p => p.Usuario)
+             .WithOne(u => u.Proprietario)
+             .HasForeignKey<Proprietario>(p => p.UsuarioId)
+             .OnDelete(DeleteBehavior.SetNull);
         });
 
         modelBuilder.Entity<Obra>(e =>
         {
-            e.HasKey(o => o.Id);
+            e.HasKey(u => u.Id);
+            e.Property(u => u.Id)
+                 .HasColumnName("ObraId");
             e.Property(o => o.Nome).HasMaxLength(200).IsRequired();
             e.Property(o => o.Endereco).HasMaxLength(300).IsRequired();
             e.Property(o => o.Cidade).HasMaxLength(100).IsRequired();
@@ -85,9 +97,11 @@ public class ApplicationDbContext(
              .OnDelete(DeleteBehavior.Restrict);
         });
 
-        modelBuilder.Entity<RegistroDiario>(e =>
+        modelBuilder.Entity<RelatoVisita>(e =>
         {
-            e.HasKey(r => r.Id);
+            e.HasKey(u => u.Id);
+            e.Property(u => u.Id)
+                 .HasColumnName("RelatoVisitaId");
             e.HasOne(r => r.Obra)
              .WithMany(o => o.RegistrosDiarios)
              .HasForeignKey(r => r.ObraId)
@@ -98,36 +112,20 @@ public class ApplicationDbContext(
              .OnDelete(DeleteBehavior.Restrict);
         });
 
-        modelBuilder.Entity<Ocorrencia>(e =>
-        {
-            e.HasKey(o => o.Id);
-            e.Property(o => o.Titulo).HasMaxLength(200).IsRequired();
-            e.HasOne(o => o.Obra)
-             .WithMany(ob => ob.Ocorrencias)
-             .HasForeignKey(o => o.ObraId)
-             .OnDelete(DeleteBehavior.Cascade);
-            e.HasOne(o => o.Usuario)
-             .WithMany(u => u.Ocorrencias)
-             .HasForeignKey(o => o.UsuarioId)
-             .OnDelete(DeleteBehavior.Restrict);
-        });
-
         modelBuilder.Entity<Anexo>(e =>
         {
-            e.HasKey(a => a.Id);
+            e.HasKey(u => u.Id);
+            e.Property(u => u.Id)
+                 .HasColumnName("AnexoId");
             e.Property(a => a.NomeArquivo).HasMaxLength(300).IsRequired();
             e.Property(a => a.TipoArquivo).HasMaxLength(100).IsRequired();
             e.HasOne(a => a.Obra)
              .WithMany(o => o.Anexos)
              .HasForeignKey(a => a.ObraId)
              .OnDelete(DeleteBehavior.NoAction);
-            e.HasOne(a => a.RegistroDiario)
+            e.HasOne(a => a.RelatoVisita)
              .WithMany(r => r.Anexos)
-             .HasForeignKey(a => a.RegistroDiarioId)
-             .OnDelete(DeleteBehavior.NoAction);
-            e.HasOne(a => a.Ocorrencia)
-             .WithMany(o => o.Anexos)
-             .HasForeignKey(a => a.OcorrenciaId)
+             .HasForeignKey(a => a.RelatoVisitaId)
              .OnDelete(DeleteBehavior.NoAction);
             e.HasOne(a => a.Usuario)
              .WithMany(u => u.Anexos)
@@ -137,9 +135,10 @@ public class ApplicationDbContext(
 
         modelBuilder.Entity<TermoConclusao>(e =>
         {
-            e.HasKey(t => t.Id);
+            e.HasKey(u => u.Id);
+            e.Property(u => u.Id)
+                 .HasColumnName("TermoConclusaoId");
             e.HasIndex(t => t.ObraId).IsUnique();
-            e.Ignore(t => t.Concluido);
             e.HasOne(t => t.Obra)
              .WithOne(o => o.TermoConclusao)
              .HasForeignKey<TermoConclusao>(t => t.ObraId)
@@ -150,23 +149,29 @@ public class ApplicationDbContext(
              .OnDelete(DeleteBehavior.Restrict);
         });
 
-        modelBuilder.Entity<AssinaturaTermoConclusao>(e =>
+        modelBuilder.Entity<Assinatura>(e =>
         {
             e.HasKey(a => a.Id);
-            e.Property(a => a.TipoAssinante).HasMaxLength(50).IsRequired();
-            e.HasOne(a => a.TermoConclusao)
-             .WithMany(t => t.Assinaturas)
-             .HasForeignKey(a => a.TermoConclusaoId)
-             .OnDelete(DeleteBehavior.Cascade);
+            e.Property(a => a.Id).HasColumnName("AssinaturaId");
+            e.Property(a => a.ImagemAssinatura).IsRequired();
+            e.Property(a => a.HashAssinatura).HasMaxLength(64).IsRequired();
+            e.Property(a => a.IpAssinante).HasMaxLength(45).IsRequired();
+            e.Property(a => a.UserAgent).HasMaxLength(512);
+            e.Property(a => a.Navegador).HasMaxLength(120);
+            e.Property(a => a.SistemaOperacional).HasMaxLength(120);
+            e.Property(a => a.Dispositivo).HasMaxLength(120);
+            e.HasIndex(a => new { a.TipoEntidade, a.EntidadeId, a.TipoAssinante }).IsUnique();
             e.HasOne(a => a.Usuario)
-             .WithMany()
+             .WithMany(u => u.Assinaturas)
              .HasForeignKey(a => a.UsuarioId)
              .OnDelete(DeleteBehavior.Restrict);
         });
 
         modelBuilder.Entity<LogAuditoria>(e =>
         {
-            e.HasKey(l => l.Id);
+            e.HasKey(u => u.Id);
+            e.Property(u => u.Id)
+                 .HasColumnName("LogAuditoriaId");
             e.Property(l => l.Acao).HasMaxLength(100).IsRequired();
             e.Property(l => l.Entidade).HasMaxLength(100).IsRequired();
             e.Property(l => l.NomeUsuario).HasMaxLength(150);

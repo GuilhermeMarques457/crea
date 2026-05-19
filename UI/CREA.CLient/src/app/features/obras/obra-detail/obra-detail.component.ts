@@ -12,30 +12,29 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDialog } from '@angular/material/dialog';
 import { DatePipe } from '@angular/common';
 import { ObraService } from '../../../core/services/obra.service';
-import { RegistroDiarioService } from '../../../core/services/registro-diario.service';
-import { OcorrenciaService } from '../../../core/services/ocorrencia.service';
+import { RelatoVisitaService } from '../../../core/services/registro-diario.service';
 import { AnexoService } from '../../../core/services/anexo.service';
 import { TermoConclusaoService } from '../../../core/services/termo-conclusao.service';
+import { AssinaturaService } from '../../../core/services/assinatura.service';
 import {
   ObraDto,
-  RegistroDiarioDto,
-  OcorrenciaDto,
+  RelatoVisitaDto,
   AnexoDto,
   TermoConclusaoDto,
-  AssinaturaTermoConclusaoDto,
+  AssinaturaDto,
   StatusObra,
   STATUS_OBRA_LABELS,
   TIPO_OBRA_LABELS,
-  TIPO_OCORRENCIA_LABELS,
   TIPO_EDIFICACAO_LABELS,
   ATIVIDADE_TECNICA_LABELS,
   POSICAO_OBRA_LABELS,
   TipoUsuario,
+  TipoEntidadeAssinatura,
+  TipoAssinante,
 } from '../../../shared/models/api.models';
 import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
 import { StatusBadgeComponent } from '../../../shared/components/status-badge/status-badge.component';
 import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
-import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
 import { SignaturePadDialogComponent } from '../../../shared/components/signature-pad-dialog/signature-pad-dialog.component';
 import { SignatureViewDialogComponent } from '../../../shared/components/signature-view-dialog/signature-view-dialog.component';
 import { ToastService } from '../../../core/services/toast.service';
@@ -45,6 +44,12 @@ import {
   EntidadeAnexosDialogComponent,
   EntidadeAnexosDialogData,
 } from '../../../shared/components/entidade-anexos-dialog/entidade-anexos-dialog.component';
+import {
+  labelTipoAssinante,
+  possuiAssinatura,
+  tipoAssinanteDoUsuario,
+  usuarioPodeAssinarEntidade,
+} from '../../../shared/utils/assinatura.utils';
 
 @Component({
   selector: 'app-obra-detail',
@@ -71,28 +76,39 @@ export class ObraDetailComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly obraService = inject(ObraService);
-  private readonly registroService = inject(RegistroDiarioService);
-  private readonly ocorrenciaService = inject(OcorrenciaService);
+  private readonly registroService = inject(RelatoVisitaService);
   private readonly anexoService = inject(AnexoService);
   private readonly termoService = inject(TermoConclusaoService);
+  private readonly assinaturaService = inject(AssinaturaService);
   private readonly toast = inject(ToastService);
   private readonly auth = inject(AuthService);
   private readonly notificacaoService = inject(NotificacaoService);
   private readonly dialog = inject(MatDialog);
 
+  readonly TipoAssinante = TipoAssinante;
+
   loading = signal(true);
   obra = signal<ObraDto | null>(null);
-  registros = signal<RegistroDiarioDto[]>([]);
-  ocorrencias = signal<OcorrenciaDto[]>([]);
+  registros = signal<RelatoVisitaDto[]>([]);
   anexos = signal<AnexoDto[]>([]);
   termo = signal<TermoConclusaoDto | null>(null);
+  assinaturasObra = signal<AssinaturaDto[]>([]);
   userType = computed(() => this.auth.currentUser()?.tipoUsuario);
 
   tipoLabel = () => (this.obra() ? TIPO_OBRA_LABELS[this.obra()!.tipoObra] : '');
-  tipoEdificacaoLabel = () => this.obra()?.tipoEdificacao ? TIPO_EDIFICACAO_LABELS[this.obra()!.tipoEdificacao!] : '–';
-  atividadeTecnicaLabel = () => this.obra()?.atividadeTecnica ? ATIVIDADE_TECNICA_LABELS[this.obra()!.atividadeTecnica!] : '–';
-  tipoOcorrenciaLabel = (oc: OcorrenciaDto) => TIPO_OCORRENCIA_LABELS[oc.tipo];
-  posicaoObraLabel = (r: RegistroDiarioDto) => r.posicaoObra ? POSICAO_OBRA_LABELS[r.posicaoObra] : '';
+  tipoEdificacaoLabel = () =>
+    this.obra()?.tipoEdificacao ? TIPO_EDIFICACAO_LABELS[this.obra()!.tipoEdificacao!] : '–';
+  atividadeTecnicaLabel = () =>
+    this.obra()?.atividadeTecnica ? ATIVIDADE_TECNICA_LABELS[this.obra()!.atividadeTecnica!] : '–';
+  posicaoObraLabel = (r: RelatoVisitaDto) =>
+    r.posicaoObra ? POSICAO_OBRA_LABELS[r.posicaoObra] : '';
+
+  obraAssinadaProfissional = computed(() =>
+    possuiAssinatura(this.assinaturasObra(), TipoAssinante.Profissional),
+  );
+  obraAssinadaCrea = computed(() =>
+    possuiAssinatura(this.assinaturasObra(), TipoAssinante.UsuarioCrea),
+  );
 
   statusOptions = Object.entries(STATUS_OBRA_LABELS).map(([v, l]) => ({
     value: Number(v) as StatusObra,
@@ -116,9 +132,12 @@ export class ObraDetailComponent implements OnInit {
 
   private loadRelated(id: string) {
     this.registroService.porObra(id).subscribe((r) => this.registros.set(r));
-    this.ocorrenciaService.porObra(id).subscribe((o) => this.ocorrencias.set(o));
     this.anexoService.porObra(id).subscribe((a) => this.anexos.set(a));
     this.termoService.porObra(id).subscribe({ next: (t) => this.termo.set(t), error: () => {} });
+    this.assinaturaService.porEntidade(TipoEntidadeAssinatura.Obra, id).subscribe({
+      next: (list) => this.assinaturasObra.set(list),
+      error: () => this.assinaturasObra.set([]),
+    });
   }
 
   mudarStatus(status: StatusObra) {
@@ -131,22 +150,34 @@ export class ObraDetailComponent implements OnInit {
     });
   }
 
-  podeAssinar(): boolean {
+  podeAssinarObra(): boolean {
+    const tipo = this.userType();
+    if (!tipo || !usuarioPodeAssinarEntidade(tipo, TipoEntidadeAssinatura.Obra)) return false;
+    const papel = tipoAssinanteDoUsuario(tipo);
+    if (!papel) return false;
+    return !possuiAssinatura(this.assinaturasObra(), papel);
+  }
+
+  podeAssinarTermo(): boolean {
     const termo = this.termo();
-    const userType = this.userType();
+    const tipo = this.userType();
+    if (!termo || termo.concluido || !tipo) return false;
+    if (!usuarioPodeAssinarEntidade(tipo, TipoEntidadeAssinatura.TermoConclusao)) return false;
+    const papel = tipoAssinanteDoUsuario(tipo);
+    if (!papel) return false;
+    if (papel === TipoAssinante.Profissional) return !termo.assinadoPeloProfissional;
+    if (papel === TipoAssinante.Proprietario) return !termo.assinadoPeloProprietario;
+    return false;
+  }
 
-    if (!termo) return false;
-
-    if (termo.concluido) return false;
-
-    if (userType === TipoUsuario.Operacional) return false;
-
-    const podeResponsavel =
-      !termo.assinadoPeloResponsavel && userType === TipoUsuario.ResponsavelTecnico;
-
-    const podeAdmin = !termo.assinadoPeloAdmin && userType === TipoUsuario.Admin;
-
-    return podeResponsavel || podeAdmin;
+  podeAssinarRegistro(r: RelatoVisitaDto): boolean {
+    const tipo = this.userType();
+    if (!tipo || !usuarioPodeAssinarEntidade(tipo, TipoEntidadeAssinatura.RelatoVisita)) return false;
+    const papel = tipoAssinanteDoUsuario(tipo);
+    if (!papel) return false;
+    if (papel === TipoAssinante.Profissional) return !r.assinadoPeloProfissional;
+    if (papel === TipoAssinante.Proprietario) return !r.assinadoPeloProprietario;
+    return false;
   }
 
   uploadAnexo(event: Event) {
@@ -161,10 +192,7 @@ export class ObraDetailComponent implements OnInit {
     });
   }
 
-  assinarTermo() {
-    const t = this.termo();
-    if (!t) return;
-
+  assinarEntidade(tipoEntidade: TipoEntidadeAssinatura, entidadeId: string, onSuccess?: () => void) {
     const dialogRef = this.dialog.open(SignaturePadDialogComponent, {
       width: '560px',
       disableClose: true,
@@ -172,55 +200,74 @@ export class ObraDetailComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((imagemAssinatura: string | null) => {
       if (!imagemAssinatura) return;
-      this.termoService.assinar(t.id, imagemAssinatura).subscribe({
-        next: (updated) => {
-          this.termo.set(updated);
-          this.toast.success('Termo assinado com sucesso!');
-          this.notificacaoService.carregarMeusPendentes();
-          if (updated.concluido) {
-            this.obra.update((o) => (o ? { ...o, status: StatusObra.Concluida } : o));
-          }
-        },
-        error: () => this.toast.error('Erro ao assinar o termo.'),
+      this.assinaturaService
+        .assinar({
+          tipoEntidade,
+          entidadeId,
+          imagemAssinatura,
+          navegador: typeof navigator !== 'undefined' ? navigator.userAgent : undefined,
+        })
+        .subscribe({
+          next: () => {
+            this.toast.success('Assinatura registrada com sucesso!');
+            this.notificacaoService.carregarMeusPendentes();
+            onSuccess?.();
+          },
+          error: () => this.toast.error('Erro ao registrar assinatura.'),
+        });
+    });
+  }
+
+  assinarObra() {
+    const id = this.obra()?.id;
+    if (!id) return;
+    this.assinarEntidade(TipoEntidadeAssinatura.Obra, id, () => {
+      this.assinaturaService.porEntidade(TipoEntidadeAssinatura.Obra, id).subscribe((list) => {
+        this.assinaturasObra.set(list);
       });
     });
   }
 
-  verAssinatura(a: AssinaturaTermoConclusaoDto) {
+  assinarTermo() {
+    const t = this.termo();
+    if (!t) return;
+    this.assinarEntidade(TipoEntidadeAssinatura.TermoConclusao, t.id, () => {
+      this.termoService.porObra(t.obraId).subscribe((updated) => this.termo.set(updated));
+    });
+  }
+
+  assinarRegistro(r: RelatoVisitaDto) {
+    this.assinarEntidade(TipoEntidadeAssinatura.RelatoVisita, r.id, () => {
+      this.registroService.porObra(r.obraId).subscribe((list) => this.registros.set(list));
+    });
+  }
+
+  verAssinatura(a: AssinaturaDto) {
     this.dialog.open(SignatureViewDialogComponent, {
       width: '480px',
       data: {
         nomeUsuario: a.nomeUsuario,
-        tipoAssinante: a.tipoAssinante,
+        tipoAssinante: labelTipoAssinante(a.tipoAssinante),
         dataAssinatura: a.dataAssinatura,
         imagemAssinatura: a.imagemAssinatura,
       },
     });
   }
 
-  qtdAnexosRegistro(r: RegistroDiarioDto): number {
+  labelAssinante(tipo: TipoAssinante): string {
+    return labelTipoAssinante(tipo);
+  }
+
+  qtdAnexosRegistro(r: RelatoVisitaDto): number {
     return r.quantidadeAnexos ?? 0;
   }
 
-  qtdAnexosOcorrencia(oc: OcorrenciaDto): number {
-    return oc.quantidadeAnexos ?? 0;
-  }
-
-  abrirAnexosRegistro(r: RegistroDiarioDto) {
+  abrirAnexosRegistro(r: RelatoVisitaDto) {
     const dataFmt = new Date(r.data).toLocaleDateString('pt-BR');
     this.abrirAnexosDialog({
       tipo: 'registro',
       entidadeId: r.id,
       titulo: `Registro #${r.numeroSequencial} — ${dataFmt}`,
-    });
-  }
-
-  abrirAnexosOcorrencia(oc: OcorrenciaDto) {
-    const dataFmt = new Date(oc.dataOcorrencia).toLocaleDateString('pt-BR');
-    this.abrirAnexosDialog({
-      tipo: 'ocorrencia',
-      entidadeId: oc.id,
-      titulo: `${oc.titulo} — ${dataFmt}`,
     });
   }
 

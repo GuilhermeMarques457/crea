@@ -1,6 +1,8 @@
 using CREA.Application.DTOs.Proprietarios;
+using CREA.Application.Helpers;
 using CREA.Application.Interfaces.Repositories;
 using CREA.Domain.Entities;
+using CREA.Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,7 +11,10 @@ namespace CREA.API.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Authorize]
-public class ProprietariosController(IProprietarioRepository proprietarioRepository, IObraRepository obraRepository) : ControllerBase
+public class ProprietariosController(
+    IProprietarioRepository proprietarioRepository,
+    IObraRepository obraRepository,
+    IUsuarioRepository usuarioRepository) : ControllerBase
 {
     [HttpGet]
     public async Task<ActionResult<IEnumerable<ProprietarioDto>>> GetAll()
@@ -30,6 +35,16 @@ public class ProprietariosController(IProprietarioRepository proprietarioReposit
     [Authorize(Roles = "Administrador")]
     public async Task<ActionResult<ProprietarioDto>> Create([FromBody] CreateProprietarioDto dto)
     {
+        if (!string.IsNullOrWhiteSpace(dto.SenhaAcesso) && string.IsNullOrWhiteSpace(dto.Email))
+            return BadRequest(new { mensagem = "E-mail é obrigatório para criar acesso de assinatura do proprietário." });
+
+        if (!string.IsNullOrWhiteSpace(dto.Email))
+        {
+            var emailExistente = await usuarioRepository.GetByEmailAsync(dto.Email);
+            if (emailExistente is not null)
+                return Conflict(new { mensagem = "Já existe um usuário com este e-mail." });
+        }
+
         var entity = new Proprietario
         {
             Nome = dto.Nome,
@@ -37,6 +52,19 @@ public class ProprietariosController(IProprietarioRepository proprietarioReposit
             Email = dto.Email ?? string.Empty,
             Telefone = dto.Telefone ?? string.Empty
         };
+
+        if (!string.IsNullOrWhiteSpace(dto.SenhaAcesso) && !string.IsNullOrWhiteSpace(dto.Email))
+        {
+            var usuario = new Usuario
+            {
+                Nome = dto.Nome,
+                Email = dto.Email!,
+                SenhaHash = SenhaHashHelper.Hash(dto.SenhaAcesso),
+                TipoUsuario = TipoUsuario.Proprietario
+            };
+            await usuarioRepository.AddAsync(usuario);
+            entity.UsuarioId = usuario.Id;
+        }
 
         await proprietarioRepository.AddAsync(entity);
         return CreatedAtAction(nameof(GetById), new { id = entity.Id }, ToDto(entity));
@@ -77,6 +105,7 @@ public class ProprietariosController(IProprietarioRepository proprietarioReposit
         Cpf = p.Cpf,
         Email = p.Email,
         Telefone = p.Telefone,
+        UsuarioId = p.UsuarioId,
         Ativo = p.Ativo,
         CriadoEm = p.CriadoEm
     };

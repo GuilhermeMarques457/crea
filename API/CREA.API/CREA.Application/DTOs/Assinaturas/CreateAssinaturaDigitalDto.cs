@@ -5,7 +5,7 @@ namespace CREA.Application.DTOs.Assinaturas;
 public class CreateAssinaturaDigitalDto
 {
     [Required]
-    public Guid RegistroDiarioId { get; set; }
+    public Guid RelatoVisitaId { get; set; }
 
     [Required]
     public Guid ProfissionalId { get; set; }

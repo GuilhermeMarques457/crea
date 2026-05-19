@@ -2,6 +2,20 @@ export enum TipoUsuario {
   Operacional = 1,
   ResponsavelTecnico = 2,
   Admin = 3,
+  UsuarioCrea = 4,
+  Proprietario = 5,
+}
+
+export enum TipoEntidadeAssinatura {
+  Obra = 1,
+  RelatoVisita = 2,
+  TermoConclusao = 3,
+}
+
+export enum TipoAssinante {
+  Profissional = 1,
+  UsuarioCrea = 2,
+  Proprietario = 3,
 }
 export enum TipoObra {
   Residencial = 1,
@@ -16,14 +30,6 @@ export enum StatusObra {
   Pausada = 3,
   Cancelada = 4,
 }
-export enum TipoOcorrencia {
-  Tecnica = 1,
-  Atraso = 2,
-  AlteracaoProjeto = 3,
-  AcidenteTrabalho = 4,
-  Outro = 5,
-}
-
 export enum TipoEdificacao {
   Residencial = 1,
   Comercial = 2,
@@ -73,18 +79,12 @@ export const STATUS_OBRA_LABELS: Record<StatusObra, string> = {
   [StatusObra.Cancelada]: 'Cancelada',
 };
 
-export const TIPO_OCORRENCIA_LABELS: Record<TipoOcorrencia, string> = {
-  [TipoOcorrencia.Tecnica]: 'Técnica',
-  [TipoOcorrencia.Atraso]: 'Atraso',
-  [TipoOcorrencia.AlteracaoProjeto]: 'Alteração de Projeto',
-  [TipoOcorrencia.AcidenteTrabalho]: 'Acidente de Trabalho',
-  [TipoOcorrencia.Outro]: 'Outro',
-};
-
 export const TIPO_USUARIO_LABELS: Record<TipoUsuario, string> = {
   [TipoUsuario.Admin]: 'Administrador',
   [TipoUsuario.ResponsavelTecnico]: 'Responsável Técnico',
   [TipoUsuario.Operacional]: 'Operacional',
+  [TipoUsuario.UsuarioCrea]: 'Usuário CREA',
+  [TipoUsuario.Proprietario]: 'Proprietário',
 };
 
 // Auth
@@ -217,6 +217,7 @@ export interface ProprietarioDto {
   cpf: string;
   email: string;
   telefone: string;
+  usuarioId?: string;
   ativo: boolean;
   criadoEm: string;
 }
@@ -225,10 +226,11 @@ export interface CreateProprietarioDto {
   cpf?: string;
   email?: string;
   telefone?: string;
+  senhaAcesso?: string;
 }
 
 // Registros Diários
-export interface RegistroDiarioDto {
+export interface RelatoVisitaDto {
   id: string;
   obraId: string;
   nomeObra: string;
@@ -249,18 +251,17 @@ export interface RegistroDiarioDto {
   servicosComplementares: boolean;
   posicaoObra?: PosicaoObra;
   decisoesTecnicas?: string;
-  assinaturaProprietario?: string;
-  dataAssinaturaProprietario?: string;
-  imagemAssinaturaResponsavel?: string;
-  dataAssinaturaResponsavel?: string;
   usuarioId: string;
   nomeUsuario: string;
   totalAssinaturas: number;
+  assinadoPeloProfissional: boolean;
+  assinadoPeloProprietario: boolean;
+  assinaturas: AssinaturaDto[];
   quantidadeAnexos?: number;
   ativo: boolean;
   criadoEm: string;
 }
-export interface CreateRegistroDiarioDto {
+export interface CreateRelatoVisitaDto {
   obraId: string;
   data: string;
   atividades: string;
@@ -278,53 +279,42 @@ export interface CreateRegistroDiarioDto {
   servicosComplementares: boolean;
   posicaoObra?: PosicaoObra;
   decisoesTecnicas?: string;
-  assinaturaProprietario?: string;
-  dataAssinaturaProprietario?: string;
-  imagemAssinaturaResponsavel?: string;
 }
 
-// Ocorrências
-export interface OcorrenciaDto {
+// Assinaturas
+export interface AssinaturaDto {
   id: string;
-  obraId: string;
-  nomeObra: string;
-  dataOcorrencia: string;
-  tipo: TipoOcorrencia;
-  titulo: string;
-  descricao: string;
-  providencias?: string;
+  tipoEntidade: TipoEntidadeAssinatura;
+  entidadeId: string;
+  tipoAssinante: TipoAssinante;
   usuarioId: string;
   nomeUsuario: string;
-  ativo: boolean;
-  criadoEm: string;
-  quantidadeAnexos?: number;
-}
-export interface CreateOcorrenciaDto {
-  obraId: string;
-  dataOcorrencia: string;
-  tipo: TipoOcorrencia;
-  titulo: string;
-  descricao: string;
-  providencias?: string;
+  hashAssinatura: string;
+  dataAssinatura: string;
+  imagemAssinatura: string;
+  ipAssinante: string;
+  userAgent: string;
+  navegador?: string;
+  sistemaOperacional?: string;
+  dispositivo?: string;
 }
 
-// Assinaturas Digitais
-export interface AssinaturaDigitalDto {
-  id: string;
-  registroDiarioId: string;
-  dataRegistroDiario: string;
-  profissionalId: string;
-  nomeProfissional: string;
-  numeroRegistro: string;
-  dataAssinatura: string;
-  hashAssinatura: string;
-  observacao?: string;
-  criadoEm: string;
+export interface CreateAssinaturaDto {
+  tipoEntidade: TipoEntidadeAssinatura;
+  entidadeId: string;
+  imagemAssinatura: string;
+  navegador?: string;
+  sistemaOperacional?: string;
+  dispositivo?: string;
 }
-export interface CreateAssinaturaDigitalDto {
-  registroDiarioId: string;
-  profissionalId: string;
-  observacao?: string;
+
+export interface PendenteAssinaturaDto {
+  tipoEntidade: TipoEntidadeAssinatura;
+  entidadeId: string;
+  tipoAssinante: TipoAssinante;
+  titulo: string;
+  subtitulo?: string;
+  criadoEm: string;
 }
 
 // Anexos
@@ -336,7 +326,6 @@ export interface AnexoDto {
   tamanhoBytes: number;
   obraId?: string;
   registroDiarioId?: string;
-  ocorrenciaId?: string;
   usuarioId: string;
   nomeUsuario: string;
   urlDownload: string;
@@ -344,17 +333,6 @@ export interface AnexoDto {
 }
 
 // Termos de Conclusão
-export interface AssinaturaTermoConclusaoDto {
-  id: string;
-  termoConclusaoId: string;
-  usuarioId: string;
-  nomeUsuario: string;
-  tipoAssinante: string;
-  hashAssinatura: string;
-  dataAssinatura: string;
-  imagemAssinatura: string;
-  ipAssinante: string;
-}
 export interface TermoConclusaoDto {
   id: string;
   obraId: string;
@@ -373,15 +351,11 @@ export interface TermoConclusaoDto {
   profissionalId: string;
   nomeProfissional: string;
   numeroRegistro: string;
-  hashAssinatura: string;
-  dataAssinatura: string;
-  assinaturaProprietario?: string;
-  dataAssinaturaProprietario?: string;
   criadoEm: string;
-  assinadoPeloResponsavel: boolean;
-  assinadoPeloAdmin: boolean;
+  assinadoPeloProfissional: boolean;
+  assinadoPeloProprietario: boolean;
   concluido: boolean;
-  assinaturas: AssinaturaTermoConclusaoDto[];
+  assinaturas: AssinaturaDto[];
 }
 export interface CreateTermoConclusaoDto {
   obraId: string;
@@ -422,24 +396,21 @@ export interface RelatorioObraDto {
   nomeProfissionalResponsavel: string;
   numeroRegistroProfissional: string;
   totalRegistrosDiarios: number;
-  totalOcorrencias: number;
   totalAnexos: number;
   possuiTermoConclusao: boolean;
   dataConclusao?: string;
-  assinadoPeloResponsavel: boolean;
-  assinadoPeloAdmin: boolean;
+  assinadoPeloProfissional: boolean;
+  assinadoPeloProprietario: boolean;
+  assinadoPeloCrea: boolean;
   termoConcluido: boolean;
-  /** Detalhes extras do termo (API / PDF). */
   termoNumero?: number;
   termoDescricao?: string;
   termoObservacoes?: string;
   termoLocalObra?: string;
   termoDeclaracaoTexto?: string;
-  termoAssinaturaProprietario?: string;
-  termoDataAssinaturaProprietario?: string;
-  assinaturas: AssinaturaTermoConclusaoDto[];
-  registrosDiarios: RegistroDiarioDto[];
-  ocorrencias: OcorrenciaDto[];
+  assinaturasObra: AssinaturaDto[];
+  assinaturasTermo: AssinaturaDto[];
+  registrosDiarios: RelatoVisitaDto[];
   geradoEm: string;
 }
 

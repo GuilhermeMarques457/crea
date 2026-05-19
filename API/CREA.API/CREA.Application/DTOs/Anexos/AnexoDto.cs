@@ -8,8 +8,7 @@ public class AnexoDto
     public string TipoArquivo { get; set; } = string.Empty;
     public long TamanhoBytes { get; set; }
     public Guid? ObraId { get; set; }
-    public Guid? RegistroDiarioId { get; set; }
-    public Guid? OcorrenciaId { get; set; }
+    public Guid? RelatoVisitaId { get; set; }
     public Guid UsuarioId { get; set; }
     public string NomeUsuario { get; set; } = string.Empty;
     public string UrlDownload { get; set; } = string.Empty;

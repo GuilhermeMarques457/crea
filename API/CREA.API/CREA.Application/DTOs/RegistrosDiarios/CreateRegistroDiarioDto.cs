@@ -3,7 +3,7 @@ using CREA.Domain.Enums;
 
 namespace CREA.Application.DTOs.RegistrosDiarios;
 
-public class CreateRegistroDiarioDto
+public class CreateRelatoVisitaDto
 {
     [Required]
     public Guid ObraId { get; set; }
@@ -23,7 +23,6 @@ public class CreateRegistroDiarioDto
 
     public string? Observacoes { get; set; }
 
-    // Etapas da obra
     public bool ServicosPreliminar { get; set; }
     public bool Fundacao { get; set; }
     public bool Alvenarias { get; set; }
@@ -34,14 +33,6 @@ public class CreateRegistroDiarioDto
     public bool Pintura { get; set; }
     public bool ServicosComplementares { get; set; }
 
-    // Posição da obra
     public PosicaoObra? PosicaoObra { get; set; }
     public string? DecisoesTecnicas { get; set; }
-
-    // Assinatura do proprietário
-    public string? AssinaturaProprietario { get; set; }
-    public DateTime? DataAssinaturaProprietario { get; set; }
-
-    // Assinatura do responsável técnico
-    public string? ImagemAssinaturaResponsavel { get; set; }
 }

@@ -9,7 +9,7 @@ import { AnexoService } from '../../../core/services/anexo.service';
 import { AnexoDto } from '../../models/api.models';
 
 export interface EntidadeAnexosDialogData {
-  tipo: 'registro' | 'ocorrencia';
+  tipo: 'registro';
   entidadeId: string;
   titulo: string;
 }
@@ -34,10 +34,7 @@ export class EntidadeAnexosDialogComponent implements OnInit {
   readonly anexos = signal<AnexoDto[]>([]);
 
   ngOnInit() {
-    const req =
-      this.data.tipo === 'registro'
-        ? this.anexoService.porRegistro(this.data.entidadeId)
-        : this.anexoService.porOcorrencia(this.data.entidadeId);
+    const req = this.anexoService.porRegistro(this.data.entidadeId)
     req.subscribe({
       next: (list) => {
         this.anexos.set(list);

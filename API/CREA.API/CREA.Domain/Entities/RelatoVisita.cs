@@ -2,7 +2,7 @@ using CREA.Domain.Enums;
 
 namespace CREA.Domain.Entities;
 
-public class RegistroDiario : BaseEntity
+public class RelatoVisita : BaseEntity
 {
     public Guid ObraId { get; set; }
     public Obra Obra { get; set; } = null!;
@@ -14,7 +14,6 @@ public class RegistroDiario : BaseEntity
     public string? CondicaoClimatica { get; set; }
     public string? Observacoes { get; set; }
 
-    // Etapas da obra (Relato de Visita)
     public bool ServicosPreliminar { get; set; }
     public bool Fundacao { get; set; }
     public bool Alvenarias { get; set; }
@@ -25,15 +24,8 @@ public class RegistroDiario : BaseEntity
     public bool Pintura { get; set; }
     public bool ServicosComplementares { get; set; }
 
-    // Posição da obra
     public PosicaoObra? PosicaoObra { get; set; }
-
-    // Decisões técnicas e orientações executivas
     public string? DecisoesTecnicas { get; set; }
-
-    // Assinatura do responsável técnico (imagem Base64)
-    public string? ImagemAssinaturaResponsavel { get; set; }
-    public DateTime? DataAssinaturaResponsavel { get; set; }
 
     public Guid UsuarioId { get; set; }
     public Usuario Usuario { get; set; } = null!;

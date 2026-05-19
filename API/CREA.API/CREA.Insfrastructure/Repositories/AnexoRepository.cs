@@ -13,15 +13,9 @@ public class AnexoRepository(ApplicationDbContext context) : Repository<Anexo>(c
             .Where(a => a.ObraId == obraId && a.Ativo)
             .ToListAsync();
 
-    public async Task<IEnumerable<Anexo>> GetByRegistroDiarioAsync(Guid registroDiarioId) =>
+    public async Task<IEnumerable<Anexo>> GetByRelatoVisitaAsync(Guid registroDiarioId) =>
         await _dbSet
             .Include(a => a.Usuario)
-            .Where(a => a.RegistroDiarioId == registroDiarioId && a.Ativo)
-            .ToListAsync();
-
-    public async Task<IEnumerable<Anexo>> GetByOcorrenciaAsync(Guid ocorrenciaId) =>
-        await _dbSet
-            .Include(a => a.Usuario)
-            .Where(a => a.OcorrenciaId == ocorrenciaId && a.Ativo)
+            .Where(a => a.RelatoVisitaId == registroDiarioId && a.Ativo)
             .ToListAsync();
 }

@@ -1,6 +1,4 @@
-using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
+using CREA.Application.DTOs.Assinaturas;
 using CREA.Application.DTOs.TermosConclusao;
 using CREA.Application.Interfaces.Repositories;
 using CREA.Domain.Entities;
@@ -17,15 +15,14 @@ public class TermosConclusaoController(
     ITermoConclusaoRepository termoConclusaoRepository,
     IObraRepository obraRepository,
     IProfissionalRepository profissionalRepository,
-    IAssinaturaTermoConclusaoRepository assinaturaTermoConclusaoRepository,
-    IUsuarioRepository usuarioRepository) : ControllerBase
+    IAssinaturaRepository assinaturaRepository) : ControllerBase
 {
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<TermoConclusaoDto>> GetById(Guid id)
     {
         var termo = await termoConclusaoRepository.GetByIdAsync(id);
         if (termo is null) return NotFound();
-        return Ok(ToDto(termo));
+        return Ok(await ToDtoAsync(termo));
     }
 
     [HttpGet("por-obra/{obraId:guid}")]
@@ -33,7 +30,7 @@ public class TermosConclusaoController(
     {
         var termo = await termoConclusaoRepository.GetByObraAsync(obraId);
         if (termo is null) return NotFound(new { mensagem = "Termo de conclusão não encontrado para esta obra." });
-        return Ok(ToDto(termo));
+        return Ok(await ToDtoAsync(termo));
     }
 
     [HttpPost]
@@ -49,9 +46,6 @@ public class TermosConclusaoController(
         if (await termoConclusaoRepository.ObraPossuiTermoAsync(dto.ObraId))
             return Conflict(new { mensagem = "Esta obra já possui um termo de conclusão." });
 
-        var dataAssinatura = DateTime.UtcNow;
-        var hash = GerarHash(dto.ObraId, dto.ProfissionalId, dataAssinatura);
-
         var termo = new TermoConclusao
         {
             ObraId = dto.ObraId,
@@ -66,17 +60,13 @@ public class TermosConclusaoController(
             DeclaracaoTexto = dto.DeclaracaoTexto,
             LocalDeclaracao = dto.LocalDeclaracao,
             DataDeclaracao = dto.DataDeclaracao,
-            ProfissionalId = dto.ProfissionalId,
-            HashAssinatura = hash,
-            DataAssinatura = dataAssinatura,
-            AssinadoPeloResponsavel = false,
-            AssinadoPeloAdmin = false
+            ProfissionalId = dto.ProfissionalId
         };
 
         await termoConclusaoRepository.AddAsync(termo);
 
         var criado = await termoConclusaoRepository.GetByObraAsync(dto.ObraId);
-        return CreatedAtAction(nameof(GetById), new { id = termo.Id }, ToDto(criado!));
+        return CreatedAtAction(nameof(GetById), new { id = termo.Id }, await ToDtoAsync(criado!));
     }
 
     [HttpDelete("{id:guid}")]
@@ -88,136 +78,57 @@ public class TermosConclusaoController(
         return NoContent();
     }
 
-    [HttpPost("{id:guid}/assinar")]
-    [Authorize(Roles = "ResponsavelTecnico,Administrador")]
-    public async Task<ActionResult<TermoConclusaoDto>> Assinar(Guid id, [FromBody] AssinarTermoConclusaoDto dto)
+    private async Task<TermoConclusaoDto> ToDtoAsync(TermoConclusao t)
     {
-        if (string.IsNullOrWhiteSpace(dto.ImagemAssinatura))
-            return BadRequest(new { mensagem = "A imagem da assinatura é obrigatória." });
+        var assinaturas = (await assinaturaRepository.GetByEntidadeAsync(TipoEntidadeAssinatura.TermoConclusao, t.Id)).ToList();
+        var assinadoProfissional = assinaturas.Any(a => a.TipoAssinante == TipoAssinante.Profissional);
+        var assinadoProprietario = assinaturas.Any(a => a.TipoAssinante == TipoAssinante.Proprietario);
 
-        var termo = await termoConclusaoRepository.GetByObraAsync(
-            (await termoConclusaoRepository.GetByIdAsync(id))?.ObraId ?? Guid.Empty);
-        if (termo is null) return NotFound();
+        if (t.Obra is null && t.ObraId != Guid.Empty)
+            t = await termoConclusaoRepository.GetByObraAsync(t.ObraId) ?? t;
 
-        var usuarioId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-        var usuario = await usuarioRepository.GetByIdAsync(usuarioId);
-        if (usuario is null) return Unauthorized();
-
-        var isAdmin = usuario.TipoUsuario == TipoUsuario.Administrador;
-        var isResponsavel = !isAdmin; // ResponsavelTecnico
-
-        if (isResponsavel && termo.AssinadoPeloResponsavel)
-            return Conflict(new { mensagem = "O responsável técnico já assinou este termo." });
-        if (isAdmin && termo.AssinadoPeloAdmin)
-            return Conflict(new { mensagem = "Um administrador já assinou este termo." });
-
-        var dataAssinatura = DateTime.UtcNow;
-        var hash = GerarHash(termo.ObraId, usuarioId, dataAssinatura);
-
-        var ip = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "desconhecido";
-
-        var assinatura = new AssinaturaTermoConclusao
+        return new TermoConclusaoDto
         {
-            TermoConclusaoId = termo.Id,
-            UsuarioId = usuarioId,
-            TipoAssinante = isAdmin ? "Administrador" : "Responsavel",
-            HashAssinatura = hash,
-            DataAssinatura = dataAssinatura,
-            ImagemAssinatura = dto.ImagemAssinatura,
-            IpAssinante = ip
+            Id = t.Id,
+            ObraId = t.ObraId,
+            NomeObra = t.Obra?.Nome ?? string.Empty,
+            NumeroTermo = t.NumeroTermo,
+            DataConclusao = t.DataConclusao,
+            Descricao = t.Descricao,
+            Observacoes = t.Observacoes,
+            Empresa = t.Empresa,
+            Proprietario = t.Proprietario,
+            TelefoneProprietario = t.TelefoneProprietario,
+            LocalObra = t.LocalObra,
+            DeclaracaoTexto = t.DeclaracaoTexto,
+            LocalDeclaracao = t.LocalDeclaracao,
+            DataDeclaracao = t.DataDeclaracao,
+            ProfissionalId = t.ProfissionalId,
+            NomeProfissional = t.Profissional?.Nome ?? string.Empty,
+            NumeroRegistro = t.Profissional?.NumeroRegistro ?? string.Empty,
+            CriadoEm = t.CriadoEm,
+            AssinadoPeloProfissional = assinadoProfissional,
+            AssinadoPeloProprietario = assinadoProprietario,
+            Concluido = assinadoProfissional && assinadoProprietario,
+            Assinaturas = assinaturas.Select(MapAssinatura).ToList()
         };
-
-        await assinaturaTermoConclusaoRepository.AddAsync(assinatura);
-
-        if (isResponsavel) termo.AssinadoPeloResponsavel = true;
-        if (isAdmin) termo.AssinadoPeloAdmin = true;
-
-        if (termo.AssinadoPeloResponsavel && termo.AssinadoPeloAdmin)
-        {
-            var obra = await obraRepository.GetByIdAsync(termo.ObraId);
-            if (obra != null)
-            {
-                obra.Status = StatusObra.Concluida;
-                await obraRepository.UpdateAsync(obra);
-            }
-        }
-
-        await termoConclusaoRepository.UpdateAsync(termo);
-
-        var updated = await termoConclusaoRepository.GetByObraAsync(termo.ObraId);
-        return Ok(ToDto(updated!));
     }
 
-    [HttpGet("pendentes")]
-    [Authorize(Roles = "ResponsavelTecnico,Administrador")]
-    public async Task<ActionResult<IEnumerable<TermoConclusaoDto>>> GetPendentes()
+    internal static AssinaturaDto MapAssinatura(Assinatura a) => new()
     {
-        var usuarioId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-        var usuario = await usuarioRepository.GetByIdAsync(usuarioId);
-        if (usuario is null) return NotFound();
-
-        var pendentes = await termoConclusaoRepository.GetPendentesAsync(usuarioId, usuario.TipoUsuario);
-        return Ok(pendentes.Select(ToDto));
-    }
-
-    [HttpGet("meus-pendentes")]
-    [Authorize(Roles = "ResponsavelTecnico,Administrador")]
-    public async Task<ActionResult<IEnumerable<TermoConclusaoDto>>> GetMeusPendentes()
-    {
-        var usuarioId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-        var usuario = await usuarioRepository.GetByIdAsync(usuarioId);
-        if (usuario is null) return NotFound();
-
-        var pendentes = await termoConclusaoRepository.GetPendentesNaoAssinadosAsync(usuarioId, usuario.TipoUsuario);
-        return Ok(pendentes.Select(ToDto));
-    }
-
-    private static string GerarHash(Guid obraId, Guid idSecundario, DateTime data)
-    {
-        var conteudo = $"TERMO-CONCLUSAO:{obraId}{idSecundario}{data:O}";
-        var bytes = SHA256.HashData(Encoding.UTF8.GetBytes(conteudo));
-        return Convert.ToHexString(bytes).ToLower();
-    }
-
-    private static TermoConclusaoDto ToDto(TermoConclusao t) => new()
-    {
-        Id = t.Id,
-        ObraId = t.ObraId,
-        NomeObra = t.Obra?.Nome ?? string.Empty,
-        NumeroTermo = t.NumeroTermo,
-        DataConclusao = t.DataConclusao,
-        Descricao = t.Descricao,
-        Observacoes = t.Observacoes,
-        Empresa = t.Empresa,
-        Proprietario = t.Proprietario,
-        TelefoneProprietario = t.TelefoneProprietario,
-        LocalObra = t.LocalObra,
-        DeclaracaoTexto = t.DeclaracaoTexto,
-        LocalDeclaracao = t.LocalDeclaracao,
-        DataDeclaracao = t.DataDeclaracao,
-        ProfissionalId = t.ProfissionalId,
-        NomeProfissional = t.Profissional?.Nome ?? string.Empty,
-        NumeroRegistro = t.Profissional?.NumeroRegistro ?? string.Empty,
-        HashAssinatura = t.HashAssinatura,
-        DataAssinatura = t.DataAssinatura,
-        AssinaturaProprietario = t.AssinaturaProprietario,
-        DataAssinaturaProprietario = t.DataAssinaturaProprietario,
-        CriadoEm = t.CriadoEm,
-        AssinadoPeloResponsavel = t.AssinadoPeloResponsavel,
-        AssinadoPeloAdmin = t.AssinadoPeloAdmin,
-        Concluido = t.AssinadoPeloResponsavel && t.AssinadoPeloAdmin,
-        Assinaturas = t.Assinaturas.Select(a => new AssinaturaTermoConclusaoDto
-        {
-            Id = a.Id,
-            TermoConclusaoId = a.TermoConclusaoId,
-            UsuarioId = a.UsuarioId,
-            NomeUsuario = a.Usuario?.Nome ?? string.Empty,
-            TipoAssinante = a.TipoAssinante,
-            HashAssinatura = a.HashAssinatura,
-            DataAssinatura = a.DataAssinatura,
-            ImagemAssinatura = a.ImagemAssinatura,
-            IpAssinante = a.IpAssinante
-        }).ToList()
+        Id = a.Id,
+        TipoEntidade = a.TipoEntidade,
+        EntidadeId = a.EntidadeId,
+        TipoAssinante = a.TipoAssinante,
+        UsuarioId = a.UsuarioId,
+        NomeUsuario = a.Usuario?.Nome ?? string.Empty,
+        HashAssinatura = a.HashAssinatura,
+        DataAssinatura = a.DataAssinatura,
+        ImagemAssinatura = a.ImagemAssinatura,
+        IpAssinante = a.IpAssinante,
+        UserAgent = a.UserAgent,
+        Navegador = a.Navegador,
+        SistemaOperacional = a.SistemaOperacional,
+        Dispositivo = a.Dispositivo
     };
 }
-

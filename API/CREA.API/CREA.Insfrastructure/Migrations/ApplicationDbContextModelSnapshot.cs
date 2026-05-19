@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace CREA.Insfrastructure.Migrations
+namespace CREA.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     partial class ApplicationDbContextModelSnapshot : ModelSnapshot
@@ -26,7 +26,8 @@ namespace CREA.Insfrastructure.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("AnexoId");
 
                     b.Property<bool>("Ativo")
                         .HasColumnType("bit");
@@ -53,10 +54,7 @@ namespace CREA.Insfrastructure.Migrations
                     b.Property<Guid?>("ObraId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("OcorrenciaId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("RegistroDiarioId")
+                    b.Property<Guid?>("RelatoVisitaId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<long>("TamanhoBytes")
@@ -74,20 +72,19 @@ namespace CREA.Insfrastructure.Migrations
 
                     b.HasIndex("ObraId");
 
-                    b.HasIndex("OcorrenciaId");
-
-                    b.HasIndex("RegistroDiarioId");
+                    b.HasIndex("RelatoVisitaId");
 
                     b.HasIndex("UsuarioId");
 
                     b.ToTable("Anexos");
                 });
 
-            modelBuilder.Entity("CREA.Domain.Entities.AssinaturaTermoConclusao", b =>
+            modelBuilder.Entity("CREA.Domain.Entities.Assinatura", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("AssinaturaId");
 
                     b.Property<bool>("Ativo")
                         .HasColumnType("bit");
@@ -101,9 +98,17 @@ namespace CREA.Insfrastructure.Migrations
                     b.Property<DateTime>("DataAssinatura")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Dispositivo")
+                        .HasMaxLength(120)
+                        .HasColumnType("nvarchar(120)");
+
+                    b.Property<Guid>("EntidadeId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("HashAssinatura")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
 
                     b.Property<string>("ImagemAssinatura")
                         .IsRequired()
@@ -111,33 +116,47 @@ namespace CREA.Insfrastructure.Migrations
 
                     b.Property<string>("IpAssinante")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(45)
+                        .HasColumnType("nvarchar(45)");
 
-                    b.Property<Guid>("TermoConclusaoId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("Navegador")
+                        .HasMaxLength(120)
+                        .HasColumnType("nvarchar(120)");
 
-                    b.Property<string>("TipoAssinante")
+                    b.Property<string>("SistemaOperacional")
+                        .HasMaxLength(120)
+                        .HasColumnType("nvarchar(120)");
+
+                    b.Property<int>("TipoAssinante")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TipoEntidade")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserAgent")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasMaxLength(512)
+                        .HasColumnType("nvarchar(512)");
 
                     b.Property<Guid>("UsuarioId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("TermoConclusaoId");
-
                     b.HasIndex("UsuarioId");
 
-                    b.ToTable("AssinaturasTermoConclusao");
+                    b.HasIndex("TipoEntidade", "EntidadeId", "TipoAssinante")
+                        .IsUnique();
+
+                    b.ToTable("Assinaturas");
                 });
 
             modelBuilder.Entity("CREA.Domain.Entities.LogAuditoria", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("LogAuditoriaId");
 
                     b.Property<string>("Acao")
                         .IsRequired()
@@ -190,7 +209,8 @@ namespace CREA.Insfrastructure.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("ObraId");
 
                     b.Property<decimal?>("AreaAmpliar")
                         .HasColumnType("decimal(18,2)");
@@ -302,59 +322,12 @@ namespace CREA.Insfrastructure.Migrations
                     b.ToTable("Obras");
                 });
 
-            modelBuilder.Entity("CREA.Domain.Entities.Ocorrencia", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("Ativo")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("AtualizadoEm")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("CriadoEm")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("DataOcorrencia")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Descricao")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("ObraId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Providencias")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Tipo")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Titulo")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<Guid>("UsuarioId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ObraId");
-
-                    b.HasIndex("UsuarioId");
-
-                    b.ToTable("Ocorrencias");
-                });
-
             modelBuilder.Entity("CREA.Domain.Entities.Profissional", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("ProfissionalId");
 
                     b.Property<bool>("Ativo")
                         .HasColumnType("bit");
@@ -420,7 +393,8 @@ namespace CREA.Insfrastructure.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("ProprietarioId");
 
                     b.Property<bool>("Ativo")
                         .HasColumnType("bit");
@@ -451,16 +425,24 @@ namespace CREA.Insfrastructure.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
+                    b.Property<Guid?>("UsuarioId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("UsuarioId")
+                        .IsUnique()
+                        .HasFilter("[UsuarioId] IS NOT NULL");
 
                     b.ToTable("Proprietarios");
                 });
 
-            modelBuilder.Entity("CREA.Domain.Entities.RegistroDiario", b =>
+            modelBuilder.Entity("CREA.Domain.Entities.RelatoVisita", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("RelatoVisitaId");
 
                     b.Property<bool>("Alvenarias")
                         .HasColumnType("bit");
@@ -487,9 +469,6 @@ namespace CREA.Insfrastructure.Migrations
                     b.Property<DateTime>("Data")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("DataAssinaturaResponsavel")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("DecisoesTecnicas")
                         .HasColumnType("nvarchar(max)");
 
@@ -502,9 +481,6 @@ namespace CREA.Insfrastructure.Migrations
 
                     b.Property<bool>("Fundacao")
                         .HasColumnType("bit");
-
-                    b.Property<string>("ImagemAssinaturaResponsavel")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("NumeroSequencial")
                         .HasColumnType("int");
@@ -542,23 +518,15 @@ namespace CREA.Insfrastructure.Migrations
 
                     b.HasIndex("UsuarioId");
 
-                    b.ToTable("RegistrosDiarios");
+                    b.ToTable("RelatosVisita");
                 });
 
             modelBuilder.Entity("CREA.Domain.Entities.TermoConclusao", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("AssinadoPeloAdmin")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("AssinadoPeloResponsavel")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("AssinaturaProprietario")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("TermoConclusaoId");
 
                     b.Property<bool>("Ativo")
                         .HasColumnType("bit");
@@ -567,12 +535,6 @@ namespace CREA.Insfrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("CriadoEm")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("DataAssinatura")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("DataAssinaturaProprietario")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("DataConclusao")
@@ -589,10 +551,6 @@ namespace CREA.Insfrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Empresa")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("HashAssinatura")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LocalDeclaracao")
@@ -633,7 +591,8 @@ namespace CREA.Insfrastructure.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("UsuarioId");
 
                     b.Property<bool>("Ativo")
                         .HasColumnType("bit");
@@ -676,14 +635,9 @@ namespace CREA.Insfrastructure.Migrations
                         .HasForeignKey("ObraId")
                         .OnDelete(DeleteBehavior.NoAction);
 
-                    b.HasOne("CREA.Domain.Entities.Ocorrencia", "Ocorrencia")
+                    b.HasOne("CREA.Domain.Entities.RelatoVisita", "RelatoVisita")
                         .WithMany("Anexos")
-                        .HasForeignKey("OcorrenciaId")
-                        .OnDelete(DeleteBehavior.NoAction);
-
-                    b.HasOne("CREA.Domain.Entities.RegistroDiario", "RegistroDiario")
-                        .WithMany("Anexos")
-                        .HasForeignKey("RegistroDiarioId")
+                        .HasForeignKey("RelatoVisitaId")
                         .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("CREA.Domain.Entities.Usuario", "Usuario")
@@ -694,28 +648,18 @@ namespace CREA.Insfrastructure.Migrations
 
                     b.Navigation("Obra");
 
-                    b.Navigation("Ocorrencia");
-
-                    b.Navigation("RegistroDiario");
+                    b.Navigation("RelatoVisita");
 
                     b.Navigation("Usuario");
                 });
 
-            modelBuilder.Entity("CREA.Domain.Entities.AssinaturaTermoConclusao", b =>
+            modelBuilder.Entity("CREA.Domain.Entities.Assinatura", b =>
                 {
-                    b.HasOne("CREA.Domain.Entities.TermoConclusao", "TermoConclusao")
-                        .WithMany("Assinaturas")
-                        .HasForeignKey("TermoConclusaoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("CREA.Domain.Entities.Usuario", "Usuario")
-                        .WithMany()
+                        .WithMany("Assinaturas")
                         .HasForeignKey("UsuarioId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.Navigation("TermoConclusao");
 
                     b.Navigation("Usuario");
                 });
@@ -747,25 +691,6 @@ namespace CREA.Insfrastructure.Migrations
                     b.Navigation("UsuarioCriador");
                 });
 
-            modelBuilder.Entity("CREA.Domain.Entities.Ocorrencia", b =>
-                {
-                    b.HasOne("CREA.Domain.Entities.Obra", "Obra")
-                        .WithMany("Ocorrencias")
-                        .HasForeignKey("ObraId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("CREA.Domain.Entities.Usuario", "Usuario")
-                        .WithMany("Ocorrencias")
-                        .HasForeignKey("UsuarioId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Obra");
-
-                    b.Navigation("Usuario");
-                });
-
             modelBuilder.Entity("CREA.Domain.Entities.Profissional", b =>
                 {
                     b.HasOne("CREA.Domain.Entities.Usuario", "Usuario")
@@ -776,7 +701,17 @@ namespace CREA.Insfrastructure.Migrations
                     b.Navigation("Usuario");
                 });
 
-            modelBuilder.Entity("CREA.Domain.Entities.RegistroDiario", b =>
+            modelBuilder.Entity("CREA.Domain.Entities.Proprietario", b =>
+                {
+                    b.HasOne("CREA.Domain.Entities.Usuario", "Usuario")
+                        .WithOne("Proprietario")
+                        .HasForeignKey("CREA.Domain.Entities.Proprietario", "UsuarioId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Usuario");
+                });
+
+            modelBuilder.Entity("CREA.Domain.Entities.RelatoVisita", b =>
                 {
                     b.HasOne("CREA.Domain.Entities.Obra", "Obra")
                         .WithMany("RegistrosDiarios")
@@ -818,16 +753,9 @@ namespace CREA.Insfrastructure.Migrations
                 {
                     b.Navigation("Anexos");
 
-                    b.Navigation("Ocorrencias");
-
                     b.Navigation("RegistrosDiarios");
 
                     b.Navigation("TermoConclusao");
-                });
-
-            modelBuilder.Entity("CREA.Domain.Entities.Ocorrencia", b =>
-                {
-                    b.Navigation("Anexos");
                 });
 
             modelBuilder.Entity("CREA.Domain.Entities.Profissional", b =>
@@ -842,21 +770,18 @@ namespace CREA.Insfrastructure.Migrations
                     b.Navigation("Obras");
                 });
 
-            modelBuilder.Entity("CREA.Domain.Entities.RegistroDiario", b =>
+            modelBuilder.Entity("CREA.Domain.Entities.RelatoVisita", b =>
                 {
                     b.Navigation("Anexos");
-                });
-
-            modelBuilder.Entity("CREA.Domain.Entities.TermoConclusao", b =>
-                {
-                    b.Navigation("Assinaturas");
                 });
 
             modelBuilder.Entity("CREA.Domain.Entities.Usuario", b =>
                 {
                     b.Navigation("Anexos");
 
-                    b.Navigation("Ocorrencias");
+                    b.Navigation("Assinaturas");
+
+                    b.Navigation("Proprietario");
 
                     b.Navigation("RegistrosDiarios");
                 });

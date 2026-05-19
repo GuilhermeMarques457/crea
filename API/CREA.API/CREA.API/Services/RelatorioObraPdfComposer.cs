@@ -1,7 +1,6 @@
-using CREA.Application.DTOs.Ocorrencias;
+using CREA.Application.DTOs.Assinaturas;
 using CREA.Application.DTOs.RegistrosDiarios;
 using CREA.Application.DTOs.Relatorios;
-using CREA.Application.DTOs.TermosConclusao;
 using CREA.Domain.Enums;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
@@ -52,7 +51,6 @@ public static class RelatorioObraPdfComposer
             {
                 row.Spacing(12);
                 row.RelativeItem().Element(c => DrawMetric(c, "Registros diários", r.TotalRegistrosDiarios.ToString()));
-                row.RelativeItem().Element(c => DrawMetric(c, "Ocorrências", r.TotalOcorrencias.ToString()));
                 row.RelativeItem().Element(c => DrawMetric(c, "Anexos (arquivos)", r.TotalAnexos.ToString()));
                 row.RelativeItem().Element(c => DrawMetric(c, "Status", StatusObraPt(r.Status)));
             });
@@ -68,6 +66,15 @@ public static class RelatorioObraPdfComposer
                 block.Item().Element(c => DrawKeyRow(c,"Registro", r.NumeroRegistroProfissional));
             });
 
+            col.Item().Text("Assinaturas da obra").SemiBold().FontSize(11);
+            if (r.AssinaturasObra.Count == 0)
+                col.Item().Text("Nenhuma assinatura digital registrada.").Italic().FontColor(Colors.Grey.Darken1);
+            else
+            {
+                foreach (var a in r.AssinaturasObra)
+                    col.Item().Element(c => AssinaturaItem(c, a));
+            }
+
             if (r.PossuiTermoConclusao)
             {
                 col.Item().Text("Termo de conclusão").SemiBold().FontSize(12);
@@ -75,8 +82,8 @@ public static class RelatorioObraPdfComposer
                 {
                     block.Spacing(4);
                     block.Item().Element(c => DrawKeyRow(c,"Situação", r.TermoConcluido ? "Concluído" : "Pendente de assinatura(s)"));
-                    block.Item().Element(c => DrawKeyRow(c,"Responsável assinou", r.AssinadoPeloResponsavel ? "Sim" : "Não"));
-                    block.Item().Element(c => DrawKeyRow(c,"Administrador assinou", r.AssinadoPeloAdmin ? "Sim" : "Não"));
+                    block.Item().Element(c => DrawKeyRow(c,"Profissional assinou", r.AssinadoPeloProfissional ? "Sim" : "Não"));
+                    block.Item().Element(c => DrawKeyRow(c,"Proprietário assinou (termo)", r.AssinadoPeloProprietario ? "Sim" : "Não"));
                     if (r.DataConclusao.HasValue)
                         block.Item().Element(c => DrawKeyRow(c,"Data conclusão", r.DataConclusao.Value.ToString("dd/MM/yyyy")));
                     if (r.TermoNumero.HasValue)
@@ -89,21 +96,15 @@ public static class RelatorioObraPdfComposer
                         block.Item().Element(c => DrawKeyRow(c,"Local (termo)", r.TermoLocalObra));
                     if (!string.IsNullOrWhiteSpace(r.TermoDeclaracaoTexto))
                         block.Item().Element(c => DrawKeyRowMultiline(c,"Declaração", r.TermoDeclaracaoTexto!));
-                    if (!string.IsNullOrWhiteSpace(r.TermoAssinaturaProprietario))
-                    {
-                        block.Item().Element(c => DrawKeyRow(c,"Assinatura proprietário (texto)", r.TermoAssinaturaProprietario!));
-                        if (r.TermoDataAssinaturaProprietario.HasValue)
-                            block.Item().Element(c => DrawKeyRow(c,"Data assinatura proprietário", r.TermoDataAssinaturaProprietario.Value.ToString("dd/MM/yyyy HH:mm")));
-                    }
                 });
 
                 col.Item().Text("Assinaturas do termo").SemiBold().FontSize(11);
-                if (r.Assinaturas.Count == 0)
+                if (r.AssinaturasTermo.Count == 0)
                     col.Item().Text("Nenhuma assinatura digital registrada.").Italic().FontColor(Colors.Grey.Darken1);
                 else
                 {
-                    foreach (var a in r.Assinaturas)
-                        col.Item().Element(c => AssinaturaTermoItem(c, a));
+                    foreach (var a in r.AssinaturasTermo)
+                        col.Item().Element(c => AssinaturaItem(c, a));
                 }
             }
 
@@ -114,18 +115,8 @@ public static class RelatorioObraPdfComposer
             else
             {
                 foreach (var reg in regs.OrderBy(x => x.NumeroSequencial))
-                    col.Item().Element(c => RegistroDiarioBlock(c, reg));
-            }
-
-            col.Item().Text("Ocorrências").SemiBold().FontSize(12);
-            var ocs = r.Ocorrencias.ToList();
-            if (ocs.Count == 0)
-                col.Item().Text("Nenhuma ocorrência.").Italic().FontColor(Colors.Grey.Darken1);
-            else
-            {
-                foreach (var oc in ocs.OrderByDescending(x => x.DataOcorrencia))
-                    col.Item().Element(c => OcorrenciaBlock(c, oc));
-            }
+                    col.Item().Element(c => RelatoVisitaBlock(c, reg));
+            }         
         });
     }
 
@@ -162,22 +153,32 @@ public static class RelatorioObraPdfComposer
         });
     }
 
-    private static void AssinaturaTermoItem(IContainer container, AssinaturaTermoConclusaoDto a)
+    private static void AssinaturaItem(IContainer container, AssinaturaDto a)
     {
         container.Border(1).BorderColor(Colors.Grey.Lighten2).Padding(10).Column(col =>
         {
             col.Spacing(6);
-            col.Item().Text($"{a.NomeUsuario} ({a.TipoAssinante})").SemiBold();
+            col.Item().Text($"{a.NomeUsuario} ({TipoAssinantePt(a.TipoAssinante)})").SemiBold();
             col.Item().Text($"Assinado em: {a.DataAssinatura:dd/MM/yyyy HH:mm}").FontSize(9).FontColor(Colors.Grey.Darken1);
             if (!string.IsNullOrWhiteSpace(a.IpAssinante))
                 col.Item().Text($"IP: {a.IpAssinante}").FontSize(8).FontColor(Colors.Grey.Darken1);
+            if (!string.IsNullOrWhiteSpace(a.Navegador))
+                col.Item().Text($"Navegador: {a.Navegador}").FontSize(8).FontColor(Colors.Grey.Darken1);
             var img = DecodeImage(a.ImagemAssinatura);
             if (img is { Length: > 0 })
                 col.Item().Width(260).Image(img).FitArea();
         });
     }
 
-    private static void RegistroDiarioBlock(IContainer container, RegistroDiarioDto reg)
+    private static string TipoAssinantePt(TipoAssinante t) => t switch
+    {
+        TipoAssinante.Profissional => "Profissional",
+        TipoAssinante.UsuarioCrea => "CREA",
+        TipoAssinante.Proprietario => "Proprietário",
+        _ => t.ToString()
+    };
+
+    private static void RelatoVisitaBlock(IContainer container, RelatoVisitaDto reg)
     {
         container.Border(1).BorderColor(Colors.Blue.Lighten4).Padding(10).Column(col =>
         {
@@ -202,43 +203,16 @@ public static class RelatorioObraPdfComposer
             if (etapas.Count > 0)
                 col.Item().Text("Etapas marcadas: " + string.Join(", ", etapas)).FontSize(9);
 
-            if (!string.IsNullOrWhiteSpace(reg.AssinaturaProprietario))
+            if (reg.Assinaturas.Count > 0)
             {
-                col.Item().Text("Assinatura do proprietário (texto)").SemiBold().FontSize(9);
-                col.Item().Text(reg.AssinaturaProprietario!);
-                if (reg.DataAssinaturaProprietario.HasValue)
-                    col.Item().Text($"Data: {reg.DataAssinaturaProprietario:dd/MM/yyyy HH:mm}").FontSize(8).FontColor(Colors.Grey.Darken1);
-            }
-
-            if (reg.DataAssinaturaResponsavel.HasValue)
-                col.Item().Element(c => DrawKeyRow(c,"Assinatura R.T.", reg.DataAssinaturaResponsavel.Value.ToString("dd/MM/yyyy HH:mm")));
-
-            var imgRt = DecodeImage(reg.ImagemAssinaturaResponsavel);
-            if (imgRt is { Length: > 0 })
-            {
-                col.Item().Text("Assinatura do responsável técnico (imagem)").SemiBold().FontSize(9);
-                col.Item().Width(260).Image(imgRt).FitArea();
+                col.Item().Text("Assinaturas digitais").SemiBold().FontSize(9);
+                foreach (var assinatura in reg.Assinaturas)
+                    col.Item().Element(c => AssinaturaItem(c, assinatura));
             }
 
             col.Item().Text($"Registrado por: {reg.NomeUsuario}").FontSize(8).FontColor(Colors.Grey.Darken1);
             if (reg.QuantidadeAnexos > 0)
                 col.Item().Text($"Anexos vinculados: {reg.QuantidadeAnexos} arquivo(s)").FontSize(8).FontColor(Colors.Grey.Darken1);
-        });
-    }
-
-    private static void OcorrenciaBlock(IContainer container, OcorrenciaDto oc)
-    {
-        container.Border(1).BorderColor(Colors.Orange.Lighten4).Padding(10).Column(col =>
-        {
-            col.Spacing(4);
-            col.Item().Text(oc.Titulo).SemiBold();
-            col.Item().Text($"{TipoOcorrenciaPt(oc.Tipo)} — {oc.DataOcorrencia:dd/MM/yyyy}").FontSize(9).FontColor(Colors.Grey.Darken1);
-            col.Item().Element(c => DrawKeyRowMultiline(c,"Descrição", oc.Descricao));
-            if (!string.IsNullOrWhiteSpace(oc.Providencias))
-                col.Item().Element(c => DrawKeyRowMultiline(c,"Providências", oc.Providencias!));
-            col.Item().Text($"Registrado por: {oc.NomeUsuario}").FontSize(8).FontColor(Colors.Grey.Darken1);
-            if (oc.QuantidadeAnexos > 0)
-                col.Item().Text($"Anexos: {oc.QuantidadeAnexos}").FontSize(8).FontColor(Colors.Grey.Darken1);
         });
     }
 
@@ -273,7 +247,7 @@ public static class RelatorioObraPdfComposer
         }
     }
 
-    private static List<string> EtapasMarcadas(RegistroDiarioDto reg)
+    private static List<string> EtapasMarcadas(RelatoVisitaDto reg)
     {
         var list = new List<string>();
         void Add(bool ok, string name)
@@ -334,15 +308,5 @@ public static class RelatorioObraPdfComposer
         PosicaoObra.EmAndamento => "Em andamento",
         PosicaoObra.Paralisada => "Paralisada",
         _ => p.ToString()
-    };
-
-    private static string TipoOcorrenciaPt(TipoOcorrencia t) => t switch
-    {
-        TipoOcorrencia.ProblemasTecnicos => "Problemas técnicos",
-        TipoOcorrencia.Atraso => "Atraso",
-        TipoOcorrencia.AlteracaoProjeto => "Alteração de projeto",
-        TipoOcorrencia.AcidenteTrabalho => "Acidente de trabalho",
-        TipoOcorrencia.Outro => "Outro",
-        _ => t.ToString()
     };
 }

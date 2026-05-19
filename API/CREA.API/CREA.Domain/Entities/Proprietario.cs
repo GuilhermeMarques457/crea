@@ -7,5 +7,8 @@ public class Proprietario : BaseEntity
     public string Email { get; set; } = string.Empty;
     public string Telefone { get; set; } = string.Empty;
 
+    public Guid? UsuarioId { get; set; }
+    public Usuario? Usuario { get; set; }
+
     public ICollection<Obra> Obras { get; set; } = [];
 }

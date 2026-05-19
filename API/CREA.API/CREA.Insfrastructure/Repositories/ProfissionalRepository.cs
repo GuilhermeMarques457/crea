@@ -18,4 +18,7 @@ public class ProfissionalRepository(ApplicationDbContext context) : Repository<P
 
     public async Task<bool> NumeroRegistroExisteAsync(string numeroRegistro) =>
         await _dbSet.AnyAsync(p => p.NumeroRegistro == numeroRegistro);
+
+    public async Task<Profissional?> GetByUsuarioIdAsync(Guid usuarioId) =>
+        await _dbSet.FirstOrDefaultAsync(p => p.UsuarioId == usuarioId && p.Ativo);
 }

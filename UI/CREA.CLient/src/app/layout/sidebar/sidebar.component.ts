@@ -19,8 +19,23 @@ interface NavItem {
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { label: 'Dashboard', icon: 'dashboard', route: '/dashboard' },
-  { label: 'Obras', icon: 'construction', route: '/obras' },
+  {
+    label: 'Dashboard',
+    icon: 'dashboard',
+    route: '/dashboard',
+    roles: [TipoUsuario.Admin, TipoUsuario.ResponsavelTecnico, TipoUsuario.Operacional],
+  },
+  {
+    label: 'Obras',
+    icon: 'construction',
+    route: '/obras',
+    roles: [
+      TipoUsuario.Admin,
+      TipoUsuario.ResponsavelTecnico,
+      TipoUsuario.Operacional,
+      TipoUsuario.UsuarioCrea,
+    ],
+  },
   {
     label: 'Profissionais',
     icon: 'engineering',
@@ -37,10 +52,15 @@ const NAV_ITEMS: NavItem[] = [
     label: 'Pendências',
     icon: 'pending_actions',
     route: '/pendencias',
-    roles: [TipoUsuario.Admin, TipoUsuario.ResponsavelTecnico],
+    roles: [TipoUsuario.ResponsavelTecnico, TipoUsuario.UsuarioCrea, TipoUsuario.Proprietario],
     badge: true,
   },
-  { label: 'Relatórios', icon: 'assessment', route: '/relatorios' },
+  {
+    label: 'Relatórios',
+    icon: 'assessment',
+    route: '/relatorios',
+    roles: [TipoUsuario.Admin, TipoUsuario.ResponsavelTecnico, TipoUsuario.Operacional],
+  },
   { label: 'Usuários', icon: 'group', route: '/usuarios', roles: [TipoUsuario.Admin] },
   { label: 'Auditoria', icon: 'security', route: '/auditoria', roles: [TipoUsuario.Admin] },
 ];
@@ -60,7 +80,6 @@ export class SidebarComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   readonly notificacaoService = inject(NotificacaoService);
 
-  /** Off-canvas menu open (viewports below `md`). */
   readonly mobileMenuOpen = signal(false);
 
   userName = computed(() => this.auth.currentUser()?.nome ?? '');
@@ -75,7 +94,15 @@ export class SidebarComponent implements OnInit {
   );
 
   ngOnInit() {
-    this.notificacaoService.carregarMeusPendentes();
+    const tipo = this.userType();
+    if (
+      tipo === TipoUsuario.Proprietario ||
+      tipo === TipoUsuario.UsuarioCrea
+    ) {
+      this.notificacaoService.carregarMeusPendentes();
+    } else if (tipo !== undefined) {
+      this.notificacaoService.carregarMeusPendentes();
+    }
 
     this.router.events
       .pipe(

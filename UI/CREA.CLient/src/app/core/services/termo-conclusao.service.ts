@@ -17,15 +17,6 @@ export class TermoConclusaoService {
   criar(dto: CreateTermoConclusaoDto) {
     return this.http.post<TermoConclusaoDto>(this.base, dto);
   }
-  assinar(termoId: string, imagemAssinatura: string) {
-    return this.http.post<TermoConclusaoDto>(`${this.base}/${termoId}/assinar`, { imagemAssinatura });
-  }
-  pendentes() {
-    return this.http.get<TermoConclusaoDto[]>(`${this.base}/pendentes`);
-  }
-  meusPendentes() {
-    return this.http.get<TermoConclusaoDto[]>(`${this.base}/meus-pendentes`);
-  }
   excluir(id: string) {
     return this.http.delete<void>(`${this.base}/${id}`);
   }

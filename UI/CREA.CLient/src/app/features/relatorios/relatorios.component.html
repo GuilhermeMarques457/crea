@@ -202,23 +202,33 @@
               <span
                 class="text-xs px-2.5 py-1 rounded-full font-medium"
                 [class]="
-                  relatorio()!.assinadoPeloResponsavel
+                  relatorio()!.assinadoPeloProfissional
                     ? 'bg-green-100 text-green-700'
                     : 'bg-yellow-100 text-yellow-700'
                 "
               >
-                Responsável Técnico:
-                {{ relatorio()!.assinadoPeloResponsavel ? 'Assinado ✓' : 'Pendente' }}
+                Profissional:
+                {{ relatorio()!.assinadoPeloProfissional ? 'Assinado ✓' : 'Pendente' }}
               </span>
               <span
                 class="text-xs px-2.5 py-1 rounded-full font-medium"
                 [class]="
-                  relatorio()!.assinadoPeloAdmin
+                  relatorio()!.assinadoPeloProprietario
                     ? 'bg-green-100 text-green-700'
                     : 'bg-yellow-100 text-yellow-700'
                 "
               >
-                Administrador: {{ relatorio()!.assinadoPeloAdmin ? 'Assinado ✓' : 'Pendente' }}
+                Proprietário: {{ relatorio()!.assinadoPeloProprietario ? 'Assinado ✓' : 'Pendente' }}
+              </span>
+              <span
+                class="text-xs px-2.5 py-1 rounded-full font-medium"
+                [class]="
+                  relatorio()!.assinadoPeloCrea
+                    ? 'bg-green-100 text-green-700'
+                    : 'bg-yellow-100 text-yellow-700'
+                "
+              >
+                CREA (obra): {{ relatorio()!.assinadoPeloCrea ? 'Assinado ✓' : 'Pendente' }}
               </span>
               <span
                 class="text-xs px-2.5 py-1 rounded-full font-medium"
@@ -233,15 +243,15 @@
                 }}
               </span>
             </div>
-            @if (relatorio()!.assinaturas.length > 0) {
+            @if (relatorio()!.assinaturasTermo.length > 0) {
               <div class="divide-y divide-slate-100">
-                @for (a of relatorio()!.assinaturas; track a.id) {
+                @for (a of relatorio()!.assinaturasTermo; track a.id) {
                   <div
                     class="flex flex-col gap-2 py-2 text-sm sm:flex-row sm:items-center sm:justify-between"
                   >
                     <div>
                       <span class="font-medium text-slate-800">{{ a.nomeUsuario }}</span>
-                      <span class="text-xs text-slate-500 ml-2">({{ a.tipoAssinante }})</span>
+                      <span class="text-xs text-slate-500 ml-2">({{ labelAssinante(a.tipoAssinante) }})</span>
                     </div>
                     <div class="flex items-center gap-2">
                       <span class="text-slate-500">{{
@@ -289,28 +299,6 @@
                   </div>
                   <p class="text-sm text-slate-600">{{ r.atividades }}</p>
                   <p class="text-xs text-slate-400 mt-1">Equipe: {{ r.equipePresente }}</p>
-                </div>
-              }
-            </div>
-          </mat-card-content>
-        </mat-card>
-      }
-
-      <!-- Ocorrências -->
-      @if (relatorio() != null && relatorio()!.ocorrencias!.length) {
-        <mat-card>
-          <mat-card-header><mat-card-title>Ocorrências</mat-card-title></mat-card-header>
-          <mat-card-content class="p-0">
-            <div class="divide-y divide-slate-100">
-              @for (oc of relatorio()!.ocorrencias; track oc.id) {
-                <div class="px-5 py-3">
-                  <div class="mb-1 flex flex-col gap-1 sm:flex-row sm:justify-between sm:gap-2">
-                    <span class="font-medium text-slate-800">{{ oc.titulo }}</span>
-                    <span class="text-xs text-orange-600 font-medium">{{
-                      oc.dataOcorrencia | date: 'dd/MM/yyyy'
-                    }}</span>
-                  </div>
-                  <p class="text-sm text-slate-600">{{ oc.descricao }}</p>
                 </div>
               }
             </div>

@@ -12,15 +12,20 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { DatePipe } from '@angular/common';
 import { forkJoin, of } from 'rxjs';
 import { finalize, switchMap } from 'rxjs/operators';
-import { RegistroDiarioService } from '../../../core/services/registro-diario.service';
+import { RelatoVisitaService } from '../../../core/services/registro-diario.service';
 import { AnexoService } from '../../../core/services/anexo.service';
+import { AssinaturaService } from '../../../core/services/assinatura.service';
 import { AuthService } from '../../../core/services/auth.service';
 import {
   AnexoDto,
+  AssinaturaDto,
   PosicaoObra,
   POSICAO_OBRA_LABELS,
+  TipoEntidadeAssinatura,
+  TipoAssinante,
   TipoUsuario,
 } from '../../../shared/models/api.models';
 import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
@@ -28,6 +33,11 @@ import { SignaturePadDialogComponent } from '../../../shared/components/signatur
 import { SignatureViewDialogComponent } from '../../../shared/components/signature-view-dialog/signature-view-dialog.component';
 import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
 import { ToastService } from '../../../core/services/toast.service';
+import {
+  labelTipoAssinante,
+  tipoAssinanteDoUsuario,
+  usuarioPodeAssinarEntidade,
+} from '../../../shared/utils/assinatura.utils';
 import moment from 'moment';
 
 @Component({
@@ -45,13 +55,16 @@ import moment from 'moment';
     MatCheckboxModule,
     MatSelectModule,
     MatTooltipModule,
+    DatePipe,
     PageHeaderComponent,
   ],
   templateUrl: `./registro-form.component.html`,
 })
-export class RegistroDiarioFormComponent implements OnInit {
+export class RelatoVisitaFormComponent implements OnInit {
+  readonly TipoAssinante = TipoAssinante;
   private readonly fb = inject(FormBuilder);
-  private readonly service = inject(RegistroDiarioService);
+  private readonly service = inject(RelatoVisitaService);
+  private readonly assinaturaService = inject(AssinaturaService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly toast = inject(ToastService);
@@ -61,13 +74,19 @@ export class RegistroDiarioFormComponent implements OnInit {
 
   isEdit = signal(false);
   saving = signal(false);
-  imagemAssinaturaResponsavel = signal<string | null>(null);
   readonly anexos = signal<AnexoDto[]>([]);
+  readonly assinaturas = signal<AssinaturaDto[]>([]);
   readonly arquivosPendentes = signal<File[]>([]);
-  isResponsavel = computed(() => {
+
+  podeAssinar = computed(() => {
     const tipo = this.auth.currentUser()?.tipoUsuario;
-    return tipo === TipoUsuario.ResponsavelTecnico;
+    if (!tipo || !this.editId) return false;
+    if (!usuarioPodeAssinarEntidade(tipo, TipoEntidadeAssinatura.RelatoVisita)) return false;
+    const papel = tipoAssinanteDoUsuario(tipo);
+    if (!papel) return false;
+    return !this.assinaturas().some((a) => a.tipoAssinante === papel);
   });
+
   private obraId!: string;
   private editId: string | null = null;
 
@@ -108,9 +127,7 @@ export class RegistroDiarioFormComponent implements OnInit {
           posicaoObra: r.posicaoObra ?? null,
         });
         this.obraId = r.obraId;
-        if (r.imagemAssinaturaResponsavel) {
-          this.imagemAssinaturaResponsavel.set(r.imagemAssinaturaResponsavel);
-        }
+        this.assinaturas.set(r.assinaturas ?? []);
       });
       this.anexoService.porRegistro(this.editId).subscribe((list) => this.anexos.set(list));
     }
@@ -227,32 +244,49 @@ export class RegistroDiarioFormComponent implements OnInit {
     this.router.navigate(['/obras', this.obraId]);
   }
 
-  abrirAssinatura() {
+  labelAssinante(tipo: TipoAssinante): string {
+    return labelTipoAssinante(tipo);
+  }
+
+  assinadoPelo(tipo: TipoAssinante): boolean {
+    return this.assinaturas().some((a) => a.tipoAssinante === tipo);
+  }
+
+  assinar() {
+    if (!this.editId) return;
     const dialogRef = this.dialog.open(SignaturePadDialogComponent, {
       width: '560px',
       disableClose: true,
     });
-    dialogRef.afterClosed().subscribe((imagem: string | null) => {
-      if (imagem) {
-        this.imagemAssinaturaResponsavel.set(imagem);
-      }
+    dialogRef.afterClosed().subscribe((imagemAssinatura: string | null) => {
+      if (!imagemAssinatura) return;
+      this.assinaturaService
+        .assinar({
+          tipoEntidade: TipoEntidadeAssinatura.RelatoVisita,
+          entidadeId: this.editId!,
+          imagemAssinatura,
+          navegador: typeof navigator !== 'undefined' ? navigator.userAgent : undefined,
+        })
+        .subscribe({
+          next: () => {
+            this.toast.success('Assinatura registrada!');
+            this.assinaturaService
+              .porEntidade(TipoEntidadeAssinatura.RelatoVisita, this.editId!)
+              .subscribe((list) => this.assinaturas.set(list));
+          },
+          error: () => this.toast.error('Erro ao registrar assinatura.'),
+        });
     });
   }
 
-  limparAssinatura() {
-    this.imagemAssinaturaResponsavel.set(null);
-  }
-
-  verAssinatura() {
-    const imagem = this.imagemAssinaturaResponsavel();
-    if (!imagem) return;
+  verAssinatura(a: AssinaturaDto) {
     this.dialog.open(SignatureViewDialogComponent, {
       width: '480px',
       data: {
-        nomeUsuario: this.auth.currentUser()?.nome ?? '',
-        tipoAssinante: 'Responsável Técnico',
-        dataAssinatura: new Date().toISOString(),
-        imagemAssinatura: imagem,
+        nomeUsuario: a.nomeUsuario,
+        tipoAssinante: labelTipoAssinante(a.tipoAssinante),
+        dataAssinatura: a.dataAssinatura,
+        imagemAssinatura: a.imagemAssinatura,
       },
     });
   }

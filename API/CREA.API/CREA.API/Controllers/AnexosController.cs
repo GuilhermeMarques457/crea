@@ -26,14 +26,7 @@ public class AnexosController(IAnexoRepository anexoRepository) : ControllerBase
     [HttpGet("por-registro/{registroDiarioId:guid}")]
     public async Task<ActionResult<IEnumerable<AnexoDto>>> GetByRegistro(Guid registroDiarioId)
     {
-        var anexos = await anexoRepository.GetByRegistroDiarioAsync(registroDiarioId);
-        return Ok(anexos.Select(a => ToDto(a, Request, null)));
-    }
-
-    [HttpGet("por-ocorrencia/{ocorrenciaId:guid}")]
-    public async Task<ActionResult<IEnumerable<AnexoDto>>> GetByOcorrencia(Guid ocorrenciaId)
-    {
-        var anexos = await anexoRepository.GetByOcorrenciaAsync(ocorrenciaId);
+        var anexos = await anexoRepository.GetByRelatoVisitaAsync(registroDiarioId);
         return Ok(anexos.Select(a => ToDto(a, Request, null)));
     }
 
@@ -55,8 +48,7 @@ public class AnexosController(IAnexoRepository anexoRepository) : ControllerBase
     public async Task<ActionResult<AnexoDto>> Upload(
         IFormFile arquivo,
         [FromQuery] Guid? obraId,
-        [FromQuery] Guid? registroDiarioId,
-        [FromQuery] Guid? ocorrenciaId)
+        [FromQuery] Guid? registroDiarioId)
     {
         if (arquivo is null || arquivo.Length == 0)
             return BadRequest(new { mensagem = "Nenhum arquivo enviado." });
@@ -67,8 +59,8 @@ public class AnexosController(IAnexoRepository anexoRepository) : ControllerBase
         if (!TiposPermitidos.Contains(arquivo.ContentType))
             return BadRequest(new { mensagem = "Tipo de arquivo não permitido." });
 
-        if (obraId is null && registroDiarioId is null && ocorrenciaId is null)
-            return BadRequest(new { mensagem = "É necessário informar obraId, registroDiarioId ou ocorrenciaId." });
+        if (obraId is null && registroDiarioId is null)
+            return BadRequest(new { mensagem = "É necessário informar obraId ou registroDiarioId." });
 
         var usuarioId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         var nomeArquivo = $"{Guid.NewGuid()}{Path.GetExtension(arquivo.FileName)}";
@@ -87,8 +79,7 @@ public class AnexosController(IAnexoRepository anexoRepository) : ControllerBase
             TipoArquivo = arquivo.ContentType,
             TamanhoBytes = arquivo.Length,
             ObraId = obraId,
-            RegistroDiarioId = registroDiarioId,
-            OcorrenciaId = ocorrenciaId,
+            RelatoVisitaId = registroDiarioId,
             UsuarioId = usuarioId
         };
 
@@ -119,8 +110,7 @@ public class AnexosController(IAnexoRepository anexoRepository) : ControllerBase
         TipoArquivo = a.TipoArquivo,
         TamanhoBytes = a.TamanhoBytes,
         ObraId = a.ObraId,
-        RegistroDiarioId = a.RegistroDiarioId,
-        OcorrenciaId = a.OcorrenciaId,
+        RelatoVisitaId = a.RelatoVisitaId,
         UsuarioId = a.UsuarioId,
         NomeUsuario = a.Usuario?.Nome ?? nomeUsuarioFallback ?? string.Empty,
         UrlDownload = $"{request.Scheme}://{request.Host}/uploads/{a.NomeArquivo}",

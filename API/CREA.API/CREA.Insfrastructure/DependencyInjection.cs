@@ -12,11 +12,10 @@ public static class DependencyInjection
         services.AddScoped<IProfissionalRepository, ProfissionalRepository>();
         services.AddScoped<IProprietarioRepository, ProprietarioRepository>();
         services.AddScoped<IObraRepository, ObraRepository>();
-        services.AddScoped<IRegistroDiarioRepository, RegistroDiarioRepository>();
-        services.AddScoped<IOcorrenciaRepository, OcorrenciaRepository>();
+        services.AddScoped<IRelatoVisitaRepository, RelatoVisitaRepository>();
         services.AddScoped<IAnexoRepository, AnexoRepository>();
         services.AddScoped<ITermoConclusaoRepository, TermoConclusaoRepository>();
-        services.AddScoped<IAssinaturaTermoConclusaoRepository, AssinaturaTermoConclusaoRepository>();
+        services.AddScoped<IAssinaturaRepository, AssinaturaRepository>();
         services.AddScoped<ILogAuditoriaRepository, LogAuditoriaRepository>();
 
         return services;

@@ -1,3 +1,5 @@
+using CREA.Application.DTOs.Assinaturas;
+
 namespace CREA.Application.DTOs.TermosConclusao;
 
 public class TermoConclusaoDto
@@ -19,13 +21,9 @@ public class TermoConclusaoDto
     public Guid ProfissionalId { get; set; }
     public string NomeProfissional { get; set; } = string.Empty;
     public string NumeroRegistro { get; set; } = string.Empty;
-    public string HashAssinatura { get; set; } = string.Empty;
-    public DateTime DataAssinatura { get; set; }
-    public string? AssinaturaProprietario { get; set; }
-    public DateTime? DataAssinaturaProprietario { get; set; }
     public DateTime CriadoEm { get; set; }
-    public bool AssinadoPeloResponsavel { get; set; }
-    public bool AssinadoPeloAdmin { get; set; }
+    public bool AssinadoPeloProfissional { get; set; }
+    public bool AssinadoPeloProprietario { get; set; }
     public bool Concluido { get; set; }
-    public List<AssinaturaTermoConclusaoDto> Assinaturas { get; set; } = [];
+    public List<AssinaturaDto> Assinaturas { get; set; } = [];
 }

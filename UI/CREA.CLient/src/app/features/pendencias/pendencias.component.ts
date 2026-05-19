@@ -1,4 +1,5 @@
 import { Component, signal, inject, OnInit, computed } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -6,21 +7,26 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDialog } from '@angular/material/dialog';
 import { DatePipe } from '@angular/common';
-import { AuthService } from '../../core/services/auth.service';
 import { NotificacaoService } from '../../core/services/notificacao.service';
-import { TermoConclusaoService } from '../../core/services/termo-conclusao.service';
-import { RegistroDiarioService } from '../../core/services/registro-diario.service';
+import { AssinaturaService } from '../../core/services/assinatura.service';
 import { ToastService } from '../../core/services/toast.service';
 import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
 import { PageHeaderComponent } from '../../shared/components/page-header/page-header.component';
 import { SignaturePadDialogComponent } from '../../shared/components/signature-pad-dialog/signature-pad-dialog.component';
-import { SignatureViewDialogComponent } from '../../shared/components/signature-view-dialog/signature-view-dialog.component';
-import { TermoConclusaoDto, AssinaturaTermoConclusaoDto, RegistroDiarioDto, TipoUsuario } from '../../shared/models/api.models';
+import {
+  PendenteAssinaturaDto,
+  TipoEntidadeAssinatura,
+} from '../../shared/models/api.models';
+import {
+  labelTipoAssinante,
+  TIPO_ENTIDADE_LABELS,
+} from '../../shared/utils/assinatura.utils';
 
 @Component({
   selector: 'app-pendencias',
   standalone: true,
   imports: [
+    NgTemplateOutlet,
     RouterLink,
     MatCardModule,
     MatButtonModule,
@@ -33,17 +39,25 @@ import { TermoConclusaoDto, AssinaturaTermoConclusaoDto, RegistroDiarioDto, Tipo
   templateUrl: './pendencias.component.html',
 })
 export class PendenciasComponent implements OnInit {
-  private readonly termoService = inject(TermoConclusaoService);
-  private readonly registroService = inject(RegistroDiarioService);
+  private readonly assinaturaService = inject(AssinaturaService);
   private readonly notificacaoService = inject(NotificacaoService);
   private readonly toast = inject(ToastService);
-  private readonly auth = inject(AuthService);
   private readonly dialog = inject(MatDialog);
 
+  readonly TipoEntidadeAssinatura = TipoEntidadeAssinatura;
+
   loading = signal(true);
-  pendentes = signal<TermoConclusaoDto[]>([]);
-  registrosPendentes = signal<RegistroDiarioDto[]>([]);
-  userType = computed(() => this.auth.currentUser()?.tipoUsuario);
+  pendentes = signal<PendenteAssinaturaDto[]>([]);
+
+  obrasPendentes = computed(() =>
+    this.pendentes().filter((p) => p.tipoEntidade === TipoEntidadeAssinatura.Obra),
+  );
+  termosPendentes = computed(() =>
+    this.pendentes().filter((p) => p.tipoEntidade === TipoEntidadeAssinatura.TermoConclusao),
+  );
+  registrosPendentes = computed(() =>
+    this.pendentes().filter((p) => p.tipoEntidade === TipoEntidadeAssinatura.RelatoVisita),
+  );
 
   ngOnInit() {
     this.carregar();
@@ -51,32 +65,58 @@ export class PendenciasComponent implements OnInit {
 
   carregar() {
     this.loading.set(true);
-    this.termoService.pendentes().subscribe({
+    this.assinaturaService.pendentes().subscribe({
       next: (list) => {
         this.pendentes.set(list);
-        this.checkLoading();
+        this.loading.set(false);
       },
-      error: () => this.checkLoading(),
-    });
-    this.registroService.pendentesAssinatura().subscribe({
-      next: (list) => {
-        this.registrosPendentes.set(list);
-        this.checkLoading();
+      error: () => {
+        this.loading.set(false);
+        this.toast.error('Erro ao carregar pendências.');
       },
-      error: () => this.checkLoading(),
     });
   }
 
-  private loadCount = 0;
-  private checkLoading() {
-    this.loadCount++;
-    if (this.loadCount >= 2) {
-      this.loading.set(false);
-      this.loadCount = 0;
+  iconeEntidade(tipo: TipoEntidadeAssinatura): string {
+    switch (tipo) {
+      case TipoEntidadeAssinatura.Obra:
+        return 'construction';
+      case TipoEntidadeAssinatura.RelatoVisita:
+        return 'edit_note';
+      case TipoEntidadeAssinatura.TermoConclusao:
+        return 'description';
+      default:
+        return 'pending_actions';
     }
   }
 
-  assinar(termo: TermoConclusaoDto) {
+  corEntidade(tipo: TipoEntidadeAssinatura): string {
+    switch (tipo) {
+      case TipoEntidadeAssinatura.Obra:
+        return 'text-amber-600';
+      case TipoEntidadeAssinatura.RelatoVisita:
+        return 'text-blue-500';
+      case TipoEntidadeAssinatura.TermoConclusao:
+        return 'text-orange-500';
+      default:
+        return 'text-slate-500';
+    }
+  }
+
+  labelEntidade(tipo: TipoEntidadeAssinatura): string {
+    return TIPO_ENTIDADE_LABELS[tipo];
+  }
+
+  labelAssinante(p: PendenteAssinaturaDto): string {
+    return labelTipoAssinante(p.tipoAssinante);
+  }
+
+  linkObraId(p: PendenteAssinaturaDto): string | null {
+    if (p.tipoEntidade === TipoEntidadeAssinatura.Obra) return p.entidadeId;
+    return null;
+  }
+
+  assinar(pendente: PendenteAssinaturaDto) {
     const dialogRef = this.dialog.open(SignaturePadDialogComponent, {
       width: '560px',
       disableClose: true,
@@ -84,84 +124,33 @@ export class PendenciasComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((imagemAssinatura: string | null) => {
       if (!imagemAssinatura) return;
-      this.termoService.assinar(termo.id, imagemAssinatura).subscribe({
-        next: (updated) => {
-          this.toast.success('Termo assinado com sucesso!');
-          this.pendentes.update((list) =>
-            updated.concluido
-              ? list.filter((t) => t.id !== termo.id)
-              : list.map((t) => (t.id === termo.id ? updated : t)),
-          );
-          this.notificacaoService.carregarMeusPendentes();
-        },
-        error: () => this.toast.error('Erro ao assinar o termo.'),
-      });
-    });
-  }
 
-  statusLabel(termo: TermoConclusaoDto): string {
-    if (!termo.assinadoPeloResponsavel && !termo.assinadoPeloAdmin)
-      return 'Aguardando ambas as assinaturas';
-    if (!termo.assinadoPeloResponsavel) return 'Aguardando assinatura do responsável técnico';
-    return 'Aguardando assinatura do administrador';
-  }
+      const navegador = typeof navigator !== 'undefined' ? navigator.userAgent : undefined;
 
-  podeAssinar(termo: TermoConclusaoDto): boolean {
-    const userType = this.userType();
-
-    if (!termo) return false;
-
-    if (termo.concluido) return false;
-
-    const podeResponsavel =
-      !termo.assinadoPeloResponsavel && userType === TipoUsuario.ResponsavelTecnico;
-
-    const podeAdmin = !termo.assinadoPeloAdmin && userType === TipoUsuario.Admin;
-
-    return podeResponsavel || podeAdmin;
-  }
-
-  verAssinatura(a: AssinaturaTermoConclusaoDto) {
-    this.dialog.open(SignatureViewDialogComponent, {
-      width: '480px',
-      data: {
-        nomeUsuario: a.nomeUsuario,
-        tipoAssinante: a.tipoAssinante,
-        dataAssinatura: a.dataAssinatura,
-        imagemAssinatura: a.imagemAssinatura,
-      },
-    });
-  }
-
-  assinarRegistro(registro: RegistroDiarioDto) {
-    const dialogRef = this.dialog.open(SignaturePadDialogComponent, {
-      width: '560px',
-      disableClose: true,
-    });
-
-    dialogRef.afterClosed().subscribe((imagemAssinatura: string | null) => {
-      if (!imagemAssinatura) return;
-      this.registroService.assinar(registro.id, imagemAssinatura).subscribe({
-        next: () => {
-          this.toast.success('Registro assinado com sucesso!');
-          this.registrosPendentes.update((list) => list.filter((r) => r.id !== registro.id));
-          this.notificacaoService.carregarMeusPendentes();
-        },
-        error: () => this.toast.error('Erro ao assinar o registro.'),
-      });
-    });
-  }
-
-  verAssinaturaRegistro(registro: RegistroDiarioDto) {
-    if (!registro.imagemAssinaturaResponsavel) return;
-    this.dialog.open(SignatureViewDialogComponent, {
-      width: '480px',
-      data: {
-        nomeUsuario: registro.nomeUsuario,
-        tipoAssinante: 'Responsável Técnico',
-        dataAssinatura: registro.dataAssinaturaResponsavel ?? '',
-        imagemAssinatura: registro.imagemAssinaturaResponsavel,
-      },
+      this.assinaturaService
+        .assinar({
+          tipoEntidade: pendente.tipoEntidade,
+          entidadeId: pendente.entidadeId,
+          imagemAssinatura,
+          navegador,
+        })
+        .subscribe({
+          next: () => {
+            this.toast.success('Assinatura registrada com sucesso!');
+            this.pendentes.update((list) =>
+              list.filter(
+                (p) =>
+                  !(
+                    p.tipoEntidade === pendente.tipoEntidade &&
+                    p.entidadeId === pendente.entidadeId &&
+                    p.tipoAssinante === pendente.tipoAssinante
+                  ),
+              ),
+            );
+            this.notificacaoService.carregarMeusPendentes();
+          },
+          error: () => this.toast.error('Erro ao registrar assinatura.'),
+        });
     });
   }
 }

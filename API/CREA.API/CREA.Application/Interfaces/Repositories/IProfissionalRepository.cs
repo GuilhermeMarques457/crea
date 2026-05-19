@@ -8,4 +8,5 @@ public interface IProfissionalRepository : IRepository<Profissional>
     Task<Profissional?> GetByCpfAsync(string cpf);
     Task<IEnumerable<Profissional>> GetByTipoRegistroAsync(string tipoRegistro);
     Task<bool> NumeroRegistroExisteAsync(string numeroRegistro);
+    Task<Profissional?> GetByUsuarioIdAsync(Guid usuarioId);
 }

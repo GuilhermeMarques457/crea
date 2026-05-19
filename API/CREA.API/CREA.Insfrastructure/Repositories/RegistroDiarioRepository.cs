@@ -5,9 +5,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CREA.Insfrastructure.Repositories;
 
-public class RegistroDiarioRepository(ApplicationDbContext context) : Repository<RegistroDiario>(context), IRegistroDiarioRepository
+public class RelatoVisitaRepository(ApplicationDbContext context) : Repository<RelatoVisita>(context), IRelatoVisitaRepository
 {
-    public async Task<IEnumerable<RegistroDiario>> GetByObraAsync(Guid obraId) =>
+    public async Task<IEnumerable<RelatoVisita>> GetByObraAsync(Guid obraId) =>
         await _dbSet
             .Include(r => r.Usuario)
             .Include(r => r.Anexos)
@@ -15,7 +15,7 @@ public class RegistroDiarioRepository(ApplicationDbContext context) : Repository
             .OrderByDescending(r => r.Data)
             .ToListAsync();
 
-    public async Task<IEnumerable<RegistroDiario>> GetByObraAndPeriodoAsync(Guid obraId, DateTime inicio, DateTime fim) =>
+    public async Task<IEnumerable<RelatoVisita>> GetByObraAndPeriodoAsync(Guid obraId, DateTime inicio, DateTime fim) =>
         await _dbSet
             .Include(r => r.Usuario)
             .Include(r => r.Anexos)
@@ -23,21 +23,10 @@ public class RegistroDiarioRepository(ApplicationDbContext context) : Repository
             .OrderByDescending(r => r.Data)
             .ToListAsync();
 
-    public async Task<RegistroDiario?> GetByIdWithDetailsAsync(Guid id) =>
+    public async Task<RelatoVisita?> GetByIdWithDetailsAsync(Guid id) =>
         await _dbSet
-            .Include(r => r.Obra)
+            .Include(r => r.Obra).ThenInclude(o => o.Proprietario)
             .Include(r => r.Usuario)
             .Include(r => r.Anexos)
             .FirstOrDefaultAsync(r => r.Id == id && r.Ativo);
-
-    public async Task<IEnumerable<RegistroDiario>> GetPendentesAssinaturaAsync(Guid usuarioId) =>
-        await _dbSet
-            .Include(r => r.Obra)
-            .Include(r => r.Usuario)
-            .Include(r => r.Anexos)
-            .Where(r => r.Ativo
-                && r.ImagemAssinaturaResponsavel == null
-                && r.Obra.ProfissionalResponsavel.UsuarioId == usuarioId)
-            .OrderByDescending(r => r.Data)
-            .ToListAsync();
 }

@@ -103,55 +103,6 @@
         }
       }
     },
-    "/api/Anexos/por-ocorrencia/{ocorrenciaId}": {
-      "get": {
-        "tags": [
-          "Anexos"
-        ],
-        "parameters": [
-          {
-            "name": "ocorrenciaId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/AnexoDto"
-                  }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/AnexoDto"
-                  }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/AnexoDto"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/Anexos/download/{id}": {
       "get": {
         "tags": [
@@ -191,14 +142,6 @@
           },
           {
             "name": "registroDiarioId",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          },
-          {
-            "name": "ocorrenciaId",
             "in": "query",
             "schema": {
               "type": "string",
@@ -273,16 +216,22 @@
         }
       }
     },
-    "/api/AssinaturasDigitais/por-registro/{registroDiarioId}": {
+    "/api/Assinaturas/por-entidade": {
       "get": {
         "tags": [
-          "AssinaturasDigitais"
+          "Assinaturas"
         ],
         "parameters": [
           {
-            "name": "registroDiarioId",
-            "in": "path",
-            "required": true,
+            "name": "tipoEntidade",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/TipoEntidadeAssinatura"
+            }
+          },
+          {
+            "name": "entidadeId",
+            "in": "query",
             "schema": {
               "type": "string",
               "format": "uuid"
@@ -297,7 +246,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/AssinaturaDigitalDto"
+                    "$ref": "#/components/schemas/AssinaturaDto"
                   }
                 }
               },
@@ -305,7 +254,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/AssinaturaDigitalDto"
+                    "$ref": "#/components/schemas/AssinaturaDto"
                   }
                 }
               },
@@ -313,7 +262,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/AssinaturaDigitalDto"
+                    "$ref": "#/components/schemas/AssinaturaDto"
                   }
                 }
               }
@@ -322,21 +271,10 @@
         }
       }
     },
-    "/api/AssinaturasDigitais/por-profissional/{profissionalId}": {
+    "/api/Assinaturas/pendentes": {
       "get": {
         "tags": [
-          "AssinaturasDigitais"
-        ],
-        "parameters": [
-          {
-            "name": "profissionalId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
+          "Assinaturas"
         ],
         "responses": {
           "200": {
@@ -346,7 +284,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/AssinaturaDigitalDto"
+                    "$ref": "#/components/schemas/PendenteAssinaturaDto"
                   }
                 }
               },
@@ -354,7 +292,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/AssinaturaDigitalDto"
+                    "$ref": "#/components/schemas/PendenteAssinaturaDto"
                   }
                 }
               },
@@ -362,7 +300,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/AssinaturaDigitalDto"
+                    "$ref": "#/components/schemas/PendenteAssinaturaDto"
                   }
                 }
               }
@@ -371,26 +309,26 @@
         }
       }
     },
-    "/api/AssinaturasDigitais": {
+    "/api/Assinaturas": {
       "post": {
         "tags": [
-          "AssinaturasDigitais"
+          "Assinaturas"
         ],
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateAssinaturaDigitalDto"
+                "$ref": "#/components/schemas/CreateAssinaturaDto"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateAssinaturaDigitalDto"
+                "$ref": "#/components/schemas/CreateAssinaturaDto"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateAssinaturaDigitalDto"
+                "$ref": "#/components/schemas/CreateAssinaturaDto"
               }
             }
           }
@@ -401,43 +339,20 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/AssinaturaDigitalDto"
+                  "$ref": "#/components/schemas/AssinaturaDto"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AssinaturaDigitalDto"
+                  "$ref": "#/components/schemas/AssinaturaDto"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AssinaturaDigitalDto"
+                  "$ref": "#/components/schemas/AssinaturaDto"
                 }
               }
             }
-          }
-        }
-      }
-    },
-    "/api/AssinaturasDigitais/{id}": {
-      "delete": {
-        "tags": [
-          "AssinaturasDigitais"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
           }
         }
       }
@@ -447,9 +362,84 @@
         "tags": [
           "Auditoria"
         ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 20
+            }
+          },
+          {
+            "name": "entidade",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "acao",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "usuarioId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "inicio",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "fim",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/LogAuditoriaDtoPagedResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LogAuditoriaDtoPagedResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LogAuditoriaDtoPagedResult"
+                }
+              }
+            }
           }
         }
       }
@@ -1024,261 +1014,6 @@
         }
       }
     },
-    "/api/Ocorrencias/por-obra/{obraId}": {
-      "get": {
-        "tags": [
-          "Ocorrencias"
-        ],
-        "parameters": [
-          {
-            "name": "obraId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/OcorrenciaDto"
-                  }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/OcorrenciaDto"
-                  }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/OcorrenciaDto"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/Ocorrencias/por-obra/{obraId}/tipo/{tipo}": {
-      "get": {
-        "tags": [
-          "Ocorrencias"
-        ],
-        "parameters": [
-          {
-            "name": "obraId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          },
-          {
-            "name": "tipo",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "$ref": "#/components/schemas/TipoOcorrencia"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/OcorrenciaDto"
-                  }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/OcorrenciaDto"
-                  }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/OcorrenciaDto"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/Ocorrencias/{id}": {
-      "get": {
-        "tags": [
-          "Ocorrencias"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/OcorrenciaDto"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/OcorrenciaDto"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/OcorrenciaDto"
-                }
-              }
-            }
-          }
-        }
-      },
-      "put": {
-        "tags": [
-          "Ocorrencias"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateOcorrenciaDto"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateOcorrenciaDto"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateOcorrenciaDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "Ocorrencias"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/api/Ocorrencias": {
-      "post": {
-        "tags": [
-          "Ocorrencias"
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateOcorrenciaDto"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateOcorrenciaDto"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateOcorrenciaDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/OcorrenciaDto"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/OcorrenciaDto"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/OcorrenciaDto"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/Profissionais": {
       "get": {
         "tags": [
@@ -1551,6 +1286,191 @@
         }
       }
     },
+    "/api/Proprietarios": {
+      "get": {
+        "tags": [
+          "Proprietarios"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProprietarioDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProprietarioDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProprietarioDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Proprietarios"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateProprietarioDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateProprietarioDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateProprietarioDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProprietarioDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProprietarioDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProprietarioDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Proprietarios/{id}": {
+      "get": {
+        "tags": [
+          "Proprietarios"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProprietarioDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProprietarioDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProprietarioDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Proprietarios"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateProprietarioDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateProprietarioDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateProprietarioDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Proprietarios"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/RegistrosDiarios/por-obra/{obraId}": {
       "get": {
         "tags": [
@@ -1575,7 +1495,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/RegistroDiarioDto"
+                    "$ref": "#/components/schemas/RelatoVisitaDto"
                   }
                 }
               },
@@ -1583,7 +1503,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/RegistroDiarioDto"
+                    "$ref": "#/components/schemas/RelatoVisitaDto"
                   }
                 }
               },
@@ -1591,7 +1511,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/RegistroDiarioDto"
+                    "$ref": "#/components/schemas/RelatoVisitaDto"
                   }
                 }
               }
@@ -1640,7 +1560,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/RegistroDiarioDto"
+                    "$ref": "#/components/schemas/RelatoVisitaDto"
                   }
                 }
               },
@@ -1648,7 +1568,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/RegistroDiarioDto"
+                    "$ref": "#/components/schemas/RelatoVisitaDto"
                   }
                 }
               },
@@ -1656,7 +1576,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/RegistroDiarioDto"
+                    "$ref": "#/components/schemas/RelatoVisitaDto"
                   }
                 }
               }
@@ -1687,17 +1607,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/RegistroDiarioDto"
+                  "$ref": "#/components/schemas/RelatoVisitaDto"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RegistroDiarioDto"
+                  "$ref": "#/components/schemas/RelatoVisitaDto"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RegistroDiarioDto"
+                  "$ref": "#/components/schemas/RelatoVisitaDto"
                 }
               }
             }
@@ -1723,17 +1643,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateRegistroDiarioDto"
+                "$ref": "#/components/schemas/CreateRelatoVisitaDto"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateRegistroDiarioDto"
+                "$ref": "#/components/schemas/CreateRelatoVisitaDto"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateRegistroDiarioDto"
+                "$ref": "#/components/schemas/CreateRelatoVisitaDto"
               }
             }
           }
@@ -1775,17 +1695,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateRegistroDiarioDto"
+                "$ref": "#/components/schemas/CreateRelatoVisitaDto"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateRegistroDiarioDto"
+                "$ref": "#/components/schemas/CreateRelatoVisitaDto"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateRegistroDiarioDto"
+                "$ref": "#/components/schemas/CreateRelatoVisitaDto"
               }
             }
           }
@@ -1796,17 +1716,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/RegistroDiarioDto"
+                  "$ref": "#/components/schemas/RelatoVisitaDto"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RegistroDiarioDto"
+                  "$ref": "#/components/schemas/RelatoVisitaDto"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RegistroDiarioDto"
+                  "$ref": "#/components/schemas/RelatoVisitaDto"
                 }
               }
             }
@@ -1850,6 +1770,29 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/api/Relatorios/obra/{obraId}/pdf": {
+      "get": {
+        "tags": [
+          "Relatorios"
+        ],
+        "parameters": [
+          {
+            "name": "obraId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
           }
         }
       }
@@ -2204,6 +2147,10 @@
             "type": "string",
             "nullable": true
           },
+          "nomeArquivo": {
+            "type": "string",
+            "nullable": true
+          },
           "tipoArquivo": {
             "type": "string",
             "nullable": true
@@ -2217,12 +2164,7 @@
             "format": "uuid",
             "nullable": true
           },
-          "registroDiarioId": {
-            "type": "string",
-            "format": "uuid",
-            "nullable": true
-          },
-          "ocorrenciaId": {
+          "relatoVisitaId": {
             "type": "string",
             "format": "uuid",
             "nullable": true
@@ -2246,30 +2188,32 @@
         },
         "additionalProperties": false
       },
-      "AssinaturaDigitalDto": {
+      "AssinaturaDto": {
         "type": "object",
         "properties": {
           "id": {
             "type": "string",
             "format": "uuid"
           },
-          "registroDiarioId": {
+          "tipoEntidade": {
+            "$ref": "#/components/schemas/TipoEntidadeAssinatura"
+          },
+          "entidadeId": {
             "type": "string",
             "format": "uuid"
           },
-          "dataRegistroDiario": {
-            "type": "string",
-            "format": "date-time"
+          "tipoAssinante": {
+            "$ref": "#/components/schemas/TipoAssinante"
           },
-          "profissionalId": {
+          "usuarioId": {
             "type": "string",
             "format": "uuid"
           },
-          "nomeProfissional": {
+          "nomeUsuario": {
             "type": "string",
             "nullable": true
           },
-          "numeroRegistro": {
+          "hashAssinatura": {
             "type": "string",
             "nullable": true
           },
@@ -2277,37 +2221,70 @@
             "type": "string",
             "format": "date-time"
           },
-          "hashAssinatura": {
+          "imagemAssinatura": {
             "type": "string",
             "nullable": true
           },
-          "observacao": {
+          "ipAssinante": {
             "type": "string",
             "nullable": true
           },
-          "criadoEm": {
+          "userAgent": {
             "type": "string",
-            "format": "date-time"
+            "nullable": true
+          },
+          "navegador": {
+            "type": "string",
+            "nullable": true
+          },
+          "sistemaOperacional": {
+            "type": "string",
+            "nullable": true
+          },
+          "dispositivo": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
       },
-      "CreateAssinaturaDigitalDto": {
+      "AtividadeTecnica": {
+        "enum": [
+          1,
+          2,
+          3
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "CreateAssinaturaDto": {
         "required": [
-          "profissionalId",
-          "registroDiarioId"
+          "entidadeId",
+          "imagemAssinatura",
+          "tipoEntidade"
         ],
         "type": "object",
         "properties": {
-          "registroDiarioId": {
+          "tipoEntidade": {
+            "$ref": "#/components/schemas/TipoEntidadeAssinatura"
+          },
+          "entidadeId": {
             "type": "string",
             "format": "uuid"
           },
-          "profissionalId": {
-            "type": "string",
-            "format": "uuid"
+          "imagemAssinatura": {
+            "minLength": 1,
+            "type": "string"
           },
-          "observacao": {
+          "navegador": {
+            "type": "string",
+            "nullable": true
+          },
+          "sistemaOperacional": {
+            "type": "string",
+            "nullable": true
+          },
+          "dispositivo": {
             "type": "string",
             "nullable": true
           }
@@ -2323,7 +2300,7 @@
           "nome",
           "numeroArt",
           "profissionalResponsavelId",
-          "proprietario",
+          "proprietarioId",
           "tipoObra"
         ],
         "type": "object",
@@ -2353,18 +2330,41 @@
             "type": "string",
             "nullable": true
           },
-          "proprietario": {
+          "proprietarioId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "empresa": {
             "maxLength": 200,
-            "minLength": 1,
-            "type": "string"
+            "type": "string",
+            "nullable": true
+          },
+          "numeroCaderneta": {
+            "maxLength": 20,
+            "type": "string",
+            "nullable": true
           },
           "numeroArt": {
             "maxLength": 50,
             "minLength": 1,
             "type": "string"
           },
+          "numeroRT": {
+            "maxLength": 50,
+            "type": "string",
+            "nullable": true
+          },
           "tipoObra": {
             "$ref": "#/components/schemas/TipoObra"
+          },
+          "tipoEdificacao": {
+            "$ref": "#/components/schemas/TipoEdificacao"
+          },
+          "atividadeTecnica": {
+            "$ref": "#/components/schemas/AtividadeTecnica"
+          },
+          "direcaoTecnica": {
+            "type": "boolean"
           },
           "dataInicio": {
             "type": "string",
@@ -2379,46 +2379,39 @@
             "type": "string",
             "nullable": true
           },
+          "areaConstruir": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "areaRegularizar": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "areaAmpliar": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "areaReformar": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "areaTotalEdificada": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "valorRecibo": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
           "profissionalResponsavelId": {
             "type": "string",
             "format": "uuid"
-          }
-        },
-        "additionalProperties": false
-      },
-      "CreateOcorrenciaDto": {
-        "required": [
-          "dataOcorrencia",
-          "descricao",
-          "obraId",
-          "tipo",
-          "titulo"
-        ],
-        "type": "object",
-        "properties": {
-          "obraId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "dataOcorrencia": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "tipo": {
-            "$ref": "#/components/schemas/TipoOcorrencia"
-          },
-          "titulo": {
-            "maxLength": 200,
-            "minLength": 1,
-            "type": "string"
-          },
-          "descricao": {
-            "minLength": 1,
-            "type": "string"
-          },
-          "providencias": {
-            "type": "string",
-            "nullable": true
           }
         },
         "additionalProperties": false
@@ -2454,6 +2447,11 @@
             "minLength": 1,
             "type": "string"
           },
+          "empresa": {
+            "maxLength": 200,
+            "type": "string",
+            "nullable": true
+          },
           "especialidade": {
             "maxLength": 100,
             "minLength": 1,
@@ -2477,7 +2475,41 @@
         },
         "additionalProperties": false
       },
-      "CreateRegistroDiarioDto": {
+      "CreateProprietarioDto": {
+        "required": [
+          "nome"
+        ],
+        "type": "object",
+        "properties": {
+          "nome": {
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "cpf": {
+            "maxLength": 14,
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "maxLength": 200,
+            "type": "string",
+            "nullable": true
+          },
+          "telefone": {
+            "maxLength": 20,
+            "type": "string",
+            "nullable": true
+          },
+          "senhaAcesso": {
+            "minLength": 6,
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreateRelatoVisitaDto": {
         "required": [
           "atividades",
           "data",
@@ -2511,6 +2543,40 @@
           "observacoes": {
             "type": "string",
             "nullable": true
+          },
+          "servicosPreliminar": {
+            "type": "boolean"
+          },
+          "fundacao": {
+            "type": "boolean"
+          },
+          "alvenarias": {
+            "type": "boolean"
+          },
+          "superestrutura": {
+            "type": "boolean"
+          },
+          "cobertura": {
+            "type": "boolean"
+          },
+          "esquadriasInstalacoesEletricasHidraulicas": {
+            "type": "boolean"
+          },
+          "revestimentoForroParePiso": {
+            "type": "boolean"
+          },
+          "pintura": {
+            "type": "boolean"
+          },
+          "servicosComplementares": {
+            "type": "boolean"
+          },
+          "posicaoObra": {
+            "$ref": "#/components/schemas/PosicaoObra"
+          },
+          "decisoesTecnicas": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -2528,6 +2594,10 @@
             "type": "string",
             "format": "uuid"
           },
+          "numeroTermo": {
+            "type": "integer",
+            "format": "int32"
+          },
           "dataConclusao": {
             "type": "string",
             "format": "date-time"
@@ -2538,6 +2608,35 @@
           },
           "observacoes": {
             "type": "string",
+            "nullable": true
+          },
+          "empresa": {
+            "type": "string",
+            "nullable": true
+          },
+          "proprietario": {
+            "type": "string",
+            "nullable": true
+          },
+          "telefoneProprietario": {
+            "type": "string",
+            "nullable": true
+          },
+          "localObra": {
+            "type": "string",
+            "nullable": true
+          },
+          "declaracaoTexto": {
+            "type": "string",
+            "nullable": true
+          },
+          "localDeclaracao": {
+            "type": "string",
+            "nullable": true
+          },
+          "dataDeclaracao": {
+            "type": "string",
+            "format": "date-time",
             "nullable": true
           },
           "profissionalId": {
@@ -2572,6 +2671,83 @@
           },
           "tipoUsuario": {
             "$ref": "#/components/schemas/TipoUsuario"
+          }
+        },
+        "additionalProperties": false
+      },
+      "LogAuditoriaDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "usuarioId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "nomeUsuario": {
+            "type": "string",
+            "nullable": true
+          },
+          "acao": {
+            "type": "string",
+            "nullable": true
+          },
+          "entidade": {
+            "type": "string",
+            "nullable": true
+          },
+          "entidadeId": {
+            "type": "string",
+            "nullable": true
+          },
+          "dadosAntigos": {
+            "type": "string",
+            "nullable": true
+          },
+          "dadosNovos": {
+            "type": "string",
+            "nullable": true
+          },
+          "enderecoIp": {
+            "type": "string",
+            "nullable": true
+          },
+          "dataAcao": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "LogAuditoriaDtoPagedResult": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LogAuditoriaDto"
+            },
+            "nullable": true
+          },
+          "totalItems": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "page": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
           }
         },
         "additionalProperties": false
@@ -2651,7 +2827,23 @@
             "type": "string",
             "nullable": true
           },
-          "proprietario": {
+          "proprietarioId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "nomeProprietario": {
+            "type": "string",
+            "nullable": true
+          },
+          "telefoneProprietario": {
+            "type": "string",
+            "nullable": true
+          },
+          "empresa": {
+            "type": "string",
+            "nullable": true
+          },
+          "numeroCaderneta": {
             "type": "string",
             "nullable": true
           },
@@ -2659,8 +2851,21 @@
             "type": "string",
             "nullable": true
           },
+          "numeroRT": {
+            "type": "string",
+            "nullable": true
+          },
           "tipoObra": {
             "$ref": "#/components/schemas/TipoObra"
+          },
+          "tipoEdificacao": {
+            "$ref": "#/components/schemas/TipoEdificacao"
+          },
+          "atividadeTecnica": {
+            "$ref": "#/components/schemas/AtividadeTecnica"
+          },
+          "direcaoTecnica": {
+            "type": "boolean"
           },
           "status": {
             "$ref": "#/components/schemas/StatusObra"
@@ -2676,6 +2881,36 @@
           },
           "descricao": {
             "type": "string",
+            "nullable": true
+          },
+          "areaConstruir": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "areaRegularizar": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "areaAmpliar": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "areaReformar": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "areaTotalEdificada": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "valorRecibo": {
+            "type": "number",
+            "format": "double",
             "nullable": true
           },
           "profissionalResponsavelId": {
@@ -2700,50 +2935,26 @@
         },
         "additionalProperties": false
       },
-      "OcorrenciaDto": {
+      "PendenteAssinaturaDto": {
         "type": "object",
         "properties": {
-          "id": {
+          "tipoEntidade": {
+            "$ref": "#/components/schemas/TipoEntidadeAssinatura"
+          },
+          "entidadeId": {
             "type": "string",
             "format": "uuid"
           },
-          "obraId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "nomeObra": {
-            "type": "string",
-            "nullable": true
-          },
-          "dataOcorrencia": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "tipo": {
-            "$ref": "#/components/schemas/TipoOcorrencia"
+          "tipoAssinante": {
+            "$ref": "#/components/schemas/TipoAssinante"
           },
           "titulo": {
             "type": "string",
             "nullable": true
           },
-          "descricao": {
+          "subtitulo": {
             "type": "string",
             "nullable": true
-          },
-          "providencias": {
-            "type": "string",
-            "nullable": true
-          },
-          "usuarioId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "nomeUsuario": {
-            "type": "string",
-            "nullable": true
-          },
-          "ativo": {
-            "type": "boolean"
           },
           "criadoEm": {
             "type": "string",
@@ -2751,6 +2962,16 @@
           }
         },
         "additionalProperties": false
+      },
+      "PosicaoObra": {
+        "enum": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "type": "integer",
+        "format": "int32"
       },
       "ProfissionalDto": {
         "type": "object",
@@ -2772,6 +2993,10 @@
             "nullable": true
           },
           "tipoRegistro": {
+            "type": "string",
+            "nullable": true
+          },
+          "empresa": {
             "type": "string",
             "nullable": true
           },
@@ -2802,7 +3027,45 @@
         },
         "additionalProperties": false
       },
-      "RegistroDiarioDto": {
+      "ProprietarioDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "nome": {
+            "type": "string",
+            "nullable": true
+          },
+          "cpf": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "telefone": {
+            "type": "string",
+            "nullable": true
+          },
+          "usuarioId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "ativo": {
+            "type": "boolean"
+          },
+          "criadoEm": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RelatoVisitaDto": {
         "type": "object",
         "properties": {
           "id": {
@@ -2816,6 +3079,10 @@
           "nomeObra": {
             "type": "string",
             "nullable": true
+          },
+          "numeroSequencial": {
+            "type": "integer",
+            "format": "int32"
           },
           "data": {
             "type": "string",
@@ -2837,6 +3104,40 @@
             "type": "string",
             "nullable": true
           },
+          "servicosPreliminar": {
+            "type": "boolean"
+          },
+          "fundacao": {
+            "type": "boolean"
+          },
+          "alvenarias": {
+            "type": "boolean"
+          },
+          "superestrutura": {
+            "type": "boolean"
+          },
+          "cobertura": {
+            "type": "boolean"
+          },
+          "esquadriasInstalacoesEletricasHidraulicas": {
+            "type": "boolean"
+          },
+          "revestimentoForroParePiso": {
+            "type": "boolean"
+          },
+          "pintura": {
+            "type": "boolean"
+          },
+          "servicosComplementares": {
+            "type": "boolean"
+          },
+          "posicaoObra": {
+            "$ref": "#/components/schemas/PosicaoObra"
+          },
+          "decisoesTecnicas": {
+            "type": "string",
+            "nullable": true
+          },
           "usuarioId": {
             "type": "string",
             "format": "uuid"
@@ -2845,16 +3146,33 @@
             "type": "string",
             "nullable": true
           },
-          "totalAssinaturas": {
-            "type": "integer",
-            "format": "int32"
-          },
           "ativo": {
             "type": "boolean"
           },
           "criadoEm": {
             "type": "string",
             "format": "date-time"
+          },
+          "totalAssinaturas": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "assinadoPeloProfissional": {
+            "type": "boolean"
+          },
+          "assinadoPeloProprietario": {
+            "type": "boolean"
+          },
+          "quantidadeAnexos": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "assinaturas": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AssinaturaDto"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -2886,12 +3204,37 @@
             "type": "string",
             "nullable": true
           },
+          "telefoneProprietario": {
+            "type": "string",
+            "nullable": true
+          },
+          "empresa": {
+            "type": "string",
+            "nullable": true
+          },
+          "numeroCaderneta": {
+            "type": "string",
+            "nullable": true
+          },
           "numeroArt": {
+            "type": "string",
+            "nullable": true
+          },
+          "numeroRT": {
             "type": "string",
             "nullable": true
           },
           "tipoObra": {
             "$ref": "#/components/schemas/TipoObra"
+          },
+          "tipoEdificacao": {
+            "$ref": "#/components/schemas/TipoEdificacao"
+          },
+          "atividadeTecnica": {
+            "$ref": "#/components/schemas/AtividadeTecnica"
+          },
+          "direcaoTecnica": {
+            "type": "boolean"
           },
           "status": {
             "$ref": "#/components/schemas/StatusObra"
@@ -2917,10 +3260,6 @@
             "type": "integer",
             "format": "int32"
           },
-          "totalOcorrencias": {
-            "type": "integer",
-            "format": "int32"
-          },
           "totalAnexos": {
             "type": "integer",
             "format": "int32"
@@ -2933,17 +3272,57 @@
             "format": "date-time",
             "nullable": true
           },
-          "registrosDiarios": {
+          "assinadoPeloProfissional": {
+            "type": "boolean"
+          },
+          "assinadoPeloProprietario": {
+            "type": "boolean"
+          },
+          "assinadoPeloCrea": {
+            "type": "boolean"
+          },
+          "termoConcluido": {
+            "type": "boolean"
+          },
+          "termoNumero": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "termoDescricao": {
+            "type": "string",
+            "nullable": true
+          },
+          "termoObservacoes": {
+            "type": "string",
+            "nullable": true
+          },
+          "termoLocalObra": {
+            "type": "string",
+            "nullable": true
+          },
+          "termoDeclaracaoTexto": {
+            "type": "string",
+            "nullable": true
+          },
+          "assinaturasObra": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/RegistroDiarioDto"
+              "$ref": "#/components/schemas/AssinaturaDto"
             },
             "nullable": true
           },
-          "ocorrencias": {
+          "assinaturasTermo": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/OcorrenciaDto"
+              "$ref": "#/components/schemas/AssinaturaDto"
+            },
+            "nullable": true
+          },
+          "registrosDiarios": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RelatoVisitaDto"
             },
             "nullable": true
           },
@@ -2979,6 +3358,10 @@
             "type": "string",
             "nullable": true
           },
+          "numeroTermo": {
+            "type": "integer",
+            "format": "int32"
+          },
           "dataConclusao": {
             "type": "string",
             "format": "date-time"
@@ -2989,6 +3372,35 @@
           },
           "observacoes": {
             "type": "string",
+            "nullable": true
+          },
+          "empresa": {
+            "type": "string",
+            "nullable": true
+          },
+          "proprietario": {
+            "type": "string",
+            "nullable": true
+          },
+          "telefoneProprietario": {
+            "type": "string",
+            "nullable": true
+          },
+          "localObra": {
+            "type": "string",
+            "nullable": true
+          },
+          "declaracaoTexto": {
+            "type": "string",
+            "nullable": true
+          },
+          "localDeclaracao": {
+            "type": "string",
+            "nullable": true
+          },
+          "dataDeclaracao": {
+            "type": "string",
+            "format": "date-time",
             "nullable": true
           },
           "profissionalId": {
@@ -3003,33 +3415,57 @@
             "type": "string",
             "nullable": true
           },
-          "hashAssinatura": {
-            "type": "string",
-            "nullable": true
-          },
-          "dataAssinatura": {
-            "type": "string",
-            "format": "date-time"
-          },
           "criadoEm": {
             "type": "string",
             "format": "date-time"
+          },
+          "assinadoPeloProfissional": {
+            "type": "boolean"
+          },
+          "assinadoPeloProprietario": {
+            "type": "boolean"
+          },
+          "concluido": {
+            "type": "boolean"
+          },
+          "assinaturas": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AssinaturaDto"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false
       },
-      "TipoObra": {
+      "TipoAssinante": {
         "enum": [
           1,
           2,
-          3,
-          4,
-          5
+          3
         ],
         "type": "integer",
         "format": "int32"
       },
-      "TipoOcorrencia": {
+      "TipoEdificacao": {
+        "enum": [
+          1,
+          2,
+          3
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "TipoEntidadeAssinatura": {
+        "enum": [
+          1,
+          2,
+          3
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "TipoObra": {
         "enum": [
           1,
           2,
@@ -3044,7 +3480,9 @@
         "enum": [
           1,
           2,
-          3
+          3,
+          4,
+          5
         ],
         "type": "integer",
         "format": "int32"
@@ -3124,7 +3562,7 @@
       "name": "Anexos"
     },
     {
-      "name": "AssinaturasDigitais"
+      "name": "Assinaturas"
     },
     {
       "name": "Auditoria"
@@ -3136,10 +3574,10 @@
       "name": "Obras"
     },
     {
-      "name": "Ocorrencias"
+      "name": "Profissionais"
     },
     {
-      "name": "Profissionais"
+      "name": "Proprietarios"
     },
     {
       "name": "RegistrosDiarios"

@@ -1,9 +1,8 @@
 using CREA.API.Services;
-using CREA.Application.DTOs.Ocorrencias;
 using CREA.Application.DTOs.RegistrosDiarios;
 using CREA.Application.DTOs.Relatorios;
-using CREA.Application.DTOs.TermosConclusao;
 using CREA.Application.Interfaces.Repositories;
+using CREA.Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,10 +13,10 @@ namespace CREA.API.Controllers;
 [Authorize]
 public class RelatoriosController(
     IObraRepository obraRepository,
-    IRegistroDiarioRepository registroDiarioRepository,
-    IOcorrenciaRepository ocorrenciaRepository,
+    IRelatoVisitaRepository registroDiarioRepository,
     IAnexoRepository anexoRepository,
-    ITermoConclusaoRepository termoConclusaoRepository) : ControllerBase
+    ITermoConclusaoRepository termoConclusaoRepository,
+    IAssinaturaRepository assinaturaRepository) : ControllerBase
 {
     [HttpGet("obra/{obraId:guid}")]
     public async Task<ActionResult<RelatorioObraDto>> GetRelatorioObra(Guid obraId)
@@ -48,9 +47,54 @@ public class RelatoriosController(
         if (obra is null) return null;
 
         var registros = (await registroDiarioRepository.GetByObraAsync(obraId)).ToList();
-        var ocorrencias = (await ocorrenciaRepository.GetByObraAsync(obraId)).ToList();
         var anexos = (await anexoRepository.GetByObraAsync(obraId)).ToList();
         var termo = await termoConclusaoRepository.GetByObraAsync(obraId);
+
+        var assinaturasObra = (await assinaturaRepository.GetByEntidadeAsync(TipoEntidadeAssinatura.Obra, obraId)).ToList();
+        var assinaturasTermo = termo is not null
+            ? (await assinaturaRepository.GetByEntidadeAsync(TipoEntidadeAssinatura.TermoConclusao, termo.Id)).ToList()
+            : [];
+
+        var registrosDto = new List<RelatoVisitaDto>();
+        foreach (var r in registros)
+        {
+            var assinaturasRelato = (await assinaturaRepository.GetByEntidadeAsync(TipoEntidadeAssinatura.RelatoVisita, r.Id)).ToList();
+            registrosDto.Add(new RelatoVisitaDto
+            {
+                Id = r.Id,
+                ObraId = r.ObraId,
+                NomeObra = obra.Nome,
+                NumeroSequencial = r.NumeroSequencial,
+                Data = r.Data,
+                Atividades = r.Atividades,
+                EquipePresente = r.EquipePresente,
+                CondicaoClimatica = r.CondicaoClimatica,
+                Observacoes = r.Observacoes,
+                ServicosPreliminar = r.ServicosPreliminar,
+                Fundacao = r.Fundacao,
+                Alvenarias = r.Alvenarias,
+                Superestrutura = r.Superestrutura,
+                Cobertura = r.Cobertura,
+                EsquadriasInstalacoesEletricasHidraulicas = r.EsquadriasInstalacoesEletricasHidraulicas,
+                RevestimentoForroParePiso = r.RevestimentoForroParePiso,
+                Pintura = r.Pintura,
+                ServicosComplementares = r.ServicosComplementares,
+                PosicaoObra = r.PosicaoObra,
+                DecisoesTecnicas = r.DecisoesTecnicas,
+                UsuarioId = r.UsuarioId,
+                NomeUsuario = r.Usuario?.Nome ?? string.Empty,
+                Ativo = r.Ativo,
+                CriadoEm = r.CriadoEm,
+                TotalAssinaturas = assinaturasRelato.Count,
+                AssinadoPeloProfissional = assinaturasRelato.Any(a => a.TipoAssinante == TipoAssinante.Profissional),
+                AssinadoPeloProprietario = assinaturasRelato.Any(a => a.TipoAssinante == TipoAssinante.Proprietario),
+                QuantidadeAnexos = r.Anexos?.Count(a => a.Ativo) ?? 0,
+                Assinaturas = assinaturasRelato.Select(TermosConclusaoController.MapAssinatura).ToList()
+            });
+        }
+
+        var termoAssinadoProfissional = assinaturasTermo.Any(a => a.TipoAssinante == TipoAssinante.Profissional);
+        var termoAssinadoProprietario = assinaturasTermo.Any(a => a.TipoAssinante == TipoAssinante.Proprietario);
 
         return new RelatorioObraDto
         {
@@ -77,79 +121,21 @@ public class RelatoriosController(
             NomeProfissionalResponsavel = obra.ProfissionalResponsavel?.Nome ?? string.Empty,
             NumeroRegistroProfissional = obra.ProfissionalResponsavel?.NumeroRegistro ?? string.Empty,
             TotalRegistrosDiarios = registros.Count,
-            TotalOcorrencias = ocorrencias.Count,
             TotalAnexos = anexos.Count,
             PossuiTermoConclusao = termo is not null,
             DataConclusao = termo?.DataConclusao,
-            AssinadoPeloResponsavel = termo?.AssinadoPeloResponsavel ?? false,
-            AssinadoPeloAdmin = termo?.AssinadoPeloAdmin ?? false,
-            TermoConcluido = termo is not null && termo.AssinadoPeloResponsavel && termo.AssinadoPeloAdmin,
+            AssinadoPeloProfissional = assinaturasObra.Any(a => a.TipoAssinante == TipoAssinante.Profissional),
+            AssinadoPeloProprietario = termoAssinadoProprietario,
+            AssinadoPeloCrea = assinaturasObra.Any(a => a.TipoAssinante == TipoAssinante.UsuarioCrea),
+            TermoConcluido = termo is not null && termoAssinadoProfissional && termoAssinadoProprietario,
             TermoNumero = termo?.NumeroTermo,
             TermoDescricao = termo?.Descricao,
             TermoObservacoes = termo?.Observacoes,
             TermoLocalObra = termo?.LocalObra,
             TermoDeclaracaoTexto = termo?.DeclaracaoTexto,
-            TermoAssinaturaProprietario = termo?.AssinaturaProprietario,
-            TermoDataAssinaturaProprietario = termo?.DataAssinaturaProprietario,
-            Assinaturas = termo?.Assinaturas?.Where(a => a.Ativo).Select(a => new AssinaturaTermoConclusaoDto
-            {
-                Id = a.Id,
-                TermoConclusaoId = a.TermoConclusaoId,
-                UsuarioId = a.UsuarioId,
-                NomeUsuario = a.Usuario?.Nome ?? string.Empty,
-                TipoAssinante = a.TipoAssinante,
-                HashAssinatura = a.HashAssinatura,
-                DataAssinatura = a.DataAssinatura,
-                ImagemAssinatura = a.ImagemAssinatura ?? string.Empty,
-                IpAssinante = a.IpAssinante ?? string.Empty
-            }).ToList() ?? [],
-            RegistrosDiarios = registros.Select(r => new RegistroDiarioDto
-            {
-                Id = r.Id,
-                ObraId = r.ObraId,
-                NomeObra = obra.Nome,
-                NumeroSequencial = r.NumeroSequencial,
-                Data = r.Data,
-                Atividades = r.Atividades,
-                EquipePresente = r.EquipePresente,
-                CondicaoClimatica = r.CondicaoClimatica,
-                Observacoes = r.Observacoes,
-                ServicosPreliminar = r.ServicosPreliminar,
-                Fundacao = r.Fundacao,
-                Alvenarias = r.Alvenarias,
-                Superestrutura = r.Superestrutura,
-                Cobertura = r.Cobertura,
-                EsquadriasInstalacoesEletricasHidraulicas = r.EsquadriasInstalacoesEletricasHidraulicas,
-                RevestimentoForroParePiso = r.RevestimentoForroParePiso,
-                Pintura = r.Pintura,
-                ServicosComplementares = r.ServicosComplementares,
-                PosicaoObra = r.PosicaoObra,
-                DecisoesTecnicas = r.DecisoesTecnicas,
-                ImagemAssinaturaResponsavel = r.ImagemAssinaturaResponsavel,
-                DataAssinaturaResponsavel = r.DataAssinaturaResponsavel,
-                UsuarioId = r.UsuarioId,
-                NomeUsuario = r.Usuario?.Nome ?? string.Empty,
-                Ativo = r.Ativo,
-                CriadoEm = r.CriadoEm,
-                TotalAssinaturas = (r.DataAssinaturaResponsavel.HasValue ? 1 : 0),
-                QuantidadeAnexos = r.Anexos?.Count(a => a.Ativo) ?? 0
-            }),
-            Ocorrencias = ocorrencias.Select(o => new OcorrenciaDto
-            {
-                Id = o.Id,
-                ObraId = o.ObraId,
-                NomeObra = obra.Nome,
-                DataOcorrencia = o.DataOcorrencia,
-                Tipo = o.Tipo,
-                Titulo = o.Titulo,
-                Descricao = o.Descricao,
-                Providencias = o.Providencias,
-                UsuarioId = o.UsuarioId,
-                NomeUsuario = o.Usuario?.Nome ?? string.Empty,
-                Ativo = o.Ativo,
-                CriadoEm = o.CriadoEm,
-                QuantidadeAnexos = o.Anexos?.Count(a => a.Ativo) ?? 0
-            }),
+            AssinaturasObra = assinaturasObra.Select(TermosConclusaoController.MapAssinatura).ToList(),
+            AssinaturasTermo = assinaturasTermo.Select(TermosConclusaoController.MapAssinatura).ToList(),
+            RegistrosDiarios = registrosDto,
             GeradoEm = DateTime.UtcNow
         };
     }

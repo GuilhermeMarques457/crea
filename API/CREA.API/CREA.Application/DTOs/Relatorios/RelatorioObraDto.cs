@@ -1,6 +1,5 @@
-using CREA.Application.DTOs.Ocorrencias;
+using CREA.Application.DTOs.Assinaturas;
 using CREA.Application.DTOs.RegistrosDiarios;
-using CREA.Application.DTOs.TermosConclusao;
 using CREA.Domain.Enums;
 
 namespace CREA.Application.DTOs.Relatorios;
@@ -28,25 +27,22 @@ public class RelatorioObraDto
     public string NomeProfissionalResponsavel { get; set; } = string.Empty;
     public string NumeroRegistroProfissional { get; set; } = string.Empty;
     public int TotalRegistrosDiarios { get; set; }
-    public int TotalOcorrencias { get; set; }
     public int TotalAnexos { get; set; }
     public bool PossuiTermoConclusao { get; set; }
     public DateTime? DataConclusao { get; set; }
-    public bool AssinadoPeloResponsavel { get; set; }
-    public bool AssinadoPeloAdmin { get; set; }
+    public bool AssinadoPeloProfissional { get; set; }
+    public bool AssinadoPeloProprietario { get; set; }
+    public bool AssinadoPeloCrea { get; set; }
     public bool TermoConcluido { get; set; }
 
-    /// <summary>Detalhes extras do termo (PDF / relatório completo).</summary>
     public int? TermoNumero { get; set; }
     public string? TermoDescricao { get; set; }
     public string? TermoObservacoes { get; set; }
     public string? TermoLocalObra { get; set; }
     public string? TermoDeclaracaoTexto { get; set; }
-    public string? TermoAssinaturaProprietario { get; set; }
-    public DateTime? TermoDataAssinaturaProprietario { get; set; }
 
-    public List<AssinaturaTermoConclusaoDto> Assinaturas { get; set; } = [];
-    public IEnumerable<RegistroDiarioDto> RegistrosDiarios { get; set; } = [];
-    public IEnumerable<OcorrenciaDto> Ocorrencias { get; set; } = [];
+    public List<AssinaturaDto> AssinaturasObra { get; set; } = [];
+    public List<AssinaturaDto> AssinaturasTermo { get; set; } = [];
+    public IEnumerable<RelatoVisitaDto> RegistrosDiarios { get; set; } = [];
     public DateTime GeradoEm { get; set; } = DateTime.UtcNow;
 }

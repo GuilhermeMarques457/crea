@@ -13,7 +13,8 @@ import { RelatorioService } from '../../core/services/relatorio.service';
 import { ObraService } from '../../core/services/obra.service';
 import { ToastService } from '../../core/services/toast.service';
 import { SignatureViewDialogComponent } from '../../shared/components/signature-view-dialog/signature-view-dialog.component';
-import { AssinaturaTermoConclusaoDto } from '../../shared/models/api.models';
+import { AssinaturaDto } from '../../shared/models/api.models';
+import { labelTipoAssinante } from '../../shared/utils/assinatura.utils';
 import {
   ObraDto,
   RelatorioObraDto,
@@ -72,7 +73,6 @@ export class RelatoriosComponent implements OnInit {
     this.relatorio()
       ? [
           { label: 'Registros Diários', value: this.relatorio()!.totalRegistrosDiarios },
-          { label: 'Ocorrências', value: this.relatorio()!.totalOcorrencias },
           { label: 'Anexos', value: this.relatorio()!.totalAnexos },
           { label: 'Termo Conclusão', value: this.relatorio()!.possuiTermoConclusao ? '✓' : '–' },
         ]
@@ -133,15 +133,19 @@ export class RelatoriosComponent implements OnInit {
     });
   }
 
-  verAssinatura(a: AssinaturaTermoConclusaoDto) {
+  verAssinatura(a: AssinaturaDto) {
     this.dialog.open(SignatureViewDialogComponent, {
       width: '480px',
       data: {
         nomeUsuario: a.nomeUsuario,
-        tipoAssinante: a.tipoAssinante,
+        tipoAssinante: labelTipoAssinante(a.tipoAssinante),
         dataAssinatura: a.dataAssinatura,
         imagemAssinatura: a.imagemAssinatura,
       },
     });
+  }
+
+  labelAssinante(tipo: number): string {
+    return labelTipoAssinante(tipo);
   }
 }

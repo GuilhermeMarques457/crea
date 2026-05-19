@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace CREA.Insfrastructure.Migrations
+namespace CREA.Infrastructure.Migrations
 {
     /// <inheritdoc />
     public partial class Initial : Migration
@@ -15,7 +15,7 @@ namespace CREA.Insfrastructure.Migrations
                 name: "LogsAuditoria",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    LogAuditoriaId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UsuarioId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     NomeUsuario = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
                     Acao = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
@@ -31,14 +31,14 @@ namespace CREA.Insfrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_LogsAuditoria", x => x.Id);
+                    table.PrimaryKey("PK_LogsAuditoria", x => x.LogAuditoriaId);
                 });
 
             migrationBuilder.CreateTable(
                 name: "Usuarios",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UsuarioId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Nome = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
                     Email = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     SenhaHash = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -49,18 +49,51 @@ namespace CREA.Insfrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Usuarios", x => x.Id);
+                    table.PrimaryKey("PK_Usuarios", x => x.UsuarioId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Assinaturas",
+                columns: table => new
+                {
+                    AssinaturaId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TipoEntidade = table.Column<int>(type: "int", nullable: false),
+                    EntidadeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TipoAssinante = table.Column<int>(type: "int", nullable: false),
+                    UsuarioId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    HashAssinatura = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
+                    DataAssinatura = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ImagemAssinatura = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IpAssinante = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: false),
+                    UserAgent = table.Column<string>(type: "nvarchar(512)", maxLength: 512, nullable: false),
+                    Navegador = table.Column<string>(type: "nvarchar(120)", maxLength: 120, nullable: true),
+                    SistemaOperacional = table.Column<string>(type: "nvarchar(120)", maxLength: 120, nullable: true),
+                    Dispositivo = table.Column<string>(type: "nvarchar(120)", maxLength: 120, nullable: true),
+                    CriadoEm = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    AtualizadoEm = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Ativo = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Assinaturas", x => x.AssinaturaId);
+                    table.ForeignKey(
+                        name: "FK_Assinaturas_Usuarios_UsuarioId",
+                        column: x => x.UsuarioId,
+                        principalTable: "Usuarios",
+                        principalColumn: "UsuarioId",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
                 name: "Profissionais",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ProfissionalId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Nome = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
                     Cpf = table.Column<string>(type: "nvarchar(14)", maxLength: 14, nullable: false),
                     NumeroRegistro = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     TipoRegistro = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
+                    Empresa = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Especialidade = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Email = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     Telefone = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
@@ -71,12 +104,37 @@ namespace CREA.Insfrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Profissionais", x => x.Id);
+                    table.PrimaryKey("PK_Profissionais", x => x.ProfissionalId);
                     table.ForeignKey(
                         name: "FK_Profissionais_Usuarios_UsuarioId",
                         column: x => x.UsuarioId,
                         principalTable: "Usuarios",
-                        principalColumn: "Id",
+                        principalColumn: "UsuarioId",
+                        onDelete: ReferentialAction.SetNull);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Proprietarios",
+                columns: table => new
+                {
+                    ProprietarioId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Nome = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    Cpf = table.Column<string>(type: "nvarchar(14)", maxLength: 14, nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    Telefone = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    UsuarioId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    CriadoEm = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    AtualizadoEm = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Ativo = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Proprietarios", x => x.ProprietarioId);
+                    table.ForeignKey(
+                        name: "FK_Proprietarios_Usuarios_UsuarioId",
+                        column: x => x.UsuarioId,
+                        principalTable: "Usuarios",
+                        principalColumn: "UsuarioId",
                         onDelete: ReferentialAction.SetNull);
                 });
 
@@ -84,19 +142,31 @@ namespace CREA.Insfrastructure.Migrations
                 name: "Obras",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ObraId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Nome = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     Endereco = table.Column<string>(type: "nvarchar(300)", maxLength: 300, nullable: false),
                     Cidade = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Estado = table.Column<string>(type: "nvarchar(2)", maxLength: 2, nullable: false),
                     Cep = table.Column<string>(type: "nvarchar(9)", maxLength: 9, nullable: false),
-                    Proprietario = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    ProprietarioId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Empresa = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    NumeroCaderneta = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     NumeroArt = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    NumeroRT = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     TipoObra = table.Column<int>(type: "int", nullable: false),
+                    TipoEdificacao = table.Column<int>(type: "int", nullable: true),
+                    AtividadeTecnica = table.Column<int>(type: "int", nullable: true),
+                    DirecaoTecnica = table.Column<bool>(type: "bit", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
                     DataInicio = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DataPrevisaoTermino = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Descricao = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    AreaConstruir = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    AreaRegularizar = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    AreaAmpliar = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    AreaReformar = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    AreaTotalEdificada = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    ValorRecibo = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
                     ProfissionalResponsavelId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UsuarioCriadorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CriadoEm = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -105,65 +175,50 @@ namespace CREA.Insfrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Obras", x => x.Id);
+                    table.PrimaryKey("PK_Obras", x => x.ObraId);
                     table.ForeignKey(
                         name: "FK_Obras_Profissionais_ProfissionalResponsavelId",
                         column: x => x.ProfissionalResponsavelId,
                         principalTable: "Profissionais",
-                        principalColumn: "Id",
+                        principalColumn: "ProfissionalId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Obras_Proprietarios_ProprietarioId",
+                        column: x => x.ProprietarioId,
+                        principalTable: "Proprietarios",
+                        principalColumn: "ProprietarioId",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Obras_Usuarios_UsuarioCriadorId",
                         column: x => x.UsuarioCriadorId,
                         principalTable: "Usuarios",
-                        principalColumn: "Id",
+                        principalColumn: "UsuarioId",
                         onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Ocorrencias",
+                name: "RelatosVisita",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    RelatoVisitaId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ObraId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    DataOcorrencia = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Tipo = table.Column<int>(type: "int", nullable: false),
-                    Titulo = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    Descricao = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Providencias = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    UsuarioId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CriadoEm = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    AtualizadoEm = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Ativo = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Ocorrencias", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Ocorrencias_Obras_ObraId",
-                        column: x => x.ObraId,
-                        principalTable: "Obras",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Ocorrencias_Usuarios_UsuarioId",
-                        column: x => x.UsuarioId,
-                        principalTable: "Usuarios",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "RegistrosDiarios",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ObraId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    NumeroSequencial = table.Column<int>(type: "int", nullable: false),
                     Data = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Atividades = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     EquipePresente = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CondicaoClimatica = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Observacoes = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ServicosPreliminar = table.Column<bool>(type: "bit", nullable: false),
+                    Fundacao = table.Column<bool>(type: "bit", nullable: false),
+                    Alvenarias = table.Column<bool>(type: "bit", nullable: false),
+                    Superestrutura = table.Column<bool>(type: "bit", nullable: false),
+                    Cobertura = table.Column<bool>(type: "bit", nullable: false),
+                    EsquadriasInstalacoesEletricasHidraulicas = table.Column<bool>(type: "bit", nullable: false),
+                    RevestimentoForroParePiso = table.Column<bool>(type: "bit", nullable: false),
+                    Pintura = table.Column<bool>(type: "bit", nullable: false),
+                    ServicosComplementares = table.Column<bool>(type: "bit", nullable: false),
+                    PosicaoObra = table.Column<int>(type: "int", nullable: true),
+                    DecisoesTecnicas = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UsuarioId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CriadoEm = table.Column<DateTime>(type: "datetime2", nullable: false),
                     AtualizadoEm = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -171,18 +226,18 @@ namespace CREA.Insfrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_RegistrosDiarios", x => x.Id);
+                    table.PrimaryKey("PK_RelatosVisita", x => x.RelatoVisitaId);
                     table.ForeignKey(
-                        name: "FK_RegistrosDiarios_Obras_ObraId",
+                        name: "FK_RelatosVisita_Obras_ObraId",
                         column: x => x.ObraId,
                         principalTable: "Obras",
-                        principalColumn: "Id",
+                        principalColumn: "ObraId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_RegistrosDiarios_Usuarios_UsuarioId",
+                        name: "FK_RelatosVisita_Usuarios_UsuarioId",
                         column: x => x.UsuarioId,
                         principalTable: "Usuarios",
-                        principalColumn: "Id",
+                        principalColumn: "UsuarioId",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -190,32 +245,38 @@ namespace CREA.Insfrastructure.Migrations
                 name: "TermosConclusao",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TermoConclusaoId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ObraId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    NumeroTermo = table.Column<int>(type: "int", nullable: false),
                     DataConclusao = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Descricao = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Observacoes = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Empresa = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Proprietario = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    TelefoneProprietario = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LocalObra = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DeclaracaoTexto = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LocalDeclaracao = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DataDeclaracao = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ProfissionalId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    HashAssinatura = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    DataAssinatura = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CriadoEm = table.Column<DateTime>(type: "datetime2", nullable: false),
                     AtualizadoEm = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Ativo = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TermosConclusao", x => x.Id);
+                    table.PrimaryKey("PK_TermosConclusao", x => x.TermoConclusaoId);
                     table.ForeignKey(
                         name: "FK_TermosConclusao_Obras_ObraId",
                         column: x => x.ObraId,
                         principalTable: "Obras",
-                        principalColumn: "Id",
+                        principalColumn: "ObraId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_TermosConclusao_Profissionais_ProfissionalId",
                         column: x => x.ProfissionalId,
                         principalTable: "Profissionais",
-                        principalColumn: "Id",
+                        principalColumn: "ProfissionalId",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -223,15 +284,14 @@ namespace CREA.Insfrastructure.Migrations
                 name: "Anexos",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    AnexoId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     NomeArquivo = table.Column<string>(type: "nvarchar(300)", maxLength: 300, nullable: false),
                     NomeArquivoOriginal = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CaminhoArquivo = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     TipoArquivo = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     TamanhoBytes = table.Column<long>(type: "bigint", nullable: false),
                     ObraId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    RegistroDiarioId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    OcorrenciaId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    RelatoVisitaId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     UsuarioId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CriadoEm = table.Column<DateTime>(type: "datetime2", nullable: false),
                     AtualizadoEm = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -239,59 +299,23 @@ namespace CREA.Insfrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Anexos", x => x.Id);
+                    table.PrimaryKey("PK_Anexos", x => x.AnexoId);
                     table.ForeignKey(
                         name: "FK_Anexos_Obras_ObraId",
                         column: x => x.ObraId,
                         principalTable: "Obras",
-                        principalColumn: "Id");
+                        principalColumn: "ObraId");
                     table.ForeignKey(
-                        name: "FK_Anexos_Ocorrencias_OcorrenciaId",
-                        column: x => x.OcorrenciaId,
-                        principalTable: "Ocorrencias",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Anexos_RegistrosDiarios_RegistroDiarioId",
-                        column: x => x.RegistroDiarioId,
-                        principalTable: "RegistrosDiarios",
-                        principalColumn: "Id");
+                        name: "FK_Anexos_RelatosVisita_RelatoVisitaId",
+                        column: x => x.RelatoVisitaId,
+                        principalTable: "RelatosVisita",
+                        principalColumn: "RelatoVisitaId");
                     table.ForeignKey(
                         name: "FK_Anexos_Usuarios_UsuarioId",
                         column: x => x.UsuarioId,
                         principalTable: "Usuarios",
-                        principalColumn: "Id",
+                        principalColumn: "UsuarioId",
                         onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "AssinaturasDigitais",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    RegistroDiarioId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ProfissionalId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    DataAssinatura = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    HashAssinatura = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Observacao = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CriadoEm = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    AtualizadoEm = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Ativo = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AssinaturasDigitais", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_AssinaturasDigitais_Profissionais_ProfissionalId",
-                        column: x => x.ProfissionalId,
-                        principalTable: "Profissionais",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_AssinaturasDigitais_RegistrosDiarios_RegistroDiarioId",
-                        column: x => x.RegistroDiarioId,
-                        principalTable: "RegistrosDiarios",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -300,14 +324,9 @@ namespace CREA.Insfrastructure.Migrations
                 column: "ObraId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Anexos_OcorrenciaId",
+                name: "IX_Anexos_RelatoVisitaId",
                 table: "Anexos",
-                column: "OcorrenciaId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Anexos_RegistroDiarioId",
-                table: "Anexos",
-                column: "RegistroDiarioId");
+                column: "RelatoVisitaId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Anexos_UsuarioId",
@@ -315,14 +334,15 @@ namespace CREA.Insfrastructure.Migrations
                 column: "UsuarioId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AssinaturasDigitais_ProfissionalId",
-                table: "AssinaturasDigitais",
-                column: "ProfissionalId");
+                name: "IX_Assinaturas_TipoEntidade_EntidadeId_TipoAssinante",
+                table: "Assinaturas",
+                columns: new[] { "TipoEntidade", "EntidadeId", "TipoAssinante" },
+                unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_AssinaturasDigitais_RegistroDiarioId",
-                table: "AssinaturasDigitais",
-                column: "RegistroDiarioId");
+                name: "IX_Assinaturas_UsuarioId",
+                table: "Assinaturas",
+                column: "UsuarioId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Obras_ProfissionalResponsavelId",
@@ -330,19 +350,14 @@ namespace CREA.Insfrastructure.Migrations
                 column: "ProfissionalResponsavelId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Obras_ProprietarioId",
+                table: "Obras",
+                column: "ProprietarioId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Obras_UsuarioCriadorId",
                 table: "Obras",
                 column: "UsuarioCriadorId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Ocorrencias_ObraId",
-                table: "Ocorrencias",
-                column: "ObraId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Ocorrencias_UsuarioId",
-                table: "Ocorrencias",
-                column: "UsuarioId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Profissionais_NumeroRegistro",
@@ -356,13 +371,20 @@ namespace CREA.Insfrastructure.Migrations
                 column: "UsuarioId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RegistrosDiarios_ObraId",
-                table: "RegistrosDiarios",
+                name: "IX_Proprietarios_UsuarioId",
+                table: "Proprietarios",
+                column: "UsuarioId",
+                unique: true,
+                filter: "[UsuarioId] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RelatosVisita_ObraId",
+                table: "RelatosVisita",
                 column: "ObraId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RegistrosDiarios_UsuarioId",
-                table: "RegistrosDiarios",
+                name: "IX_RelatosVisita_UsuarioId",
+                table: "RelatosVisita",
                 column: "UsuarioId");
 
             migrationBuilder.CreateIndex(
@@ -390,7 +412,7 @@ namespace CREA.Insfrastructure.Migrations
                 name: "Anexos");
 
             migrationBuilder.DropTable(
-                name: "AssinaturasDigitais");
+                name: "Assinaturas");
 
             migrationBuilder.DropTable(
                 name: "LogsAuditoria");
@@ -399,16 +421,16 @@ namespace CREA.Insfrastructure.Migrations
                 name: "TermosConclusao");
 
             migrationBuilder.DropTable(
-                name: "Ocorrencias");
-
-            migrationBuilder.DropTable(
-                name: "RegistrosDiarios");
+                name: "RelatosVisita");
 
             migrationBuilder.DropTable(
                 name: "Obras");
 
             migrationBuilder.DropTable(
                 name: "Profissionais");
+
+            migrationBuilder.DropTable(
+                name: "Proprietarios");
 
             migrationBuilder.DropTable(
                 name: "Usuarios");

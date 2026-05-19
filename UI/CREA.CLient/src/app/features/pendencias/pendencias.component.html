@@ -1,153 +1,63 @@
 <div class="page-container">
   <app-page-header
     title="Pendências"
-    subtitle="Termos e registros aguardando sua assinatura"
+    subtitle="Obras, relatos e termos aguardando sua assinatura"
     icon="pending_actions"
   />
 
   @if (loading()) {
     <div class="flex justify-center py-16"><mat-spinner /></div>
-  } @else if (pendentes().length === 0 && registrosPendentes().length === 0) {
+  } @else if (pendentes().length === 0) {
     <app-empty-state
       icon="check_circle"
       message="Nenhuma pendência"
-      description="Todos os termos e registros estão assinados."
+      description="Todas as assinaturas sob sua responsabilidade foram concluídas."
     />
   } @else {
-    <!-- Termos de Conclusão -->
-    @if (pendentes().length > 0) {
+    @if (obrasPendentes().length > 0) {
       <h2 class="text-lg font-semibold text-slate-700 mb-3 flex items-center gap-2">
-        <mat-icon class="text-orange-500">description</mat-icon>
-        Termos de Conclusão ({{ pendentes().length }})
+        <mat-icon class="text-amber-600">construction</mat-icon>
+        Obras ({{ obrasPendentes().length }})
       </h2>
       <div class="space-y-4 mb-8">
-        @for (t of pendentes(); track t.id) {
+        @for (p of obrasPendentes(); track p.entidadeId + '-' + p.tipoAssinante) {
           <mat-card>
             <mat-card-content class="p-4 sm:p-5">
-              <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                <div class="min-w-0 flex-1">
-                  <div class="mb-2 flex flex-wrap items-center gap-2 sm:gap-3">
-                    <mat-icon class="shrink-0 text-orange-500">description</mat-icon>
-                    <a
-                      [routerLink]="['/obras', t.obraId]"
-                      class="min-w-0 flex-1 text-lg font-semibold text-slate-800 no-underline hover:text-blue-600 sm:flex-none"
-                    >
-                      {{ t.nomeObra }}
-                    </a>
-                  </div>
-                  <p class="text-sm text-slate-600 mb-2">{{ t.descricao }}</p>
-                  <div class="flex flex-wrap gap-4 text-xs text-slate-500">
-                    <span><strong>Conclusão:</strong> {{ t.dataConclusao | date: 'dd/MM/yyyy' }}</span>
-                    <span><strong>Profissional:</strong> {{ t.nomeProfissional }}</span>
-                    <span><strong>Emitido em:</strong> {{ t.criadoEm | date: 'dd/MM/yyyy' }}</span>
-                  </div>
-
-                  <div class="mt-3 flex items-center gap-2">
-                    <span
-                      class="text-xs px-2.5 py-1 rounded-full font-medium"
-                      [class]="
-                        t.assinadoPeloResponsavel
-                          ? 'bg-green-100 text-green-700'
-                          : 'bg-yellow-100 text-yellow-700'
-                      "
-                    >
-                      Responsável: {{ t.assinadoPeloResponsavel ? 'Assinado ✓' : 'Pendente' }}
-                    </span>
-                    <span
-                      class="text-xs px-2.5 py-1 rounded-full font-medium"
-                      [class]="
-                        t.assinadoPeloAdmin
-                          ? 'bg-green-100 text-green-700'
-                          : 'bg-yellow-100 text-yellow-700'
-                      "
-                    >
-                      Administrador: {{ t.assinadoPeloAdmin ? 'Assinado ✓' : 'Pendente' }}
-                    </span>
-                  </div>
-
-                  @if (t.assinaturas.length > 0) {
-                    <div class="mt-3 text-xs text-slate-400">
-                      @for (a of t.assinaturas; track a.id) {
-                        <div class="flex items-center gap-1">
-                          <p>
-                            {{ a.nomeUsuario }} ({{ a.tipoAssinante }}) —
-                            {{ a.dataAssinatura | date: 'dd/MM/yyyy HH:mm' }}
-                          </p>
-                          @if (a.imagemAssinatura) {
-                            <button mat-icon-button class="!w-10 !h-10" (click)="verAssinatura(a)">
-                              <mat-icon class="text-blue-600 !text-md">draw</mat-icon>
-                            </button>
-                          }
-                        </div>
-                      }
-                    </div>
-                  }
-                </div>
-
-                @if (podeAssinar(t)) {
-                  <button
-                    mat-flat-button
-                    color="primary"
-                    class="w-full shrink-0 sm:w-auto"
-                    (click)="assinar(t)"
-                  >
-                    <mat-icon>draw</mat-icon> Assinar
-                  </button>
-                }
-              </div>
+              <ng-container
+                *ngTemplateOutlet="pendenteCard; context: { $implicit: p, obraLink: p.entidadeId }"
+              />
             </mat-card-content>
           </mat-card>
         }
       </div>
     }
 
-    <!-- Registros Diários -->
+    @if (termosPendentes().length > 0) {
+      <h2 class="text-lg font-semibold text-slate-700 mb-3 flex items-center gap-2">
+        <mat-icon class="text-orange-500">description</mat-icon>
+        Termos de Conclusão ({{ termosPendentes().length }})
+      </h2>
+      <div class="space-y-4 mb-8">
+        @for (p of termosPendentes(); track p.entidadeId + '-' + p.tipoAssinante) {
+          <mat-card>
+            <mat-card-content class="p-4 sm:p-5">
+              <ng-container *ngTemplateOutlet="pendenteCard; context: { $implicit: p }" />
+            </mat-card-content>
+          </mat-card>
+        }
+      </div>
+    }
+
     @if (registrosPendentes().length > 0) {
       <h2 class="text-lg font-semibold text-slate-700 mb-3 flex items-center gap-2">
         <mat-icon class="text-blue-500">edit_note</mat-icon>
-        Registros Diários ({{ registrosPendentes().length }})
+        Relatos de Visita ({{ registrosPendentes().length }})
       </h2>
       <div class="space-y-4">
-        @for (r of registrosPendentes(); track r.id) {
+        @for (p of registrosPendentes(); track p.entidadeId + '-' + p.tipoAssinante) {
           <mat-card>
             <mat-card-content class="p-4 sm:p-5">
-              <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                <div class="min-w-0 flex-1">
-                  <div class="mb-2 flex flex-wrap items-center gap-2 sm:gap-3">
-                    <mat-icon class="shrink-0 text-blue-500">edit_note</mat-icon>
-                    <a
-                      [routerLink]="['/obras', r.obraId]"
-                      class="min-w-0 flex-1 text-lg font-semibold text-slate-800 no-underline hover:text-blue-600 sm:flex-none"
-                    >
-                      {{ r.nomeObra }}
-                    </a>
-                    <span class="shrink-0 rounded bg-slate-200 px-1.5 py-0.5 text-xs text-slate-600"
-                      >#{{ r.numeroSequencial }}</span
-                    >
-                  </div>
-                  <p class="text-sm text-slate-600 mb-2 line-clamp-2">{{ r.atividades }}</p>
-                  <div class="flex flex-wrap gap-4 text-xs text-slate-500">
-                    <span><strong>Data:</strong> {{ r.data | date: 'dd/MM/yyyy' }}</span>
-                    <span><strong>Equipe:</strong> {{ r.equipePresente }}</span>
-                    <span><strong>Registrado por:</strong> {{ r.nomeUsuario }}</span>
-                  </div>
-
-                  <div class="mt-3">
-                    <span class="text-xs px-2.5 py-1 rounded-full font-medium bg-yellow-100 text-yellow-700">
-                      Assinatura Pendente
-                    </span>
-                  </div>
-                </div>
-
-                <button
-                  mat-flat-button
-                  color="primary"
-                  class="w-full shrink-0 sm:w-auto"
-                  (click)="assinarRegistro(r)"
-                >
-                  <mat-icon>draw</mat-icon> Assinar
-                </button>
-              </div>
+              <ng-container *ngTemplateOutlet="pendenteCard; context: { $implicit: p }" />
             </mat-card-content>
           </mat-card>
         }
@@ -155,3 +65,42 @@
     }
   }
 </div>
+
+<ng-template #pendenteCard let-p let-obraLink="obraLink">
+  <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+    <div class="min-w-0 flex-1">
+      <div class="mb-2 flex flex-wrap items-center gap-2 sm:gap-3">
+        <mat-icon class="shrink-0" [class]="corEntidade(p.tipoEntidade)">{{
+          iconeEntidade(p.tipoEntidade)
+        }}</mat-icon>
+        @if (obraLink) {
+          <a
+            [routerLink]="['/obras', obraLink]"
+            class="min-w-0 flex-1 text-lg font-semibold text-slate-800 no-underline hover:text-blue-600"
+          >
+            {{ p.titulo }}
+          </a>
+        } @else {
+          <span class="text-lg font-semibold text-slate-800">{{ p.titulo }}</span>
+        }
+      </div>
+      @if (p.subtitulo) {
+        <p class="text-sm text-slate-600 mb-2">{{ p.subtitulo }}</p>
+      }
+      <div class="flex flex-wrap gap-4 text-xs text-slate-500">
+        <span><strong>Tipo:</strong> {{ labelEntidade(p.tipoEntidade) }}</span>
+        <span><strong>Sua assinatura:</strong> {{ labelAssinante(p) }}</span>
+        <span><strong>Desde:</strong> {{ p.criadoEm | date: 'dd/MM/yyyy' }}</span>
+      </div>
+      <div class="mt-3">
+        <span class="text-xs px-2.5 py-1 rounded-full font-medium bg-yellow-100 text-yellow-700">
+          Assinatura pendente — {{ labelAssinante(p) }}
+        </span>
+      </div>
+    </div>
+
+    <button mat-flat-button color="primary" class="w-full shrink-0 sm:w-auto" (click)="assinar(p)">
+      <mat-icon>draw</mat-icon> Assinar
+    </button>
+  </div>
+</ng-template>

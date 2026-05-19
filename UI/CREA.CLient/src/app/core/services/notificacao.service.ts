@@ -1,28 +1,16 @@
 import { Injectable, signal, inject } from '@angular/core';
-import { TermoConclusaoService } from './termo-conclusao.service';
-import { TermoConclusaoDto } from '../../shared/models/api.models';
-import { RegistroDiarioService } from './registro-diario.service';
-import { forkJoin } from 'rxjs';
+import { AssinaturaService } from './assinatura.service';
 
 @Injectable({ providedIn: 'root' })
 export class NotificacaoService {
-  private readonly termoService = inject(TermoConclusaoService);
-  private readonly registroService = inject(RegistroDiarioService);
+  private readonly assinaturaService = inject(AssinaturaService);
 
-  pendentes = signal<TermoConclusaoDto[]>([]);
   count = signal(0);
 
   carregarMeusPendentes() {
-    forkJoin({
-      termos: this.termoService.meusPendentes(),
-      registros: this.registroService.pendentesAssinatura(),
-    }).subscribe({
-      next: ({ termos, registros }) => {
-        this.pendentes.set(termos);
-
-        const total = termos.length + registros.length;
-        this.count.set(total);
-      },
+    this.assinaturaService.pendentes().subscribe({
+      next: (list) => this.count.set(list.length),
+      error: () => this.count.set(0),
     });
   }
 }

@@ -49,6 +49,8 @@ export class UsuarioFormComponent implements OnInit {
       label: TIPO_USUARIO_LABELS[TipoUsuario.ResponsavelTecnico],
     },
     { value: TipoUsuario.Admin, label: TIPO_USUARIO_LABELS[TipoUsuario.Admin] },
+    { value: TipoUsuario.UsuarioCrea, label: TIPO_USUARIO_LABELS[TipoUsuario.UsuarioCrea] },
+    { value: TipoUsuario.Proprietario, label: TIPO_USUARIO_LABELS[TipoUsuario.Proprietario] },
   ];
 
   form = this.fb.nonNullable.group({

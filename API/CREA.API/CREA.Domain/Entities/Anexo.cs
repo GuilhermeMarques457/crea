@@ -11,11 +11,8 @@ public class Anexo : BaseEntity
     public Guid? ObraId { get; set; }
     public Obra? Obra { get; set; }
 
-    public Guid? RegistroDiarioId { get; set; }
-    public RegistroDiario? RegistroDiario { get; set; }
-
-    public Guid? OcorrenciaId { get; set; }
-    public Ocorrencia? Ocorrencia { get; set; }
+    public Guid? RelatoVisitaId { get; set; }
+    public RelatoVisita? RelatoVisita { get; set; }
 
     public Guid UsuarioId { get; set; }
     public Usuario Usuario { get; set; } = null!;
