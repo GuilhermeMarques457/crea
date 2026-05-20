@@ -84,8 +84,12 @@ export class SignaturePadDialogComponent implements AfterViewInit, OnDestroy {
 
   confirmar() {
     if (this.signaturePad.isEmpty()) return;
-    const dataUrl = this.signaturePad.toDataURL('image/png');
-    this.dialogRef.close(dataUrl);
+    const canvas = this.canvasRef.nativeElement;
+    canvas.toBlob((blob) => {
+      if (!blob) return;
+      const file = new File([blob], 'assinatura.png', { type: 'image/png' });
+      this.dialogRef.close(file);
+    }, 'image/png');
   }
 
   cancelar() {

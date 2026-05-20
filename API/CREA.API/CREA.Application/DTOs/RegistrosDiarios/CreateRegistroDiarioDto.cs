@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using CREA.Domain.Enums;
 
-namespace CREA.Application.DTOs.RegistrosDiarios;
+namespace CREA.Application.DTOs.RelatoVisita;
 
 public class CreateRelatoVisitaDto
 {

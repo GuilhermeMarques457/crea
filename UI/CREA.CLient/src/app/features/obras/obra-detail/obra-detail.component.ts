@@ -150,6 +150,7 @@ export class ObraDetailComponent implements OnInit {
     });
     this.assinaturaService.porEntidade(TipoEntidadeAssinatura.Obra, id).subscribe({
       next: (list) => {
+        console.log('Assinaturas da obra:', list);
         this.assinaturasObra.set(list);
         if (assinar === 'obra' && this.podeAssinarObra()) this.assinarObra();
       },
@@ -220,13 +221,13 @@ export class ObraDetailComponent implements OnInit {
       disableClose: true,
     });
 
-    dialogRef.afterClosed().subscribe((imagemAssinatura: string | null) => {
-      if (!imagemAssinatura) return;
+    dialogRef.afterClosed().subscribe((arquivo: File | null) => {
+      if (!arquivo) return;
       this.assinaturaService
         .assinar({
           tipoEntidade,
           entidadeId,
-          imagemAssinatura,
+          imagemAssinatura: arquivo,
           navegador: typeof navigator !== 'undefined' ? navigator.userAgent : undefined,
         })
         .subscribe({
@@ -271,7 +272,7 @@ export class ObraDetailComponent implements OnInit {
         nomeUsuario: a.nomeUsuario,
         tipoAssinante: labelTipoAssinante(a.tipoAssinante),
         dataAssinatura: a.dataAssinatura,
-        imagemAssinatura: a.imagemAssinatura,
+        imagemAssinatura: a.urlImagemAssinatura,
       },
     });
   }

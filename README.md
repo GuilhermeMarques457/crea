@@ -90,7 +90,7 @@ O frontend utiliza **Angular Standalone Components** com lazy loading por rota, 
 - Filtros por status (Em Andamento, Concluída, Suspensa, Cancelada), profissional responsável e criador
 - Detalhamento completo da obra com todos os seus registros, anexos e assinaturas
 
-### Registros Diários de Visita
+### Relato de Visita de Visita
 
 - Registro sequencial e numerado de visitas à obra
 - Informações por visita: data, atividades realizadas, equipe presente, condição climática, observações, decisões técnicas e posição da obra
@@ -102,7 +102,7 @@ O frontend utiliza **Angular Standalone Components** com lazy loading por rota, 
 - Hash de integridade da assinatura
 - Rastreamento completo: IP do assinante, User-Agent, navegador, sistema operacional e tipo de dispositivo
 - Tipos de assinante: Responsável Técnico, Proprietário, Fiscal do CREA
-- Entidades assinadas: Obras, Registros Diários, Termos de Conclusão
+- Entidades assinadas: Obras, Relato de Visita, Termos de Conclusão
 - Lista de assinaturas pendentes por usuário logado
 
 ### Termo de Conclusão de Obra
@@ -112,7 +112,7 @@ O frontend utiliza **Angular Standalone Components** com lazy loading por rota, 
 
 ### Anexos
 
-- Upload de arquivos (fotos, plantas, documentos) vinculados à obra ou a registros diários
+- Upload de arquivos (fotos, plantas, documentos) vinculados à obra ou a relato de visita
 - Servidos via endpoint estático `/uploads`
 
 ### Relatórios
@@ -135,7 +135,7 @@ O frontend utiliza **Angular Standalone Components** com lazy loading por rota, 
 - CRUD de usuários do sistema
 - Tipos de usuário: Administrador, Responsável Técnico, Usuário CREA, Proprietário
 
-### Pendências
+### Assinaturas
 
 - Painel centralizado com todas as assinaturas pendentes do usuário logado
 
@@ -295,7 +295,7 @@ UI/CREA.CLient/src/app/
 │   ├── profissionais/              # CRUD de profissionais
 │   ├── proprietarios/              # CRUD de proprietários
 │   ├── usuarios/                   # CRUD de usuários
-│   ├── pendencias/                 # Painel de assinaturas pendentes
+│   ├── assinaturas/                 # Painel de assinaturas pendentes
 │   ├── relatorios/                 # Visualização e download de relatórios
 │   └── auditoria/                  # Log de auditoria (admin)
 ├── layout/
@@ -321,12 +321,12 @@ Todos os endpoints (exceto `/api/auth/login` e `/api/auth/registrar`) requerem a
 | `POST`   | `/api/obras`                                  | Criar obra                        |
 | `PUT`    | `/api/obras/{id}`                             | Atualizar obra                    |
 | `DELETE` | `/api/obras/{id}`                             | Excluir obra                      |
-| `GET`    | `/api/registrosdiarios/por-obra/{obraId}`     | Registros de uma obra             |
-| `POST`   | `/api/registrosdiarios`                       | Criar registro diário             |
-| `PUT`    | `/api/registrosdiarios/{id}`                  | Atualizar registro                |
-| `DELETE` | `/api/registrosdiarios/{id}`                  | Excluir registro                  |
+| `GET`    | `/api/relatovisita/por-obra/{obraId}`         | Registros de uma obra             |
+| `POST`   | `/api/relatovisita`                           | Criar registro diário             |
+| `PUT`    | `/api/relatovisita/{id}`                      | Atualizar registro                |
+| `DELETE` | `/api/relatovisita/{id}`                      | Excluir registro                  |
 | `GET`    | `/api/assinaturas/por-entidade`               | Assinaturas de uma entidade       |
-| `GET`    | `/api/assinaturas/pendentes`                  | Pendências do usuário logado      |
+| `GET`    | `/api/assinaturas/pendentes`                  | Assinaturas do usuário logado     |
 | `POST`   | `/api/assinaturas`                            | Registrar assinatura digital      |
 | `GET`    | `/api/anexos/por-obra/{obraId}`               | Anexos de uma obra                |
 | `POST`   | `/api/anexos`                                 | Fazer upload de anexo             |
@@ -357,12 +357,12 @@ Todos os endpoints (exceto `/api/auth/login` e `/api/auth/registrar`) requerem a
 
 ## Papéis de Usuário
 
-| Papel                | Descrição                                                            |
-| -------------------- | -------------------------------------------------------------------- |
-| `Administrador`      | Acesso total, incluindo auditoria e gestão de usuários               |
-| `ResponsavelTecnico` | Cria e gerencia obras, registros diários, termos e assina documentos |
-| `UsuarioCrea`        | Fiscal do CREA, pode visualizar e assinar documentos                 |
-| `Proprietario`       | Acesso à sua própria obra e coleta de assinatura                     |
+| Papel                | Descrição                                                           |
+| -------------------- | ------------------------------------------------------------------- |
+| `Administrador`      | Acesso total, incluindo auditoria e gestão de usuários              |
+| `ResponsavelTecnico` | Cria e gerencia obras, relato de visita, termos e assina documentos |
+| `UsuarioCrea`        | Fiscal do CREA, pode visualizar e assinar documentos                |
+| `Proprietario`       | Acesso à sua própria obra e coleta de assinatura                    |
 
 ---
 
@@ -373,7 +373,7 @@ Em ambiente de desenvolvimento, na primeira execução a API popula automaticame
 - Usuários para cada papel (Administrador, Responsável Técnico, Usuário CREA e Proprietário)
 - Profissionais cadastrados
 - Proprietários cadastrados
-- Obras de exemplo com registros diários
+- Obras de exemplo com relato de visita
 
 As credenciais dos usuários de seed são exibidas nos logs da aplicação na inicialização.
 

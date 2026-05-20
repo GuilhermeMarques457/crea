@@ -72,7 +72,7 @@ export class RelatoriosComponent implements OnInit {
   statCards = () =>
     this.relatorio()
       ? [
-          { label: 'Registros Diários', value: this.relatorio()!.totalRegistrosDiarios },
+          { label: 'Relato de Visita', value: this.relatorio()!.totalRelatoVisita },
           { label: 'Anexos', value: this.relatorio()!.totalAnexos },
           { label: 'Termo Conclusão', value: this.relatorio()!.possuiTermoConclusao ? '✓' : '–' },
         ]
@@ -140,7 +140,7 @@ export class RelatoriosComponent implements OnInit {
         nomeUsuario: a.nomeUsuario,
         tipoAssinante: labelTipoAssinante(a.tipoAssinante),
         dataAssinatura: a.dataAssinatura,
-        imagemAssinatura: a.imagemAssinatura,
+        imagemAssinatura: a.urlImagemAssinatura,
       },
     });
   }

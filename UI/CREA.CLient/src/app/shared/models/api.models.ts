@@ -229,7 +229,7 @@ export interface CreateProprietarioDto {
   usuarioId: string;
 }
 
-// Registros Diários
+// Relato de Visita
 export interface RelatoVisitaDto {
   id: string;
   obraId: string;
@@ -291,6 +291,7 @@ export interface AssinaturaDto {
   nomeUsuario: string;
   hashAssinatura: string;
   dataAssinatura: string;
+  urlImagemAssinatura: string;
   imagemAssinatura: string;
   ipAssinante: string;
   userAgent: string;
@@ -302,7 +303,7 @@ export interface AssinaturaDto {
 export interface CreateAssinaturaDto {
   tipoEntidade: TipoEntidadeAssinatura;
   entidadeId: string;
-  imagemAssinatura: string;
+  imagemAssinatura: File;
   navegador?: string;
   sistemaOperacional?: string;
   dispositivo?: string;
@@ -407,7 +408,7 @@ export interface RelatorioObraDto {
   dataPrevisaoTermino?: string;
   nomeProfissionalResponsavel: string;
   numeroRegistroProfissional: string;
-  totalRegistrosDiarios: number;
+  totalRelatoVisita: number;
   totalAnexos: number;
   possuiTermoConclusao: boolean;
   dataConclusao?: string;
@@ -422,7 +423,7 @@ export interface RelatorioObraDto {
   termoDeclaracaoTexto?: string;
   assinaturasObra: AssinaturaDto[];
   assinaturasTermo: AssinaturaDto[];
-  registrosDiarios: RelatoVisitaDto[];
+  relatoVisita: RelatoVisitaDto[];
   geradoEm: string;
 }
 

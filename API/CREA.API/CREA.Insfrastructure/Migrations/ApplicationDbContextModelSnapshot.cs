@@ -714,13 +714,13 @@ namespace CREA.Infrastructure.Migrations
             modelBuilder.Entity("CREA.Domain.Entities.RelatoVisita", b =>
                 {
                     b.HasOne("CREA.Domain.Entities.Obra", "Obra")
-                        .WithMany("RegistrosDiarios")
+                        .WithMany("RelatoVisita")
                         .HasForeignKey("ObraId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("CREA.Domain.Entities.Usuario", "Usuario")
-                        .WithMany("RegistrosDiarios")
+                        .WithMany("RelatoVisita")
                         .HasForeignKey("UsuarioId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -753,7 +753,7 @@ namespace CREA.Infrastructure.Migrations
                 {
                     b.Navigation("Anexos");
 
-                    b.Navigation("RegistrosDiarios");
+                    b.Navigation("RelatoVisita");
 
                     b.Navigation("TermoConclusao");
                 });
@@ -783,7 +783,7 @@ namespace CREA.Infrastructure.Migrations
 
                     b.Navigation("Proprietario");
 
-                    b.Navigation("RegistrosDiarios");
+                    b.Navigation("RelatoVisita");
                 });
 #pragma warning restore 612, 618
         }

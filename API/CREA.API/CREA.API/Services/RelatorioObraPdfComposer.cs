@@ -1,5 +1,5 @@
 using CREA.Application.DTOs.Assinaturas;
-using CREA.Application.DTOs.RegistrosDiarios;
+using CREA.Application.DTOs.RelatoVisita;
 using CREA.Application.DTOs.Relatorios;
 using CREA.Domain.Enums;
 using QuestPDF.Fluent;
@@ -13,14 +13,14 @@ public static class RelatorioObraPdfComposer
     static RelatorioObraPdfComposer() =>
         QuestPDF.Settings.License = LicenseType.Community;
 
-    public static byte[] Generate(RelatorioObraDto r) =>
+    public static byte[] Generate(RelatorioObraDto r, string assinaturasPath) =>
         Document.Create(d => d.Page(page =>
         {
             page.Size(PageSizes.A4);
             page.Margin(36);
             page.DefaultTextStyle(x => x.FontSize(10).FontColor(Colors.Black));
             page.Header().Element(c => DrawHeader(c, r));
-            page.Content().Element(c => DrawBody(c, r));
+            page.Content().Element(c => DrawBody(c, r, assinaturasPath));
             page.Footer().AlignCenter().DefaultTextStyle(x => x.FontSize(8).FontColor(Colors.Grey.Darken1)).Text(t =>
             {
                 t.CurrentPageNumber();
@@ -39,7 +39,7 @@ public static class RelatorioObraPdfComposer
         });
     }
 
-    private static void DrawBody(IContainer container, RelatorioObraDto r)
+    private static void DrawBody(IContainer container, RelatorioObraDto r, string assinaturasPath)
     {
         container.PaddingVertical(12).Column(col =>
         {
@@ -50,7 +50,7 @@ public static class RelatorioObraPdfComposer
             col.Item().Row(row =>
             {
                 row.Spacing(12);
-                row.RelativeItem().Element(c => DrawMetric(c, "Registros diários", r.TotalRegistrosDiarios.ToString()));
+                row.RelativeItem().Element(c => DrawMetric(c, "Relato de visita", r.TotalRelatoVisita.ToString()));
                 row.RelativeItem().Element(c => DrawMetric(c, "Anexos (arquivos)", r.TotalAnexos.ToString()));
                 row.RelativeItem().Element(c => DrawMetric(c, "Status", StatusObraPt(r.Status)));
             });
@@ -72,7 +72,7 @@ public static class RelatorioObraPdfComposer
             else
             {
                 foreach (var a in r.AssinaturasObra)
-                    col.Item().Element(c => AssinaturaItem(c, a));
+                    col.Item().Element(c => AssinaturaItem(c, a, assinaturasPath));
             }
 
             if (r.PossuiTermoConclusao)
@@ -104,18 +104,18 @@ public static class RelatorioObraPdfComposer
                 else
                 {
                     foreach (var a in r.AssinaturasTermo)
-                        col.Item().Element(c => AssinaturaItem(c, a));
+                        col.Item().Element(c => AssinaturaItem(c, a, assinaturasPath));
                 }
             }
 
-            col.Item().Text("Registros diários").SemiBold().FontSize(12);
-            var regs = r.RegistrosDiarios.ToList();
+            col.Item().Text("Relato de visita").SemiBold().FontSize(12);
+            var regs = r.RelatoVisita.ToList();
             if (regs.Count == 0)
                 col.Item().Text("Nenhum registro diário.").Italic().FontColor(Colors.Grey.Darken1);
             else
             {
                 foreach (var reg in regs.OrderBy(x => x.NumeroSequencial))
-                    col.Item().Element(c => RelatoVisitaBlock(c, reg));
+                    col.Item().Element(c => RelatoVisitaBlock(c, reg, assinaturasPath));
             }         
         });
     }
@@ -153,7 +153,7 @@ public static class RelatorioObraPdfComposer
         });
     }
 
-    private static void AssinaturaItem(IContainer container, AssinaturaDto a)
+    private static void AssinaturaItem(IContainer container, AssinaturaDto a, string assinaturasPath)
     {
         container.Border(1).BorderColor(Colors.Grey.Lighten2).Padding(10).Column(col =>
         {
@@ -164,7 +164,7 @@ public static class RelatorioObraPdfComposer
                 col.Item().Text($"IP: {a.IpAssinante}").FontSize(8).FontColor(Colors.Grey.Darken1);
             if (!string.IsNullOrWhiteSpace(a.Navegador))
                 col.Item().Text($"Navegador: {a.Navegador}").FontSize(8).FontColor(Colors.Grey.Darken1);
-            var img = DecodeImage(a.ImagemAssinatura);
+            var img = ReadImageFile(assinaturasPath, a.ImagemAssinatura);
             if (img is { Length: > 0 })
                 col.Item().Width(260).Image(img).FitArea();
         });
@@ -178,7 +178,7 @@ public static class RelatorioObraPdfComposer
         _ => t.ToString()
     };
 
-    private static void RelatoVisitaBlock(IContainer container, RelatoVisitaDto reg)
+    private static void RelatoVisitaBlock(IContainer container, RelatoVisitaDto reg, string assinaturasPath)
     {
         container.Border(1).BorderColor(Colors.Blue.Lighten4).Padding(10).Column(col =>
         {
@@ -207,7 +207,7 @@ public static class RelatorioObraPdfComposer
             {
                 col.Item().Text("Assinaturas digitais").SemiBold().FontSize(9);
                 foreach (var assinatura in reg.Assinaturas)
-                    col.Item().Element(c => AssinaturaItem(c, assinatura));
+                    col.Item().Element(c => AssinaturaItem(c, assinatura, assinaturasPath));
             }
 
             col.Item().Text($"Registrado por: {reg.NomeUsuario}").FontSize(8).FontColor(Colors.Grey.Darken1);
@@ -230,16 +230,14 @@ public static class RelatorioObraPdfComposer
             c.Item().Text(value).FontSize(10);
         });
 
-    private static byte[]? DecodeImage(string? raw)
+    private static byte[]? ReadImageFile(string assinaturasPath, string? fileName)
     {
-        if (string.IsNullOrWhiteSpace(raw)) return null;
-        var s = raw.Trim();
-        var comma = s.IndexOf(',');
-        if (s.StartsWith("data:", StringComparison.OrdinalIgnoreCase) && comma > 0)
-            s = s[(comma + 1)..];
+        if (string.IsNullOrWhiteSpace(fileName)) return null;
+        var path = Path.Combine(assinaturasPath, fileName);
+        if (!File.Exists(path)) return null;
         try
         {
-            return Convert.FromBase64String(s);
+            return File.ReadAllBytes(path);
         }
         catch
         {

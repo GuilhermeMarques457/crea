@@ -1,3 +1,4 @@
+using Azure.Core;
 using CREA.Application.DTOs.Assinaturas;
 using CREA.Application.DTOs.TermosConclusao;
 using CREA.Application.Interfaces.Repositories;
@@ -110,11 +111,11 @@ public class TermosConclusaoController(
             AssinadoPeloProfissional = assinadoProfissional,
             AssinadoPeloProprietario = assinadoProprietario,
             Concluido = assinadoProfissional && assinadoProprietario,
-            Assinaturas = assinaturas.Select(MapAssinatura).ToList()
+            Assinaturas = assinaturas.Select(x => MapAssinatura(x, Request)).ToList()
         };
     }
 
-    internal static AssinaturaDto MapAssinatura(Assinatura a) => new()
+    internal static AssinaturaDto MapAssinatura(Assinatura a, HttpRequest request) => new()
     {
         Id = a.Id,
         TipoEntidade = a.TipoEntidade,
@@ -129,6 +130,7 @@ public class TermosConclusaoController(
         UserAgent = a.UserAgent,
         Navegador = a.Navegador,
         SistemaOperacional = a.SistemaOperacional,
-        Dispositivo = a.Dispositivo
+        Dispositivo = a.Dispositivo,
+        UrlImagemAssinatura = $"{request.Scheme}://{request.Host}/api/assinaturas/imagem/{a.Id}",
     };
 }

@@ -7,7 +7,11 @@
 
   <mat-card class="mb-6 no-print">
     <mat-card-content class="p-4 sm:p-5">
-      <form [formGroup]="form" (ngSubmit)="gerar()" class="flex flex-col gap-4 sm:flex-row sm:flex-wrap">
+      <form
+        [formGroup]="form"
+        (ngSubmit)="gerar()"
+        class="flex flex-col gap-4 sm:flex-row sm:flex-wrap"
+      >
         <mat-form-field appearance="outline" class="min-w-0 w-full flex-1 sm:min-w-64">
           <mat-label>Selecione a Obra</mat-label>
           <mat-select formControlName="obraId">
@@ -23,9 +27,6 @@
           [disabled]="loading() || form.invalid"
           class="h-14 w-full shrink-0 sm:w-auto"
         >
-          @if (loading()) {
-            <mat-spinner diameter="18" class="inline-block mr-2"></mat-spinner>
-          }
           <mat-icon>assessment</mat-icon> Gerar Relatório
         </button>
       </form>
@@ -56,12 +57,6 @@
                 [disabled]="pdfLoading()"
                 (click)="exportarPdf()"
               >
-                @if (pdfLoading()) {
-                  <mat-spinner diameter="18" class="inline-block mr-2"></mat-spinner>
-                } @else {
-                  <mat-icon class="mr-2">download</mat-icon>
-                }
-              
                 {{ pdfLoading() ? 'Gerando PDF...' : 'Baixar PDF completo' }}
               </button>
             </div>
@@ -218,7 +213,8 @@
                     : 'bg-yellow-100 text-yellow-700'
                 "
               >
-                Proprietário: {{ relatorio()!.assinadoPeloProprietario ? 'Assinado ✓' : 'Pendente' }}
+                Proprietário:
+                {{ relatorio()!.assinadoPeloProprietario ? 'Assinado ✓' : 'Pendente' }}
               </span>
               <span
                 class="text-xs px-2.5 py-1 rounded-full font-medium"
@@ -251,7 +247,9 @@
                   >
                     <div>
                       <span class="font-medium text-slate-800">{{ a.nomeUsuario }}</span>
-                      <span class="text-xs text-slate-500 ml-2">({{ labelAssinante(a.tipoAssinante) }})</span>
+                      <span class="text-xs text-slate-500 ml-2"
+                        >({{ labelAssinante(a.tipoAssinante) }})</span
+                      >
                     </div>
                     <div class="flex items-center gap-2">
                       <span class="text-slate-500">{{
@@ -278,13 +276,13 @@
         </mat-card>
       }
 
-      <!-- Registros Diários -->
-      @if (relatorio() != null && relatorio()!.registrosDiarios!.length) {
+      <!-- Relato de Visita -->
+      @if (relatorio() != null && relatorio()!.relatoVisita!.length) {
         <mat-card>
-          <mat-card-header><mat-card-title>Registros Diários</mat-card-title></mat-card-header>
+          <mat-card-header><mat-card-title>Relato de Visita</mat-card-title></mat-card-header>
           <mat-card-content class="p-0">
             <div class="divide-y divide-slate-100">
-              @for (r of relatorio()!.registrosDiarios; track r.id) {
+              @for (r of relatorio()!.relatoVisita; track r.id) {
                 <div class="px-5 py-3">
                   <div class="mb-1 flex flex-col gap-1 sm:flex-row sm:justify-between sm:gap-2">
                     <span class="font-medium text-slate-800">

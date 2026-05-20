@@ -1471,10 +1471,10 @@
         }
       }
     },
-    "/api/RegistrosDiarios/por-obra/{obraId}": {
+    "/api/RelatoVisita/por-obra/{obraId}": {
       "get": {
         "tags": [
-          "RegistrosDiarios"
+          "RelatoVisita"
         ],
         "parameters": [
           {
@@ -1520,10 +1520,10 @@
         }
       }
     },
-    "/api/RegistrosDiarios/por-obra/{obraId}/periodo": {
+    "/api/RelatoVisita/por-obra/{obraId}/periodo": {
       "get": {
         "tags": [
-          "RegistrosDiarios"
+          "RelatoVisita"
         ],
         "parameters": [
           {
@@ -1585,10 +1585,10 @@
         }
       }
     },
-    "/api/RegistrosDiarios/{id}": {
+    "/api/RelatoVisita/{id}": {
       "get": {
         "tags": [
-          "RegistrosDiarios"
+          "RelatoVisita"
         ],
         "parameters": [
           {
@@ -1626,7 +1626,7 @@
       },
       "put": {
         "tags": [
-          "RegistrosDiarios"
+          "RelatoVisita"
         ],
         "parameters": [
           {
@@ -1666,7 +1666,7 @@
       },
       "delete": {
         "tags": [
-          "RegistrosDiarios"
+          "RelatoVisita"
         ],
         "parameters": [
           {
@@ -1686,10 +1686,10 @@
         }
       }
     },
-    "/api/RegistrosDiarios": {
+    "/api/RelatoVisita": {
       "post": {
         "tags": [
-          "RegistrosDiarios"
+          "RelatoVisita"
         ],
         "requestBody": {
           "content": {
@@ -3256,7 +3256,7 @@
             "type": "string",
             "nullable": true
           },
-          "totalRegistrosDiarios": {
+          "totalRelatoVisita": {
             "type": "integer",
             "format": "int32"
           },
@@ -3319,7 +3319,7 @@
             },
             "nullable": true
           },
-          "registrosDiarios": {
+          "relatoVisita": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/RelatoVisitaDto"
@@ -3580,7 +3580,7 @@
       "name": "Proprietarios"
     },
     {
-      "name": "RegistrosDiarios"
+      "name": "RelatoVisita"
     },
     {
       "name": "Relatorios"

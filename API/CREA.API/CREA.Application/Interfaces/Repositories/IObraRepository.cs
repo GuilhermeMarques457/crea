@@ -11,4 +11,5 @@ public interface IObraRepository : IRepository<Obra>
     Task<IEnumerable<Obra>> GetByStatusAsync(StatusObra status);
     Task<IEnumerable<Obra>> GetByUsuarioCriadorAsync(Guid usuarioId);
     Task<bool> ExisteObraAtivaComProprietarioAsync(Guid proprietarioId);
+    Task<bool> ExisteObraAtivaComProfissionalAsync(Guid profissionalId);
 }

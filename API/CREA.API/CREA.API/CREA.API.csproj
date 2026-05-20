@@ -25,4 +25,9 @@
     <ProjectReference Include="..\CREA.Insfrastructure\CREA.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="uploads\" />
+    <Folder Include="uploads\assinaturas\" />
+  </ItemGroup>
+
 </Project>

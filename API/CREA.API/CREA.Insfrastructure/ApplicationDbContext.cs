@@ -103,11 +103,11 @@ public class ApplicationDbContext(
             e.Property(u => u.Id)
                  .HasColumnName("RelatoVisitaId");
             e.HasOne(r => r.Obra)
-             .WithMany(o => o.RegistrosDiarios)
+             .WithMany(o => o.RelatoVisita)
              .HasForeignKey(r => r.ObraId)
              .OnDelete(DeleteBehavior.Cascade);
             e.HasOne(r => r.Usuario)
-             .WithMany(u => u.RegistrosDiarios)
+             .WithMany(u => u.RelatoVisita)
              .HasForeignKey(r => r.UsuarioId)
              .OnDelete(DeleteBehavior.Restrict);
         });

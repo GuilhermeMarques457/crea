@@ -58,7 +58,7 @@ import moment from 'moment';
     DatePipe,
     PageHeaderComponent,
   ],
-  templateUrl: `./registro-form.component.html`,
+  templateUrl: `./relato-form.component.html`,
 })
 export class RelatoVisitaFormComponent implements OnInit {
   readonly TipoAssinante = TipoAssinante;
@@ -258,13 +258,13 @@ export class RelatoVisitaFormComponent implements OnInit {
       width: '560px',
       disableClose: true,
     });
-    dialogRef.afterClosed().subscribe((imagemAssinatura: string | null) => {
-      if (!imagemAssinatura) return;
+    dialogRef.afterClosed().subscribe((arquivo: File | null) => {
+      if (!arquivo) return;
       this.assinaturaService
         .assinar({
           tipoEntidade: TipoEntidadeAssinatura.RelatoVisita,
           entidadeId: this.editId!,
-          imagemAssinatura,
+          imagemAssinatura: arquivo,
           navegador: typeof navigator !== 'undefined' ? navigator.userAgent : undefined,
         })
         .subscribe({
@@ -286,7 +286,7 @@ export class RelatoVisitaFormComponent implements OnInit {
         nomeUsuario: a.nomeUsuario,
         tipoAssinante: labelTipoAssinante(a.tipoAssinante),
         dataAssinatura: a.dataAssinatura,
-        imagemAssinatura: a.imagemAssinatura,
+        imagemAssinatura: a.urlImagemAssinatura,
       },
     });
   }

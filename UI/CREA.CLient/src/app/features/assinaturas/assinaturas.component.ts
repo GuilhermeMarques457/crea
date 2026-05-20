@@ -23,7 +23,7 @@ import {
 import { labelTipoAssinante, TIPO_ENTIDADE_LABELS } from '../../shared/utils/assinatura.utils';
 
 @Component({
-  selector: 'app-pendencias',
+  selector: 'app-assinaturas',
   standalone: true,
   imports: [
     NgTemplateOutlet,
@@ -37,9 +37,9 @@ import { labelTipoAssinante, TIPO_ENTIDADE_LABELS } from '../../shared/utils/ass
     PageHeaderComponent,
     EmptyStateComponent,
   ],
-  templateUrl: './pendencias.component.html',
+  templateUrl: './assinaturas.component.html',
 })
-export class PendenciasComponent implements OnInit {
+export class AssinaturasComponent implements OnInit {
   private readonly assinaturaService = inject(AssinaturaService);
   private readonly notificacaoService = inject(NotificacaoService);
   private readonly toast = inject(ToastService);
@@ -147,8 +147,8 @@ export class PendenciasComponent implements OnInit {
       disableClose: true,
     });
 
-    dialogRef.afterClosed().subscribe((imagemAssinatura: string | null) => {
-      if (!imagemAssinatura) return;
+    dialogRef.afterClosed().subscribe((arquivo: File | null) => {
+      if (!arquivo) return;
 
       const navegador = typeof navigator !== 'undefined' ? navigator.userAgent : undefined;
 
@@ -156,7 +156,7 @@ export class PendenciasComponent implements OnInit {
         .assinar({
           tipoEntidade: pendente.tipoEntidade,
           entidadeId: pendente.entidadeId,
-          imagemAssinatura,
+          imagemAssinatura: arquivo,
           navegador,
         })
         .subscribe({

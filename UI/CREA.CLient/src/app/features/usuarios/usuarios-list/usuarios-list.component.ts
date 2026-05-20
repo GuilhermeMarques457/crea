@@ -18,6 +18,7 @@ import { DatePipe } from '@angular/common';
 import { forkJoin } from 'rxjs';
 import { UsuarioService } from '../../../core/services/usuario.service';
 import { ProprietarioService } from '../../../core/services/proprietario.service';
+import { ProfissionalService } from '../../../core/services/profissional.service';
 import { UsuarioDto, TIPO_USUARIO_LABELS, TipoUsuario } from '../../../shared/models/api.models';
 import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
 import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
@@ -48,6 +49,7 @@ import { ToastService } from '../../../core/services/toast.service';
 export class UsuariosListComponent implements OnInit {
   private readonly service = inject(UsuarioService);
   private readonly proprietarioService = inject(ProprietarioService);
+  private readonly profissionalService = inject(ProfissionalService);
   private readonly dialog = inject(MatDialog);
   private readonly toast = inject(ToastService);
   private readonly breakpoint = inject(BreakpointObserver);
@@ -61,6 +63,8 @@ export class UsuariosListComponent implements OnInit {
   usuarios = signal<UsuarioDto[]>([]);
   /** IDs de usuários do tipo Proprietário que ainda não têm cadastro de proprietário vinculado */
   semCadastroIds = signal<Set<string>>(new Set());
+  /** IDs de usuários do tipo ResponsavelTecnico que ainda não têm profissional vinculado */
+  semCadastroProfissionalIds = signal<Set<string>>(new Set());
   search = '';
 
   displayedColumns = computed(() =>
@@ -72,12 +76,18 @@ export class UsuariosListComponent implements OnInit {
   semCadastroCount = computed(
     () =>
       this.usuarios().filter(
-        (u) => u.tipoUsuario === TipoUsuario.Proprietario && this.semCadastroIds().has(u.id),
+        (u) =>
+          (u.tipoUsuario === TipoUsuario.Proprietario && this.semCadastroIds().has(u.id)) ||
+          (u.tipoUsuario === TipoUsuario.ResponsavelTecnico &&
+            this.semCadastroProfissionalIds().has(u.id)),
       ).length,
   );
 
   semCadastro = (u: UsuarioDto) =>
     u.tipoUsuario === TipoUsuario.Proprietario && this.semCadastroIds().has(u.id);
+
+  semCadastroProfissional = (u: UsuarioDto) =>
+    u.tipoUsuario === TipoUsuario.ResponsavelTecnico && this.semCadastroProfissionalIds().has(u.id);
 
   filtered = () => {
     const q = this.search.toLowerCase();
@@ -92,18 +102,37 @@ export class UsuariosListComponent implements OnInit {
     forkJoin({
       usuarios: this.service.listar(),
       proprietarios: this.proprietarioService.listar(),
+      profissionais: this.profissionalService.listar(),
     }).subscribe({
-      next: ({ usuarios, proprietarios }) => {
+      next: ({ usuarios, proprietarios, profissionais }) => {
         this.usuarios.set(usuarios);
-        const vinculados = new Set(
+        const vinculadosProprietario = new Set(
           proprietarios.filter((p) => p.usuarioId).map((p) => p.usuarioId!),
         );
-        const semCadastro = new Set(
-          usuarios
-            .filter((u) => u.tipoUsuario === TipoUsuario.Proprietario && !vinculados.has(u.id))
-            .map((u) => u.id),
+        this.semCadastroIds.set(
+          new Set(
+            usuarios
+              .filter(
+                (u) =>
+                  u.tipoUsuario === TipoUsuario.Proprietario && !vinculadosProprietario.has(u.id),
+              )
+              .map((u) => u.id),
+          ),
         );
-        this.semCadastroIds.set(semCadastro);
+        const vinculadosProfissional = new Set(
+          profissionais.filter((p) => p.usuarioId).map((p) => p.usuarioId!),
+        );
+        this.semCadastroProfissionalIds.set(
+          new Set(
+            usuarios
+              .filter(
+                (u) =>
+                  u.tipoUsuario === TipoUsuario.ResponsavelTecnico &&
+                  !vinculadosProfissional.has(u.id),
+              )
+              .map((u) => u.id),
+          ),
+        );
         this.loading.set(false);
       },
       error: () => this.loading.set(false),

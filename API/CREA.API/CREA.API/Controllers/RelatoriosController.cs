@@ -1,5 +1,5 @@
 using CREA.API.Services;
-using CREA.Application.DTOs.RegistrosDiarios;
+using CREA.Application.DTOs.RelatoVisita;
 using CREA.Application.DTOs.Relatorios;
 using CREA.Application.Interfaces.Repositories;
 using CREA.Domain.Enums;
@@ -16,7 +16,8 @@ public class RelatoriosController(
     IRelatoVisitaRepository registroDiarioRepository,
     IAnexoRepository anexoRepository,
     ITermoConclusaoRepository termoConclusaoRepository,
-    IAssinaturaRepository assinaturaRepository) : ControllerBase
+    IAssinaturaRepository assinaturaRepository,
+    IWebHostEnvironment env) : ControllerBase
 {
     [HttpGet("obra/{obraId:guid}")]
     public async Task<ActionResult<RelatorioObraDto>> GetRelatorioObra(Guid obraId)
@@ -32,7 +33,8 @@ public class RelatoriosController(
         if (relatorio is null)
             return NotFound(new { mensagem = "Obra não encontrada." });
 
-        var bytes = RelatorioObraPdfComposer.Generate(relatorio);
+        var bytes = RelatorioObraPdfComposer.Generate(relatorio,
+            Path.Combine(env.ContentRootPath, "uploads", "assinaturas"));
         var safeName = string.Join("_", relatorio.NomeObra.Split(Path.GetInvalidFileNameChars(), StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
             .Trim();
         if (string.IsNullOrEmpty(safeName))
@@ -89,7 +91,7 @@ public class RelatoriosController(
                 AssinadoPeloProfissional = assinaturasRelato.Any(a => a.TipoAssinante == TipoAssinante.Profissional),
                 AssinadoPeloProprietario = assinaturasRelato.Any(a => a.TipoAssinante == TipoAssinante.Proprietario),
                 QuantidadeAnexos = r.Anexos?.Count(a => a.Ativo) ?? 0,
-                Assinaturas = assinaturasRelato.Select(TermosConclusaoController.MapAssinatura).ToList()
+                Assinaturas = assinaturasRelato.Select(x => TermosConclusaoController.MapAssinatura(x, Request)).ToList()
             });
         }
 
@@ -120,7 +122,7 @@ public class RelatoriosController(
             DataPrevisaoTermino = obra.DataPrevisaoTermino,
             NomeProfissionalResponsavel = obra.ProfissionalResponsavel?.Nome ?? string.Empty,
             NumeroRegistroProfissional = obra.ProfissionalResponsavel?.NumeroRegistro ?? string.Empty,
-            TotalRegistrosDiarios = registros.Count,
+            TotalRelatoVisita = registros.Count,
             TotalAnexos = anexos.Count,
             PossuiTermoConclusao = termo is not null,
             DataConclusao = termo?.DataConclusao,
@@ -133,9 +135,9 @@ public class RelatoriosController(
             TermoObservacoes = termo?.Observacoes,
             TermoLocalObra = termo?.LocalObra,
             TermoDeclaracaoTexto = termo?.DeclaracaoTexto,
-            AssinaturasObra = assinaturasObra.Select(TermosConclusaoController.MapAssinatura).ToList(),
-            AssinaturasTermo = assinaturasTermo.Select(TermosConclusaoController.MapAssinatura).ToList(),
-            RegistrosDiarios = registrosDto,
+            AssinaturasObra = assinaturasObra.Select(x => TermosConclusaoController.MapAssinatura(x, Request)).ToList(),
+            AssinaturasTermo = assinaturasTermo.Select(x => TermosConclusaoController.MapAssinatura(x, Request)).ToList(),
+            RelatoVisita = registrosDto,
             GeradoEm = DateTime.UtcNow
         };
     }

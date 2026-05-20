@@ -31,7 +31,7 @@ public class AssinaturasController(
             return NotFound(new { mensagem = "Entidade não encontrada." });
 
         var assinaturas = await assinaturaRepository.GetByEntidadeAsync(tipoEntidade, entidadeId);
-        return Ok(assinaturas.Select(ToDto));
+        return Ok(assinaturas.Select(a => ToDto(a, Request)));
     }
 
     [HttpGet("pendentes")]
@@ -55,12 +55,32 @@ public class AssinaturasController(
         return Ok(minhas);
     }
 
+    [HttpGet("imagem/{id:guid}")]
+    [AllowAnonymous]
+    public async Task<IActionResult> GetImagem(Guid id)
+    {
+        var assinatura = await assinaturaRepository.GetByIdAsync(id);
+        if (assinatura is null) return NotFound();
+
+        var caminho = Path.Combine(Directory.GetCurrentDirectory(), "uploads", "assinaturas", assinatura.ImagemAssinatura);
+        if (!System.IO.File.Exists(caminho))
+            return NotFound(new { mensagem = "Imagem não encontrada no servidor." });
+
+        var bytes = await System.IO.File.ReadAllBytesAsync(caminho);
+        var contentType = assinatura.ImagemAssinatura.EndsWith(".png") ? "image/png" : "image/jpeg";
+        return File(bytes, contentType);
+    }
+
     [HttpPost]
     [Authorize(Roles = "ResponsavelTecnico,UsuarioCrea,Proprietario")]
-    public async Task<ActionResult<AssinaturaDto>> Assinar([FromBody] CreateAssinaturaDto dto)
+    public async Task<ActionResult<AssinaturaDto>> Assinar([FromForm] CreateAssinaturaDto dto)
     {
-        if (string.IsNullOrWhiteSpace(dto.ImagemAssinatura))
+        if (dto.ImagemAssinatura is null || dto.ImagemAssinatura.Length == 0)
             return BadRequest(new { mensagem = "A imagem da assinatura é obrigatória." });
+
+        var tiposImagemPermitidos = new[] { "image/jpeg", "image/png", "image/gif", "image/webp" };
+        if (!tiposImagemPermitidos.Contains(dto.ImagemAssinatura.ContentType))
+            return BadRequest(new { mensagem = "Tipo de imagem não permitido. Use JPEG, PNG, GIF ou WebP." });
 
         var usuarioId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         var usuario = await usuarioRepository.GetByIdAsync(usuarioId);
@@ -85,6 +105,13 @@ public class AssinaturasController(
         var userAgent = Request.Headers.UserAgent.ToString();
         var (navegadorUa, sistemaUa, dispositivoUa) = UserAgentInfo.Parse(userAgent);
 
+        var nomeArquivo = $"{Guid.NewGuid()}{Path.GetExtension(dto.ImagemAssinatura.FileName)}";
+        var pasta = Path.Combine(Directory.GetCurrentDirectory(), "uploads", "assinaturas");
+        Directory.CreateDirectory(pasta);
+        var caminhoArquivo = Path.Combine(pasta, nomeArquivo);
+        await using (var stream = new FileStream(caminhoArquivo, FileMode.Create))
+            await dto.ImagemAssinatura.CopyToAsync(stream);
+
         var assinatura = new Assinatura
         {
             TipoEntidade = dto.TipoEntidade,
@@ -93,10 +120,10 @@ public class AssinaturasController(
             UsuarioId = usuarioId,
             HashAssinatura = hash,
             DataAssinatura = dataAssinatura,
-            ImagemAssinatura = dto.ImagemAssinatura,
+            ImagemAssinatura = nomeArquivo,
             IpAssinante = ip,
             UserAgent = userAgent.Length > 512 ? userAgent[..512] : userAgent,
-            Navegador =  navegadorUa,
+            Navegador = navegadorUa,
             SistemaOperacional = dto.SistemaOperacional ?? sistemaUa,
             Dispositivo = dto.Dispositivo ?? dispositivoUa
         };
@@ -104,7 +131,7 @@ public class AssinaturasController(
         await assinaturaRepository.AddAsync(assinatura);
 
         var criada = await assinaturaRepository.GetByEntidadeETipoAssinanteAsync(dto.TipoEntidade, dto.EntidadeId, tipoAssinante);
-        return CreatedAtAction(nameof(GetPorEntidade), new { tipoEntidade = dto.TipoEntidade, entidadeId = dto.EntidadeId }, ToDto(criada!));
+        return CreatedAtAction(nameof(GetPorEntidade), new { tipoEntidade = dto.TipoEntidade, entidadeId = dto.EntidadeId }, ToDto(criada!, Request));
     }
 
     private static bool TryObterTipoAssinante(TipoUsuario tipoUsuario, out TipoAssinante tipoAssinante) =>
@@ -197,7 +224,7 @@ public class AssinaturasController(
         return termo is not null && proprietario is not null && termo.Obra.ProprietarioId == proprietario.Id;
     }
 
-    private static AssinaturaDto ToDto(Assinatura a) => new()
+    private static AssinaturaDto ToDto(Assinatura a, HttpRequest request) => new()
     {
         Id = a.Id,
         TipoEntidade = a.TipoEntidade,
@@ -207,10 +234,11 @@ public class AssinaturasController(
         NomeUsuario = a.Usuario?.Nome ?? string.Empty,
         HashAssinatura = a.HashAssinatura,
         DataAssinatura = a.DataAssinatura,
-        ImagemAssinatura = a.ImagemAssinatura,
+        UrlImagemAssinatura = $"{request.Scheme}://{request.Host}/api/assinaturas/imagem/{a.Id}",
         IpAssinante = a.IpAssinante,
         UserAgent = a.UserAgent,
         Navegador = a.Navegador,
+        ImagemAssinatura = a.ImagemAssinatura,
         SistemaOperacional = a.SistemaOperacional,
         Dispositivo = a.Dispositivo
     };

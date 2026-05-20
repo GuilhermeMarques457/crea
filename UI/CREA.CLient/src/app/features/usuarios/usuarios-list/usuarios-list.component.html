@@ -6,23 +6,46 @@
   </app-page-header>
 
   @if (semCadastroCount() > 0) {
-    <div
-      class="mb-4 flex items-start gap-3 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-amber-800"
-    >
-      <mat-icon class="mt-0.5 shrink-0 text-amber-500">warning</mat-icon>
-      <div class="min-w-0 flex-1 text-sm">
-        <p class="font-semibold">
-          {{ semCadastroCount() }} usuário{{ semCadastroCount() > 1 ? 's' : '' }} do tipo
-          Proprietário sem cadastro vinculado
-        </p>
-        <p class="mt-0.5 text-amber-700">
-          Esses usuários não conseguirão assinar documentos como proprietário.
-          <a routerLink="/proprietarios/novo" class="ml-1 font-medium underline"
-            >Cadastrar proprietário →</a
-          >
-        </p>
+    @if (semCadastroIds().size > 0) {
+      <div
+        class="mb-4 flex items-start gap-3 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-amber-800"
+      >
+        <mat-icon class="mt-0.5 shrink-0 text-amber-500">warning</mat-icon>
+        <div class="min-w-0 flex-1 text-sm">
+          <p class="font-semibold">
+            {{ semCadastroIds().size }} usuário{{ semCadastroIds().size > 1 ? 's' : '' }} do tipo
+            Proprietário sem cadastro vinculado
+          </p>
+          <p class="mt-0.5 text-amber-700">
+            Esses usuários não conseguirão assinar documentos como proprietário.
+            <a routerLink="/proprietarios/novo" class="ml-1 font-medium underline"
+              >Cadastrar proprietário →</a
+            >
+          </p>
+        </div>
       </div>
-    </div>
+    }
+    @if (semCadastroProfissionalIds().size > 0) {
+      <div
+        class="mb-4 flex items-start gap-3 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-amber-800"
+      >
+        <mat-icon class="mt-0.5 shrink-0 text-amber-500">warning</mat-icon>
+        <div class="min-w-0 flex-1 text-sm">
+          <p class="font-semibold">
+            {{ semCadastroProfissionalIds().size }} usuário{{
+              semCadastroProfissionalIds().size > 1 ? 's' : ''
+            }}
+            do tipo Responsável Técnico sem profissional vinculado
+          </p>
+          <p class="mt-0.5 text-amber-700">
+            Esses usuários não conseguirão assinar documentos como responsável técnico.
+            <a routerLink="/profissionais/novo" class="ml-1 font-medium underline"
+              >Cadastrar profissional →</a
+            >
+          </p>
+        </div>
+      </div>
+    }
   }
 
   <mat-card class="mb-4">
@@ -89,6 +112,17 @@
                       class="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-700"
                       [matTooltip]="
                         'Usuário do tipo Proprietário sem cadastro de proprietário vinculado'
+                      "
+                    >
+                      <mat-icon class="!h-3.5 !w-3.5 !text-[14px]">warning</mat-icon>
+                      Sem cadastro
+                    </span>
+                  }
+                  @if (semCadastroProfissional(u)) {
+                    <span
+                      class="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-700"
+                      [matTooltip]="
+                        'Usuário do tipo Responsável Técnico sem profissional vinculado'
                       "
                     >
                       <mat-icon class="!h-3.5 !w-3.5 !text-[14px]">warning</mat-icon>

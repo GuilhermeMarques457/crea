@@ -30,7 +30,7 @@ public static class DatabaseSeeder
         // ----------------------------------------------------------------
         var usuarioAdmin = new Usuario
         {
-            Id = Guid.Parse("00000000-0000-0000-0000-000000000001"),
+            Id =Guid.NewGuid(),
             Nome = "Administrador CREA",
             Email = "admin@crea.com",
             SenhaHash = HashSenha("Admin@123"),
@@ -40,7 +40,7 @@ public static class DatabaseSeeder
 
         var usuarioEngenheiro = new Usuario
         {
-            Id = Guid.Parse("00000000-0000-0000-0000-000000000002"),
+            Id =Guid.NewGuid(),
             Nome = "Carlos Engenheiro",
             Email = "carlos@crea.com",
             SenhaHash = HashSenha("Crea@123"),
@@ -50,7 +50,7 @@ public static class DatabaseSeeder
 
         var usuarioOperacional = new Usuario
         {
-            Id = Guid.Parse("00000000-0000-0000-0000-000000000003"),
+            Id =Guid.NewGuid(),
             Nome = "João Operacional",
             Email = "joao@crea.com",
             SenhaHash = HashSenha("Crea@123"),
@@ -60,7 +60,7 @@ public static class DatabaseSeeder
 
         var usuarioArquiteta = new Usuario
         {
-            Id = Guid.Parse("00000000-0000-0000-0000-000000000004"),
+            Id =Guid.NewGuid(),
             Nome = "Ana Arquiteta",
             Email = "ana@crea.com",
             SenhaHash = HashSenha("Crea@123"),
@@ -70,7 +70,7 @@ public static class DatabaseSeeder
 
         var usuarioCrea = new Usuario
         {
-            Id = Guid.Parse("00000000-0000-0000-0000-000000000005"),
+            Id =Guid.NewGuid(),
             Nome = "Fiscal CREA",
             Email = "crea@crea.com",
             SenhaHash = HashSenha("Crea@123"),
@@ -80,7 +80,7 @@ public static class DatabaseSeeder
 
         var usuarioProprietarioTech = new Usuario
         {
-            Id = Guid.Parse("00000000-0000-0000-0000-000000000006"),
+            Id =Guid.NewGuid(),
             Nome = "Tech Solutions S.A.",
             Email = "proprietario.tech@empresa.com",
             SenhaHash = HashSenha("Crea@123"),
@@ -97,7 +97,7 @@ public static class DatabaseSeeder
         // ----------------------------------------------------------------
         var profissionalCarlos = new Profissional
         {
-            Id = Guid.Parse("00000000-0000-0000-0000-000000000011"),
+            Id =Guid.NewGuid(),
             Nome = "Carlos Engenheiro",
             Cpf = "123.456.789-00",
             NumeroRegistro = "CREA-SP 123456",
@@ -112,7 +112,7 @@ public static class DatabaseSeeder
 
         var profissionalAna = new Profissional
         {
-            Id = Guid.Parse("00000000-0000-0000-0000-000000000012"),
+            Id = Guid.NewGuid(),
             Nome = "Ana Arquiteta",
             Cpf = "987.654.321-00",
             NumeroRegistro = "CAU-SP 654321",
@@ -133,7 +133,7 @@ public static class DatabaseSeeder
         // ----------------------------------------------------------------
         var proprietarioRoberto = new Proprietario
         {
-            Id = Guid.Parse("00000000-0000-0000-0000-000000000031"),
+            Id =Guid.NewGuid(),
             Nome = "Roberto Silva",
             Cpf = string.Empty,
             Email = string.Empty,
@@ -143,7 +143,7 @@ public static class DatabaseSeeder
 
         var proprietarioAlpha = new Proprietario
         {
-            Id = Guid.Parse("00000000-0000-0000-0000-000000000032"),
+            Id =Guid.NewGuid(),
             Nome = "Construtora Alpha Ltda",
             Cpf = string.Empty,
             Email = string.Empty,
@@ -153,7 +153,7 @@ public static class DatabaseSeeder
 
         var proprietarioTech = new Proprietario
         {
-            Id = Guid.Parse("00000000-0000-0000-0000-000000000033"),
+            Id =Guid.NewGuid(),
             Nome = "Tech Solutions S.A.",
             Cpf = string.Empty,
             Email = "proprietario.tech@empresa.com",
@@ -170,7 +170,7 @@ public static class DatabaseSeeder
         // ----------------------------------------------------------------
         var obraResidencial = new Obra
         {
-            Id = Guid.Parse("00000000-0000-0000-0000-000000000021"),
+            Id =Guid.NewGuid(),
             Nome = "Residência Família Silva",
             Endereco = "Rua das Flores, 123",
             Cidade = "São Paulo",
@@ -199,7 +199,7 @@ public static class DatabaseSeeder
 
         var obraComercial = new Obra
         {
-            Id = Guid.Parse("00000000-0000-0000-0000-000000000022"),
+            Id =Guid.NewGuid(),
             Nome = "Edifício Comercial Centro",
             Endereco = "Av. Paulista, 1000",
             Cidade = "São Paulo",
@@ -228,7 +228,7 @@ public static class DatabaseSeeder
 
         var obraConcluida = new Obra
         {
-            Id = Guid.Parse("00000000-0000-0000-0000-000000000023"),
+            Id =Guid.NewGuid(),
             Nome = "Reforma Escritório Jardins",
             Endereco = "Rua Haddock Lobo, 500",
             Cidade = "São Paulo",

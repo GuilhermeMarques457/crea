@@ -45,4 +45,7 @@ public class ObraRepository(ApplicationDbContext context) : Repository<Obra>(con
 
     public async Task<bool> ExisteObraAtivaComProprietarioAsync(Guid proprietarioId) =>
         await _dbSet.AnyAsync(o => o.ProprietarioId == proprietarioId && o.Ativo);
+
+    public async Task<bool> ExisteObraAtivaComProfissionalAsync(Guid profissionalId) =>
+        await _dbSet.AnyAsync(o => o.ProfissionalResponsavelId == profissionalId && o.Ativo);
 }

@@ -1,5 +1,5 @@
 using CREA.Application.DTOs.Assinaturas;
-using CREA.Application.DTOs.RegistrosDiarios;
+using CREA.Application.DTOs.RelatoVisita;
 using CREA.Domain.Enums;
 
 namespace CREA.Application.DTOs.Relatorios;
@@ -26,7 +26,7 @@ public class RelatorioObraDto
     public DateTime? DataPrevisaoTermino { get; set; }
     public string NomeProfissionalResponsavel { get; set; } = string.Empty;
     public string NumeroRegistroProfissional { get; set; } = string.Empty;
-    public int TotalRegistrosDiarios { get; set; }
+    public int TotalRelatoVisita { get; set; }
     public int TotalAnexos { get; set; }
     public bool PossuiTermoConclusao { get; set; }
     public DateTime? DataConclusao { get; set; }
@@ -43,6 +43,6 @@ public class RelatorioObraDto
 
     public List<AssinaturaDto> AssinaturasObra { get; set; } = [];
     public List<AssinaturaDto> AssinaturasTermo { get; set; } = [];
-    public IEnumerable<RelatoVisitaDto> RegistrosDiarios { get; set; } = [];
+    public IEnumerable<RelatoVisitaDto> RelatoVisita { get; set; } = [];
     public DateTime GeradoEm { get; set; } = DateTime.UtcNow;
 }

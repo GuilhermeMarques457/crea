@@ -49,9 +49,9 @@ const NAV_ITEMS: NavItem[] = [
     roles: [TipoUsuario.Admin],
   },
   {
-    label: 'Pendências',
-    icon: 'pending_actions',
-    route: '/pendencias',
+    label: 'Assinaturas',
+    icon: 'draw',
+    route: '/assinaturas',
     roles: [TipoUsuario.ResponsavelTecnico, TipoUsuario.UsuarioCrea, TipoUsuario.Proprietario],
     badge: true,
   },
@@ -95,10 +95,7 @@ export class SidebarComponent implements OnInit {
 
   ngOnInit() {
     const tipo = this.userType();
-    if (
-      tipo === TipoUsuario.Proprietario ||
-      tipo === TipoUsuario.UsuarioCrea
-    ) {
+    if (tipo === TipoUsuario.Proprietario || tipo === TipoUsuario.UsuarioCrea) {
       this.notificacaoService.carregarMeusPendentes();
     } else if (tipo !== undefined) {
       this.notificacaoService.carregarMeusPendentes();

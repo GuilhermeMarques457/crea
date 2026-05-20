@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using CREA.Domain.Enums;
+using Microsoft.AspNetCore.Http;
 
 namespace CREA.Application.DTOs.Assinaturas;
 
@@ -12,7 +13,7 @@ public class CreateAssinaturaDto
     public Guid EntidadeId { get; set; }
 
     [Required]
-    public string ImagemAssinatura { get; set; } = string.Empty;
+    public IFormFile ImagemAssinatura { get; set; } = null!;
 
     public string? Navegador { get; set; }
     public string? SistemaOperacional { get; set; }

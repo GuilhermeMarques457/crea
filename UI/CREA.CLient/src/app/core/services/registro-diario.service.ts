@@ -6,7 +6,7 @@ import { environment } from '../../../environments/environment';
 @Injectable({ providedIn: 'root' })
 export class RelatoVisitaService {
   private readonly http = inject(HttpClient);
-  private readonly base = `${environment.apiUrl}/api/RegistrosDiarios`;
+  private readonly base = `${environment.apiUrl}/api/RelatoVisita`;
 
   porObra(obraId: string) {
     return this.http.get<RelatoVisitaDto[]>(`${this.base}/por-obra/${obraId}`);

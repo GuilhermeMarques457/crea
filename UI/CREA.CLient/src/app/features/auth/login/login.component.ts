@@ -57,7 +57,7 @@ export class LoginComponent {
           const destino =
             res.tipoUsuario === TipoUsuario.Proprietario ||
             res.tipoUsuario === TipoUsuario.UsuarioCrea
-              ? '/pendencias'
+              ? '/assinaturas'
               : '/dashboard';
           this.router.navigate([destino]);
         }

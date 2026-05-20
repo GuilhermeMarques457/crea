@@ -1,7 +1,7 @@
 using CREA.Application.DTOs.Assinaturas;
 using CREA.Domain.Enums;
 
-namespace CREA.Application.DTOs.RegistrosDiarios;
+namespace CREA.Application.DTOs.RelatoVisita;
 
 public class RelatoVisitaDto
 {

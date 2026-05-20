@@ -28,6 +28,13 @@ export class AssinaturaService {
   }
 
   assinar(dto: CreateAssinaturaDto) {
-    return this.http.post<AssinaturaDto>(this.base, dto);
+    const form = new FormData();
+    form.append('tipoEntidade', String(dto.tipoEntidade));
+    form.append('entidadeId', dto.entidadeId);
+    form.append('imagemAssinatura', dto.imagemAssinatura);
+    if (dto.navegador) form.append('navegador', dto.navegador);
+    if (dto.sistemaOperacional) form.append('sistemaOperacional', dto.sistemaOperacional);
+    if (dto.dispositivo) form.append('dispositivo', dto.dispositivo);
+    return this.http.post<AssinaturaDto>(this.base, form);
   }
 }

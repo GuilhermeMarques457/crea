@@ -42,7 +42,7 @@ public class Obra : BaseEntity
     public Guid UsuarioCriadorId { get; set; }
     public Usuario UsuarioCriador { get; set; } = null!;
 
-    public ICollection<RelatoVisita> RegistrosDiarios { get; set; } = [];
+    public ICollection<RelatoVisita> RelatoVisita { get; set; } = [];
     public ICollection<Anexo> Anexos { get; set; } = [];
     public TermoConclusao? TermoConclusao { get; set; }
 }

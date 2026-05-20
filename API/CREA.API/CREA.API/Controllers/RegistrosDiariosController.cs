@@ -1,5 +1,5 @@
 using System.Security.Claims;
-using CREA.Application.DTOs.RegistrosDiarios;
+using CREA.Application.DTOs.RelatoVisita;
 using CREA.Application.Interfaces.Repositories;
 using CREA.Domain.Entities;
 using CREA.Domain.Enums;
@@ -12,7 +12,7 @@ namespace CREA.API.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Authorize]
-public class RegistrosDiariosController(
+public class RelatoVisitaController(
     IRelatoVisitaRepository registroDiarioRepository,
     IObraRepository obraRepository,
     IAssinaturaRepository assinaturaRepository) : ControllerBase
@@ -161,7 +161,7 @@ public class RegistrosDiariosController(
             AssinadoPeloProfissional = assinadoProfissional,
             AssinadoPeloProprietario = assinadoProprietario,
             QuantidadeAnexos = r.Anexos?.Count(a => a.Ativo) ?? 0,
-            Assinaturas = assinaturas.Select(MapAssinatura).ToList()
+            Assinaturas = assinaturas.Select(x => MapAssinatura(x, Request)).ToList()
         };
     }
 }
