@@ -17,14 +17,7 @@ public class CreateTermoConclusaoDto
 
     public string? Observacoes { get; set; }
 
-    public string? Empresa { get; set; }
-    public string? Proprietario { get; set; }
-    public string? TelefoneProprietario { get; set; }
-    public string? LocalObra { get; set; }
     public string? DeclaracaoTexto { get; set; }
     public string? LocalDeclaracao { get; set; }
     public DateTime? DataDeclaracao { get; set; }
-
-    [Required]
-    public Guid ProfissionalId { get; set; }
 }

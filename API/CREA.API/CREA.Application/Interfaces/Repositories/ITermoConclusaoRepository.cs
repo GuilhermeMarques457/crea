@@ -6,4 +6,6 @@ public interface ITermoConclusaoRepository : IRepository<TermoConclusao>
 {
     Task<TermoConclusao?> GetByObraAsync(Guid obraId);
     Task<bool> ObraPossuiTermoAsync(Guid obraId);
+    Task<TermoConclusao?> GetByIdWithDetailsAsync(Guid termoId);
+
 }

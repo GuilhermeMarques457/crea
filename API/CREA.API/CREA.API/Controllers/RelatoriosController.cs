@@ -133,7 +133,6 @@ public class RelatoriosController(
             TermoNumero = termo?.NumeroTermo,
             TermoDescricao = termo?.Descricao,
             TermoObservacoes = termo?.Observacoes,
-            TermoLocalObra = termo?.LocalObra,
             TermoDeclaracaoTexto = termo?.DeclaracaoTexto,
             AssinaturasObra = assinaturasObra.Select(x => TermosConclusaoController.MapAssinatura(x, Request)).ToList(),
             AssinaturasTermo = assinaturasTermo.Select(x => TermosConclusaoController.MapAssinatura(x, Request)).ToList(),

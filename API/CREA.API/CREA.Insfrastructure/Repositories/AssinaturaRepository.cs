@@ -94,8 +94,6 @@ public class AssinaturaRepository(ApplicationDbContext context)
 
             var termos = await context.TermosConclusao
                 .Include(t => t.Obra)
-                .Include(t => t.Profissional)
-                .Where(t => t.Ativo && t.Profissional.UsuarioId == usuarioId)
                 .ToListAsync();
 
             foreach (var termo in termos)

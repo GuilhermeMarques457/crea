@@ -15,8 +15,6 @@ import { NotificacaoService } from '../../../core/services/notificacao.service';
 import { ProfissionalDto } from '../../../shared/models/api.models';
 import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
 import { ToastService } from '../../../core/services/toast.service';
-import { PhoneBrMaskDirective } from '../../../shared/directives/phone-br-mask.directive';
-import { phoneBrDigitsValidator } from '../../../shared/validators/phone-br.validator';
 import moment from 'moment';
 
 @Component({
@@ -33,40 +31,33 @@ import moment from 'moment';
     MatDatepickerModule,
     MatProgressSpinnerModule,
     PageHeaderComponent,
-    PhoneBrMaskDirective,
   ],
   templateUrl: `./termo-form.component.html`,
 })
 export class TermoFormComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly service = inject(TermoConclusaoService);
-  private readonly profissionalService = inject(ProfissionalService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly toast = inject(ToastService);
   private readonly notificacaoService = inject(NotificacaoService);
 
   saving = signal(false);
-  profissionais = signal<ProfissionalDto[]>([]);
   private obraId!: string;
 
   form = this.fb.nonNullable.group({
-    dataConclusao: [null as any, Validators.required],
-    profissionalId: ['', Validators.required],
+    dataConclusao: [moment() as any, Validators.required],
     descricao: ['', Validators.required],
     observacoes: [''],
     numeroTermo: [null as number | null],
-    empresa: [''],
-    proprietario: [''],
-    telefoneProprietario: ['', [phoneBrDigitsValidator(true)]],
-    localObra: [''],
-    declaracaoTexto: ['Nós, abaixo assinados, proprietário e profissional responsável, pela execução da obra acima apontada declaramos que temos ainda conhecimento na íntegra das sanções prescritas nas Legislações Federal, Estadual e Municipal vigentes.'],
+    declaracaoTexto: [
+      'Nós, abaixo assinados, proprietário e profissional responsável, pela execução da obra acima apontada declaramos que temos ainda conhecimento na íntegra das sanções prescritas nas Legislações Federal, Estadual e Municipal vigentes.',
+    ],
     localDeclaracao: [''],
   });
 
   ngOnInit() {
     this.obraId = this.route.snapshot.paramMap.get('obraId')!;
-    this.profissionalService.listar().subscribe((p) => this.profissionais.set(p));
   }
 
   submit() {
@@ -82,7 +73,6 @@ export class TermoFormComponent implements OnInit {
       dataConclusao: val.dataConclusao!.toISOString(),
       dataDeclaracao: new Date().toISOString(),
       numeroTermo: val.numeroTermo ?? undefined,
-      telefoneProprietario: val.telefoneProprietario?.trim() || undefined,
     };
     this.service.criar(dto).subscribe({
       next: () => {

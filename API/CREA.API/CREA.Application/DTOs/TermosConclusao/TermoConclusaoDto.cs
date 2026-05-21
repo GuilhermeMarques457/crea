@@ -11,10 +11,6 @@ public class TermoConclusaoDto
     public DateTime DataConclusao { get; set; }
     public string Descricao { get; set; } = string.Empty;
     public string? Observacoes { get; set; }
-    public string? Empresa { get; set; }
-    public string? Proprietario { get; set; }
-    public string? TelefoneProprietario { get; set; }
-    public string? LocalObra { get; set; }
     public string? DeclaracaoTexto { get; set; }
     public string? LocalDeclaracao { get; set; }
     public DateTime? DataDeclaracao { get; set; }

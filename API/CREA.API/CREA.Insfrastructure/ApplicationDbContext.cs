@@ -143,10 +143,6 @@ public class ApplicationDbContext(
              .WithOne(o => o.TermoConclusao)
              .HasForeignKey<TermoConclusao>(t => t.ObraId)
              .OnDelete(DeleteBehavior.Cascade);
-            e.HasOne(t => t.Profissional)
-             .WithMany(p => p.TermosConclusao)
-             .HasForeignKey(t => t.ProfissionalId)
-             .OnDelete(DeleteBehavior.Restrict);
         });
 
         modelBuilder.Entity<Assinatura>(e =>

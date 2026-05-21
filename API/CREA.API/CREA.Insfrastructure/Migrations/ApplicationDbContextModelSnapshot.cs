@@ -550,13 +550,7 @@ namespace CREA.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Empresa")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("LocalDeclaracao")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LocalObra")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("NumeroTermo")
@@ -568,14 +562,8 @@ namespace CREA.Infrastructure.Migrations
                     b.Property<string>("Observacoes")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("ProfissionalId")
+                    b.Property<Guid?>("ProfissionalId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Proprietario")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("TelefoneProprietario")
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -738,15 +726,11 @@ namespace CREA.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("CREA.Domain.Entities.Profissional", "Profissional")
+                    b.HasOne("CREA.Domain.Entities.Profissional", null)
                         .WithMany("TermosConclusao")
-                        .HasForeignKey("ProfissionalId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .HasForeignKey("ProfissionalId");
 
                     b.Navigation("Obra");
-
-                    b.Navigation("Profissional");
                 });
 
             modelBuilder.Entity("CREA.Domain.Entities.Obra", b =>

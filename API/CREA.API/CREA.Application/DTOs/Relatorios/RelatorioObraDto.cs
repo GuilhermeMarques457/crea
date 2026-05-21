@@ -38,7 +38,6 @@ public class RelatorioObraDto
     public int? TermoNumero { get; set; }
     public string? TermoDescricao { get; set; }
     public string? TermoObservacoes { get; set; }
-    public string? TermoLocalObra { get; set; }
     public string? TermoDeclaracaoTexto { get; set; }
 
     public List<AssinaturaDto> AssinaturasObra { get; set; } = [];

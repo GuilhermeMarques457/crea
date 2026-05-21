@@ -354,10 +354,6 @@ export interface TermoConclusaoDto {
   dataConclusao: string;
   descricao: string;
   observacoes?: string;
-  empresa?: string;
-  proprietario?: string;
-  telefoneProprietario?: string;
-  localObra?: string;
   declaracaoTexto?: string;
   localDeclaracao?: string;
   dataDeclaracao?: string;
@@ -376,14 +372,9 @@ export interface CreateTermoConclusaoDto {
   dataConclusao: string;
   descricao: string;
   observacoes?: string;
-  empresa?: string;
-  proprietario?: string;
-  telefoneProprietario?: string;
-  localObra?: string;
   declaracaoTexto?: string;
   localDeclaracao?: string;
   dataDeclaracao?: string;
-  profissionalId: string;
 }
 
 // Relatório
@@ -419,7 +410,6 @@ export interface RelatorioObraDto {
   termoNumero?: number;
   termoDescricao?: string;
   termoObservacoes?: string;
-  termoLocalObra?: string;
   termoDeclaracaoTexto?: string;
   assinaturasObra: AssinaturaDto[];
   assinaturasTermo: AssinaturaDto[];

@@ -92,8 +92,6 @@ public static class RelatorioObraPdfComposer
                         block.Item().Element(c => DrawKeyRowMultiline(c,"Descrição", r.TermoDescricao!));
                     if (!string.IsNullOrWhiteSpace(r.TermoObservacoes))
                         block.Item().Element(c => DrawKeyRowMultiline(c,"Observações (termo)", r.TermoObservacoes!));
-                    if (!string.IsNullOrWhiteSpace(r.TermoLocalObra))
-                        block.Item().Element(c => DrawKeyRow(c,"Local (termo)", r.TermoLocalObra));
                     if (!string.IsNullOrWhiteSpace(r.TermoDeclaracaoTexto))
                         block.Item().Element(c => DrawKeyRowMultiline(c,"Declaração", r.TermoDeclaracaoTexto!));
                 });

@@ -251,14 +251,10 @@ namespace CREA.Infrastructure.Migrations
                     DataConclusao = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Descricao = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Observacoes = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Empresa = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Proprietario = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    TelefoneProprietario = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    LocalObra = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DeclaracaoTexto = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LocalDeclaracao = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DataDeclaracao = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    ProfissionalId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ProfissionalId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CriadoEm = table.Column<DateTime>(type: "datetime2", nullable: false),
                     AtualizadoEm = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Ativo = table.Column<bool>(type: "bit", nullable: false)
@@ -276,8 +272,7 @@ namespace CREA.Infrastructure.Migrations
                         name: "FK_TermosConclusao_Profissionais_ProfissionalId",
                         column: x => x.ProfissionalId,
                         principalTable: "Profissionais",
-                        principalColumn: "ProfissionalId",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "ProfissionalId");
                 });
 
             migrationBuilder.CreateTable(

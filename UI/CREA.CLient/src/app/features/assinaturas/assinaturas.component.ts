@@ -172,6 +172,7 @@ export class AssinaturasComponent implements OnInit {
                   ),
               ),
             );
+            this.assinaturaService.minhas().subscribe((minhas) => this.minhas.set(minhas));
             this.notificacaoService.carregarMeusPendentes();
           },
           error: () => this.toast.error('Erro ao registrar assinatura.'),

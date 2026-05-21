@@ -210,9 +210,9 @@ public class AssinaturasController(
 
     private async Task<bool> TermoPertenceAoProfissionalAsync(Guid termoId, Guid usuarioId)
     {
-        var termo = await termoConclusaoRepository.GetByIdAsync(termoId);
+        var termo = await termoConclusaoRepository.GetByIdWithDetailsAsync(termoId);
         if (termo is null) return false;
-        var profissional = await profissionalRepository.GetByIdAsync(termo.ProfissionalId);
+        var profissional = await profissionalRepository.GetByIdAsync(termo?.Obra?.ProfissionalResponsavelId ?? Guid.Empty);
         return profissional?.UsuarioId == usuarioId;
     }
 

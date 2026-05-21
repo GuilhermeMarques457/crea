@@ -41,9 +41,6 @@ public class TermosConclusaoController(
         if (!await obraRepository.ExistsAsync(dto.ObraId))
             return BadRequest(new { mensagem = "Obra não encontrada." });
 
-        if (!await profissionalRepository.ExistsAsync(dto.ProfissionalId))
-            return BadRequest(new { mensagem = "Profissional não encontrado." });
-
         if (await termoConclusaoRepository.ObraPossuiTermoAsync(dto.ObraId))
             return Conflict(new { mensagem = "Esta obra já possui um termo de conclusão." });
 
@@ -54,14 +51,9 @@ public class TermosConclusaoController(
             DataConclusao = dto.DataConclusao,
             Descricao = dto.Descricao,
             Observacoes = dto.Observacoes,
-            Empresa = dto.Empresa,
-            Proprietario = dto.Proprietario,
-            TelefoneProprietario = dto.TelefoneProprietario,
-            LocalObra = dto.LocalObra,
             DeclaracaoTexto = dto.DeclaracaoTexto,
             LocalDeclaracao = dto.LocalDeclaracao,
             DataDeclaracao = dto.DataDeclaracao,
-            ProfissionalId = dto.ProfissionalId
         };
 
         await termoConclusaoRepository.AddAsync(termo);
@@ -97,16 +89,12 @@ public class TermosConclusaoController(
             DataConclusao = t.DataConclusao,
             Descricao = t.Descricao,
             Observacoes = t.Observacoes,
-            Empresa = t.Empresa,
-            Proprietario = t.Proprietario,
-            TelefoneProprietario = t.TelefoneProprietario,
-            LocalObra = t.LocalObra,
             DeclaracaoTexto = t.DeclaracaoTexto,
             LocalDeclaracao = t.LocalDeclaracao,
             DataDeclaracao = t.DataDeclaracao,
-            ProfissionalId = t.ProfissionalId,
-            NomeProfissional = t.Profissional?.Nome ?? string.Empty,
-            NumeroRegistro = t.Profissional?.NumeroRegistro ?? string.Empty,
+            ProfissionalId = t.Obra?.ProfissionalResponsavelId ?? Guid.Empty,
+            NomeProfissional = t.Obra?.ProfissionalResponsavel?.Nome ?? string.Empty,
+            NumeroRegistro = t.Obra?.ProfissionalResponsavel?.NumeroRegistro ?? string.Empty,
             CriadoEm = t.CriadoEm,
             AssinadoPeloProfissional = assinadoProfissional,
             AssinadoPeloProprietario = assinadoProprietario,

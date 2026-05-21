@@ -30,7 +30,7 @@ public static class DatabaseSeeder
         // ----------------------------------------------------------------
         var usuarioAdmin = new Usuario
         {
-            Id =Guid.NewGuid(),
+            Id = Guid.NewGuid(),
             Nome = "Administrador CREA",
             Email = "admin@crea.com",
             SenhaHash = HashSenha("Admin@123"),
@@ -40,7 +40,7 @@ public static class DatabaseSeeder
 
         var usuarioEngenheiro = new Usuario
         {
-            Id =Guid.NewGuid(),
+            Id = Guid.NewGuid(),
             Nome = "Carlos Engenheiro",
             Email = "carlos@crea.com",
             SenhaHash = HashSenha("Crea@123"),
@@ -50,7 +50,7 @@ public static class DatabaseSeeder
 
         var usuarioOperacional = new Usuario
         {
-            Id =Guid.NewGuid(),
+            Id = Guid.NewGuid(),
             Nome = "João Operacional",
             Email = "joao@crea.com",
             SenhaHash = HashSenha("Crea@123"),
@@ -60,7 +60,7 @@ public static class DatabaseSeeder
 
         var usuarioArquiteta = new Usuario
         {
-            Id =Guid.NewGuid(),
+            Id = Guid.NewGuid(),
             Nome = "Ana Arquiteta",
             Email = "ana@crea.com",
             SenhaHash = HashSenha("Crea@123"),
@@ -70,7 +70,7 @@ public static class DatabaseSeeder
 
         var usuarioCrea = new Usuario
         {
-            Id =Guid.NewGuid(),
+            Id = Guid.NewGuid(),
             Nome = "Fiscal CREA",
             Email = "crea@crea.com",
             SenhaHash = HashSenha("Crea@123"),
@@ -80,7 +80,7 @@ public static class DatabaseSeeder
 
         var usuarioProprietarioTech = new Usuario
         {
-            Id =Guid.NewGuid(),
+            Id = Guid.NewGuid(),
             Nome = "Tech Solutions S.A.",
             Email = "proprietario.tech@empresa.com",
             SenhaHash = HashSenha("Crea@123"),
@@ -97,7 +97,7 @@ public static class DatabaseSeeder
         // ----------------------------------------------------------------
         var profissionalCarlos = new Profissional
         {
-            Id =Guid.NewGuid(),
+            Id = Guid.NewGuid(),
             Nome = "Carlos Engenheiro",
             Cpf = "123.456.789-00",
             NumeroRegistro = "CREA-SP 123456",
@@ -133,7 +133,7 @@ public static class DatabaseSeeder
         // ----------------------------------------------------------------
         var proprietarioRoberto = new Proprietario
         {
-            Id =Guid.NewGuid(),
+            Id = Guid.NewGuid(),
             Nome = "Roberto Silva",
             Cpf = string.Empty,
             Email = string.Empty,
@@ -143,7 +143,7 @@ public static class DatabaseSeeder
 
         var proprietarioAlpha = new Proprietario
         {
-            Id =Guid.NewGuid(),
+            Id = Guid.NewGuid(),
             Nome = "Construtora Alpha Ltda",
             Cpf = string.Empty,
             Email = string.Empty,
@@ -153,7 +153,7 @@ public static class DatabaseSeeder
 
         var proprietarioTech = new Proprietario
         {
-            Id =Guid.NewGuid(),
+            Id = Guid.NewGuid(),
             Nome = "Tech Solutions S.A.",
             Cpf = string.Empty,
             Email = "proprietario.tech@empresa.com",
@@ -170,7 +170,7 @@ public static class DatabaseSeeder
         // ----------------------------------------------------------------
         var obraResidencial = new Obra
         {
-            Id =Guid.NewGuid(),
+            Id = Guid.NewGuid(),
             Nome = "Residência Família Silva",
             Endereco = "Rua das Flores, 123",
             Cidade = "São Paulo",
@@ -199,7 +199,7 @@ public static class DatabaseSeeder
 
         var obraComercial = new Obra
         {
-            Id =Guid.NewGuid(),
+            Id = Guid.NewGuid(),
             Nome = "Edifício Comercial Centro",
             Endereco = "Av. Paulista, 1000",
             Cidade = "São Paulo",
@@ -228,7 +228,7 @@ public static class DatabaseSeeder
 
         var obraConcluida = new Obra
         {
-            Id =Guid.NewGuid(),
+            Id = Guid.NewGuid(),
             Nome = "Reforma Escritório Jardins",
             Endereco = "Rua Haddock Lobo, 500",
             Cidade = "São Paulo",
@@ -356,14 +356,10 @@ public static class DatabaseSeeder
             DataConclusao = DateTime.UtcNow.AddMonths(-2),
             Descricao = "Reforma concluída integralmente conforme projeto aprovado. Todas as etapas foram executadas dentro dos padrões técnicos exigidos.",
             Observacoes = "Cliente satisfeito com o resultado. Documentação entregue ao proprietário. Habite-se emitido pela prefeitura.",
-            Empresa = "Arquitetura Moderna S.A.",
-            Proprietario = "Tech Solutions S.A.",
-            TelefoneProprietario = "(11) 2222-5555",
-            LocalObra = "Rua Haddock Lobo, 500 - São Paulo/SP",
+           
             DeclaracaoTexto = "Nós, abaixo assinados, proprietário e profissional responsável, pela execução da obra acima apontada declaramos que temos ainda conhecimento na íntegra das sanções prescritas nas Legislações Federal, Estadual e Municipal vigentes.",
             LocalDeclaracao = "São Paulo",
             DataDeclaracao = DateTime.UtcNow.AddMonths(-2),
-            ProfissionalId = profissionalAna.Id,
             CriadoEm = DateTime.UtcNow.AddMonths(-2)
         };
 
