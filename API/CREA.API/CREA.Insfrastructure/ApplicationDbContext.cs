@@ -219,7 +219,7 @@ public class ApplicationDbContext(
                 DadosAntigos = acao != "Criação" ? SerializarValoresOriginais(entry) : null,
                 DadosNovos = acao != "Exclusão" ? SerializarValoresAtuais(entry) : null,
                 EnderecoIp = ip,
-                DataAcao = DateTime.UtcNow
+                DataAcao = DateTime.Now
             });
         }
 

@@ -39,7 +39,7 @@ public class RelatoriosController(
             .Trim();
         if (string.IsNullOrEmpty(safeName))
             safeName = "obra";
-        var fileName = $"Relatorio_{safeName}_{DateTime.UtcNow:yyyyMMdd}.pdf";
+        var fileName = $"Relatorio_{safeName}_{DateTime.Now:yyyyMMdd}.pdf";
         return File(bytes, "application/pdf", fileDownloadName: fileName);
     }
 
@@ -137,7 +137,7 @@ public class RelatoriosController(
             AssinaturasObra = assinaturasObra.Select(x => TermosConclusaoController.MapAssinatura(x, Request)).ToList(),
             AssinaturasTermo = assinaturasTermo.Select(x => TermosConclusaoController.MapAssinatura(x, Request)).ToList(),
             RelatoVisita = registrosDto,
-            GeradoEm = DateTime.UtcNow
+            GeradoEm = DateTime.Now
         };
     }
 }

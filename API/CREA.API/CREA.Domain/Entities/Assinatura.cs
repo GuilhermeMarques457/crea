@@ -12,7 +12,7 @@ public class Assinatura : BaseEntity
     public Usuario Usuario { get; set; } = null!;
 
     public string HashAssinatura { get; set; } = string.Empty;
-    public DateTime DataAssinatura { get; set; } = DateTime.UtcNow;
+    public DateTime DataAssinatura { get; set; } = DateTime.Now;
     public string ImagemAssinatura { get; set; } = string.Empty;
 
     public string IpAssinante { get; set; } = string.Empty;

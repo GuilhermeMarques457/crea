@@ -29,7 +29,7 @@ public class AuthController(IUsuarioRepository usuarioRepository, IConfiguration
         return Ok(new LoginResponseDto
         {
             Token = token,
-            Expiracao = DateTime.UtcNow.AddHours(GetExpiracaoHoras()),
+            Expiracao = DateTime.Now.AddHours(GetExpiracaoHoras()),
             UsuarioId = usuario.Id,
             Nome = usuario.Nome,
             Email = usuario.Email,
@@ -101,7 +101,7 @@ public class AuthController(IUsuarioRepository usuarioRepository, IConfiguration
             issuer: configuration["Jwt:Issuer"],
             audience: configuration["Jwt:Audience"],
             claims: claims,
-            expires: DateTime.UtcNow.AddHours(GetExpiracaoHoras()),
+            expires: DateTime.Now.AddHours(GetExpiracaoHoras()),
             signingCredentials: credentials);
 
         return new JwtSecurityTokenHandler().WriteToken(token);

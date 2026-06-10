@@ -99,7 +99,7 @@ public class AssinaturasController(
         if (await assinaturaRepository.ExisteAssinaturaAsync(dto.TipoEntidade, dto.EntidadeId, tipoAssinante))
             return Conflict(new { mensagem = "Esta assinatura já foi registrada." });
 
-        var dataAssinatura = DateTime.UtcNow;
+        var dataAssinatura = DateTime.Now;
         var hash = AssinaturaHashGerador.Gerar(dto.TipoEntidade, dto.EntidadeId, usuarioId, tipoAssinante, dataAssinatura);
         var ip = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "desconhecido";
         var userAgent = Request.Headers.UserAgent.ToString();

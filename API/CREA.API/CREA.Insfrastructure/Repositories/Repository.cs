@@ -1,6 +1,7 @@
-using System.Linq.Expressions;
+  using System.Linq.Expressions;
 using CREA.Application.Interfaces.Repositories;
 using CREA.Domain.Entities;
+using CREA.Domain.Helpers;
 using CREA.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
@@ -25,7 +26,7 @@ public class Repository<T>(ApplicationDbContext context) : IRepository<T> where 
 
     public async Task<T> AddAsync(T entity)
     {
-        entity.CriadoEm = DateTime.UtcNow;
+        entity.CriadoEm = HorarioBrasil.Now;
         await _dbSet.AddAsync(entity);
         await _context.SaveChangesAsync();
         return entity;
@@ -33,7 +34,7 @@ public class Repository<T>(ApplicationDbContext context) : IRepository<T> where 
 
     public async Task UpdateAsync(T entity)
     {
-        entity.AtualizadoEm = DateTime.UtcNow;
+        entity.AtualizadoEm = HorarioBrasil.Now;
         _dbSet.Update(entity);
         await _context.SaveChangesAsync();
     }
@@ -44,7 +45,7 @@ public class Repository<T>(ApplicationDbContext context) : IRepository<T> where 
         if (entity is not null)
         {
             entity.Ativo = false;
-            entity.AtualizadoEm = DateTime.UtcNow;
+            entity.AtualizadoEm = HorarioBrasil.Now;
             await _context.SaveChangesAsync();
         }
     }

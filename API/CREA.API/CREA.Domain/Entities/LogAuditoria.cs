@@ -10,5 +10,5 @@ public class LogAuditoria : BaseEntity
     public string? DadosAntigos { get; set; }
     public string? DadosNovos { get; set; }
     public string? EnderecoIp { get; set; }
-    public DateTime DataAcao { get; set; } = DateTime.UtcNow;
+    public DateTime DataAcao { get; set; } = DateTime.Now;
 }

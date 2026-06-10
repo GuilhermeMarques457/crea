@@ -43,5 +43,5 @@ public class RelatorioObraDto
     public List<AssinaturaDto> AssinaturasObra { get; set; } = [];
     public List<AssinaturaDto> AssinaturasTermo { get; set; } = [];
     public IEnumerable<RelatoVisitaDto> RelatoVisita { get; set; } = [];
-    public DateTime GeradoEm { get; set; } = DateTime.UtcNow;
+    public DateTime GeradoEm { get; set; } = DateTime.Now;
 }

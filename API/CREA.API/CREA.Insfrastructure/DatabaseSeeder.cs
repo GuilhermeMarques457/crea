@@ -35,7 +35,7 @@ public static class DatabaseSeeder
             Email = "admin@crea.com",
             SenhaHash = HashSenha("Admin@123"),
             TipoUsuario = TipoUsuario.Administrador,
-            CriadoEm = DateTime.UtcNow
+            CriadoEm = DateTime.Now
         };
 
         var usuarioEngenheiro = new Usuario
@@ -45,7 +45,7 @@ public static class DatabaseSeeder
             Email = "carlos@crea.com",
             SenhaHash = HashSenha("Crea@123"),
             TipoUsuario = TipoUsuario.ResponsavelTecnico,
-            CriadoEm = DateTime.UtcNow
+            CriadoEm = DateTime.Now
         };
 
         var usuarioOperacional = new Usuario
@@ -55,7 +55,7 @@ public static class DatabaseSeeder
             Email = "joao@crea.com",
             SenhaHash = HashSenha("Crea@123"),
             TipoUsuario = TipoUsuario.Operacional,
-            CriadoEm = DateTime.UtcNow
+            CriadoEm = DateTime.Now
         };
 
         var usuarioArquiteta = new Usuario
@@ -65,7 +65,7 @@ public static class DatabaseSeeder
             Email = "ana@crea.com",
             SenhaHash = HashSenha("Crea@123"),
             TipoUsuario = TipoUsuario.ResponsavelTecnico,
-            CriadoEm = DateTime.UtcNow
+            CriadoEm = DateTime.Now
         };
 
         var usuarioCrea = new Usuario
@@ -75,7 +75,7 @@ public static class DatabaseSeeder
             Email = "crea@crea.com",
             SenhaHash = HashSenha("Crea@123"),
             TipoUsuario = TipoUsuario.UsuarioCrea,
-            CriadoEm = DateTime.UtcNow
+            CriadoEm = DateTime.Now
         };
 
         var usuarioProprietarioTech = new Usuario
@@ -85,7 +85,7 @@ public static class DatabaseSeeder
             Email = "proprietario.tech@empresa.com",
             SenhaHash = HashSenha("Crea@123"),
             TipoUsuario = TipoUsuario.Proprietario,
-            CriadoEm = DateTime.UtcNow
+            CriadoEm = DateTime.Now
         };
 
         await context.Usuarios.AddRangeAsync(
@@ -107,7 +107,7 @@ public static class DatabaseSeeder
             Email = "carlos@crea.com",
             Telefone = "(11) 99999-0001",
             UsuarioId = usuarioEngenheiro.Id,
-            CriadoEm = DateTime.UtcNow
+            CriadoEm = DateTime.Now
         };
 
         var profissionalAna = new Profissional
@@ -122,7 +122,7 @@ public static class DatabaseSeeder
             Email = "ana@crea.com",
             Telefone = "(11) 99999-0002",
             UsuarioId = usuarioArquiteta.Id,
-            CriadoEm = DateTime.UtcNow
+            CriadoEm = DateTime.Now
         };
 
         await context.Profissionais.AddRangeAsync(profissionalCarlos, profissionalAna);
@@ -138,7 +138,7 @@ public static class DatabaseSeeder
             Cpf = string.Empty,
             Email = string.Empty,
             Telefone = "(11) 98765-4321",
-            CriadoEm = DateTime.UtcNow
+            CriadoEm = DateTime.Now
         };
 
         var proprietarioAlpha = new Proprietario
@@ -148,7 +148,7 @@ public static class DatabaseSeeder
             Cpf = string.Empty,
             Email = string.Empty,
             Telefone = "(11) 3333-4444",
-            CriadoEm = DateTime.UtcNow
+            CriadoEm = DateTime.Now
         };
 
         var proprietarioTech = new Proprietario
@@ -159,7 +159,7 @@ public static class DatabaseSeeder
             Email = "proprietario.tech@empresa.com",
             Telefone = "(11) 2222-5555",
             UsuarioId = usuarioProprietarioTech.Id,
-            CriadoEm = DateTime.UtcNow
+            CriadoEm = DateTime.Now
         };
 
         await context.Proprietarios.AddRangeAsync(proprietarioRoberto, proprietarioAlpha, proprietarioTech);
@@ -186,15 +186,15 @@ public static class DatabaseSeeder
             AtividadeTecnica = AtividadeTecnica.Execucao,
             DirecaoTecnica = true,
             Status = StatusObra.EmAndamento,
-            DataInicio = DateTime.UtcNow.AddMonths(-3),
-            DataPrevisaoTermino = DateTime.UtcNow.AddMonths(6),
+            DataInicio = DateTime.Now.AddMonths(-3),
+            DataPrevisaoTermino = DateTime.Now.AddMonths(6),
             Descricao = "Construção de residência unifamiliar com 180m², 3 quartos, 2 banheiros, sala, cozinha e garagem.",
             AreaConstruir = 180.00m,
             AreaTotalEdificada = 180.00m,
             ValorRecibo = 350000.00m,
             ProfissionalResponsavelId = profissionalCarlos.Id,
             UsuarioCriadorId = usuarioEngenheiro.Id,
-            CriadoEm = DateTime.UtcNow
+            CriadoEm = DateTime.Now
         };
 
         var obraComercial = new Obra
@@ -215,15 +215,15 @@ public static class DatabaseSeeder
             AtividadeTecnica = AtividadeTecnica.Execucao,
             DirecaoTecnica = true,
             Status = StatusObra.EmAndamento,
-            DataInicio = DateTime.UtcNow.AddMonths(-6),
-            DataPrevisaoTermino = DateTime.UtcNow.AddMonths(18),
+            DataInicio = DateTime.Now.AddMonths(-6),
+            DataPrevisaoTermino = DateTime.Now.AddMonths(18),
             Descricao = "Construção de edifício comercial com 8 andares, 1.200m² por pavimento.",
             AreaConstruir = 9600.00m,
             AreaTotalEdificada = 9600.00m,
             ValorRecibo = 12000000.00m,
             ProfissionalResponsavelId = profissionalCarlos.Id,
             UsuarioCriadorId = usuarioEngenheiro.Id,
-            CriadoEm = DateTime.UtcNow
+            CriadoEm = DateTime.Now
         };
 
         var obraConcluida = new Obra
@@ -244,15 +244,15 @@ public static class DatabaseSeeder
             AtividadeTecnica = AtividadeTecnica.Fiscalizacao,
             DirecaoTecnica = false,
             Status = StatusObra.Concluida,
-            DataInicio = DateTime.UtcNow.AddMonths(-12),
-            DataPrevisaoTermino = DateTime.UtcNow.AddMonths(-2),
+            DataInicio = DateTime.Now.AddMonths(-12),
+            DataPrevisaoTermino = DateTime.Now.AddMonths(-2),
             Descricao = "Reforma completa de escritório com 350m², incluindo instalações elétricas e hidráulicas.",
             AreaReformar = 350.00m,
             AreaTotalEdificada = 350.00m,
             ValorRecibo = 180000.00m,
             ProfissionalResponsavelId = profissionalAna.Id,
             UsuarioCriadorId = usuarioArquiteta.Id,
-            CriadoEm = DateTime.UtcNow.AddMonths(-12)
+            CriadoEm = DateTime.Now.AddMonths(-12)
         };
 
         await context.Obras.AddRangeAsync(obraResidencial, obraComercial, obraConcluida);
@@ -267,7 +267,7 @@ public static class DatabaseSeeder
             {
                 ObraId = obraResidencial.Id,
                 NumeroSequencial = 1,
-                Data = DateTime.UtcNow.AddDays(-10),
+                Data = DateTime.Now.AddDays(-10),
                 Atividades = "Concretagem do radier da fundação. Foram utilizados 12m³ de concreto fck25. Nivelamento e acabamento da superfície.",
                 EquipePresente = "3 pedreiros, 2 serventes, 1 mestre de obras",
                 CondicaoClimatica = "Ensolarado, 28°C",
@@ -277,13 +277,13 @@ public static class DatabaseSeeder
                 PosicaoObra = PosicaoObra.DeAcordoComProjeto,
                 DecisoesTecnicas = "Aguardar cura do concreto por 28 dias antes de iniciar alvenaria.",
                 UsuarioId = usuarioOperacional.Id,
-                CriadoEm = DateTime.UtcNow.AddDays(-10)
+                CriadoEm = DateTime.Now.AddDays(-10)
             },
             new()
             {
                 ObraId = obraResidencial.Id,
                 NumeroSequencial = 2,
-                Data = DateTime.UtcNow.AddDays(-7),
+                Data = DateTime.Now.AddDays(-7),
                 Atividades = "Início da alvenaria do pavimento térreo. Levantamento dos blocos da sala e cozinha. Assentamento de 320 blocos cerâmicos.",
                 EquipePresente = "4 pedreiros, 3 serventes, 1 mestre de obras",
                 CondicaoClimatica = "Parcialmente nublado, 25°C",
@@ -292,13 +292,13 @@ public static class DatabaseSeeder
                 PosicaoObra = PosicaoObra.DeAcordoComProjeto,
                 DecisoesTecnicas = "Conferir prumo e nível das paredes no próximo dia.",
                 UsuarioId = usuarioOperacional.Id,
-                CriadoEm = DateTime.UtcNow.AddDays(-7)
+                CriadoEm = DateTime.Now.AddDays(-7)
             },
             new()
             {
                 ObraId = obraResidencial.Id,
                 NumeroSequencial = 3,
-                Data = DateTime.UtcNow.AddDays(-3),
+                Data = DateTime.Now.AddDays(-3),
                 Atividades = "Continuação da alvenaria. Levantamento das paredes dos quartos. Passagem de eletrodutos conforme projeto elétrico.",
                 EquipePresente = "4 pedreiros, 3 serventes, 1 eletricista, 1 mestre de obras",
                 CondicaoClimatica = "Ensolarado, 30°C",
@@ -308,13 +308,13 @@ public static class DatabaseSeeder
                 PosicaoObra = PosicaoObra.EmAndamento,
                 DecisoesTecnicas = "Prosseguir com instalações elétricas conforme projeto aprovado.",
                 UsuarioId = usuarioOperacional.Id,
-                CriadoEm = DateTime.UtcNow.AddDays(-3)
+                CriadoEm = DateTime.Now.AddDays(-3)
             },
             new()
             {
                 ObraId = obraComercial.Id,
                 NumeroSequencial = 1,
-                Data = DateTime.UtcNow.AddDays(-5),
+                Data = DateTime.Now.AddDays(-5),
                 Atividades = "Concretagem das lajes do 3º pavimento. Utilização de 45m³ de concreto bombeado fck30. Instalação de forma e escoramento.",
                 EquipePresente = "6 pedreiros, 4 serventes, 2 armadores, 1 encarregado",
                 CondicaoClimatica = "Ensolarado, 27°C",
@@ -323,13 +323,13 @@ public static class DatabaseSeeder
                 PosicaoObra = PosicaoObra.DeAcordoComProjeto,
                 DecisoesTecnicas = "Manter escoramento por no mínimo 21 dias. Iniciar cura úmida.",
                 UsuarioId = usuarioOperacional.Id,
-                CriadoEm = DateTime.UtcNow.AddDays(-5)
+                CriadoEm = DateTime.Now.AddDays(-5)
             },
             new()
             {
                 ObraId = obraComercial.Id,
                 NumeroSequencial = 2,
-                Data = DateTime.UtcNow.AddDays(-2),
+                Data = DateTime.Now.AddDays(-2),
                 Atividades = "Instalação de pilares metálicos do 4º andar. Soldagem e grauteamento. Inspeção de qualidade realizada.",
                 EquipePresente = "3 soldadores, 2 ajudantes, 1 engenheiro fiscal",
                 CondicaoClimatica = "Nublado, 22°C",
@@ -339,7 +339,7 @@ public static class DatabaseSeeder
                 PosicaoObra = PosicaoObra.EmAndamento,
                 DecisoesTecnicas = "Solicitar laudo de ensaio de solda ao laboratório.",
                 UsuarioId = usuarioOperacional.Id,
-                CriadoEm = DateTime.UtcNow.AddDays(-2)
+                CriadoEm = DateTime.Now.AddDays(-2)
             }
         };
 
@@ -353,20 +353,20 @@ public static class DatabaseSeeder
         {
             ObraId = obraConcluida.Id,
             NumeroTermo = 20,
-            DataConclusao = DateTime.UtcNow.AddMonths(-2),
+            DataConclusao = DateTime.Now.AddMonths(-2),
             Descricao = "Reforma concluída integralmente conforme projeto aprovado. Todas as etapas foram executadas dentro dos padrões técnicos exigidos.",
             Observacoes = "Cliente satisfeito com o resultado. Documentação entregue ao proprietário. Habite-se emitido pela prefeitura.",
            
             DeclaracaoTexto = "Nós, abaixo assinados, proprietário e profissional responsável, pela execução da obra acima apontada declaramos que temos ainda conhecimento na íntegra das sanções prescritas nas Legislações Federal, Estadual e Municipal vigentes.",
             LocalDeclaracao = "São Paulo",
-            DataDeclaracao = DateTime.UtcNow.AddMonths(-2),
-            CriadoEm = DateTime.UtcNow.AddMonths(-2)
+            DataDeclaracao = DateTime.Now.AddMonths(-2),
+            CriadoEm = DateTime.Now.AddMonths(-2)
         };
 
         await context.TermosConclusao.AddAsync(termoConclusao);
         await context.SaveChangesAsync();
 
-        var dataAssinaturaObra = DateTime.UtcNow.AddMonths(-1);
+        var dataAssinaturaObra = DateTime.Now.AddMonths(-1);
         await context.Assinaturas.AddRangeAsync(
             new Assinatura
             {
