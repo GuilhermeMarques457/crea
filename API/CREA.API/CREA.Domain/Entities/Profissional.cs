@@ -15,5 +15,4 @@ public class Profissional : BaseEntity
     public Usuario? Usuario { get; set; }
 
     public ICollection<Obra> ObrasComoResponsavel { get; set; } = [];
-    public ICollection<TermoConclusao> TermosConclusao { get; set; } = [];
 }
