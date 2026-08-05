@@ -54,12 +54,7 @@ export class LoginComponent {
         if (returnUrl) {
           this.router.navigateByUrl(returnUrl);
         } else {
-          const destino =
-            res.tipoUsuario === TipoUsuario.Proprietario ||
-            res.tipoUsuario === TipoUsuario.UsuarioCrea
-              ? '/assinaturas'
-              : '/dashboard';
-          this.router.navigate([destino]);
+          this.router.navigate(['/dashboard']);
         }
       },
       error: () => {
