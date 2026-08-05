@@ -191,13 +191,13 @@ public class AssinaturasController(
     private async Task<bool> ObraPertenceAoProfissionalAsync(Guid obraId, Guid usuarioId)
     {
         var obra = await obraRepository.GetByIdWithDetailsAsync(obraId);
-        return obra?.ProfissionalResponsavel?.UsuarioId == usuarioId;
+        return obra?.Profissional?.UsuarioId == usuarioId;
     }
 
     private async Task<bool> RelatoPertenceAoProfissionalAsync(Guid relatoId, Guid usuarioId)
     {
         var relato = await relatoVisitaRepository.GetByIdWithDetailsAsync(relatoId);
-        return relato?.Obra.ProfissionalResponsavelId is Guid profId
+        return relato?.Obra.ProfissionalId is Guid profId
             && (await profissionalRepository.GetByIdAsync(profId))?.UsuarioId == usuarioId;
     }
 
@@ -212,7 +212,7 @@ public class AssinaturasController(
     {
         var termo = await termoConclusaoRepository.GetByIdWithDetailsAsync(termoId);
         if (termo is null) return false;
-        var profissional = await profissionalRepository.GetByIdAsync(termo?.Obra?.ProfissionalResponsavelId ?? Guid.Empty);
+        var profissional = await profissionalRepository.GetByIdAsync(termo?.Obra?.ProfissionalId ?? Guid.Empty);
         return profissional?.UsuarioId == usuarioId;
     }
 

@@ -17,7 +17,7 @@ namespace CREA.Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.7")
+                .HasAnnotation("ProductVersion", "10.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -236,27 +236,11 @@ namespace CREA.Infrastructure.Migrations
                     b.Property<DateTime?>("AtualizadoEm")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Cep")
-                        .IsRequired()
-                        .HasMaxLength(9)
-                        .HasColumnType("nvarchar(9)");
-
-                    b.Property<string>("Cidade")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
                     b.Property<DateTime>("CriadoEm")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("DataInicio")
                         .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("DataPrevisaoTermino")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Descricao")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("DirecaoTecnica")
                         .HasColumnType("bit");
@@ -264,20 +248,10 @@ namespace CREA.Infrastructure.Migrations
                     b.Property<string>("Empresa")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Endereco")
+                    b.Property<string>("LocalObra")
                         .IsRequired()
                         .HasMaxLength(300)
                         .HasColumnType("nvarchar(300)");
-
-                    b.Property<string>("Estado")
-                        .IsRequired()
-                        .HasMaxLength(2)
-                        .HasColumnType("nvarchar(2)");
-
-                    b.Property<string>("Nome")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("NumeroArt")
                         .IsRequired()
@@ -290,7 +264,7 @@ namespace CREA.Infrastructure.Migrations
                     b.Property<string>("NumeroRT")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("ProfissionalResponsavelId")
+                    b.Property<Guid>("ProfissionalId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("ProprietarioId")
@@ -302,9 +276,6 @@ namespace CREA.Infrastructure.Migrations
                     b.Property<int?>("TipoEdificacao")
                         .HasColumnType("int");
 
-                    b.Property<int>("TipoObra")
-                        .HasColumnType("int");
-
                     b.Property<Guid>("UsuarioCriadorId")
                         .HasColumnType("uniqueidentifier");
 
@@ -313,7 +284,7 @@ namespace CREA.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProfissionalResponsavelId");
+                    b.HasIndex("ProfissionalId");
 
                     b.HasIndex("ProprietarioId");
 
@@ -654,9 +625,9 @@ namespace CREA.Infrastructure.Migrations
 
             modelBuilder.Entity("CREA.Domain.Entities.Obra", b =>
                 {
-                    b.HasOne("CREA.Domain.Entities.Profissional", "ProfissionalResponsavel")
+                    b.HasOne("CREA.Domain.Entities.Profissional", "Profissional")
                         .WithMany("ObrasComoResponsavel")
-                        .HasForeignKey("ProfissionalResponsavelId")
+                        .HasForeignKey("ProfissionalId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -672,7 +643,7 @@ namespace CREA.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("ProfissionalResponsavel");
+                    b.Navigation("Profissional");
 
                     b.Navigation("Proprietario");
 

@@ -77,19 +77,15 @@ public class ApplicationDbContext(
             e.HasKey(u => u.Id);
             e.Property(u => u.Id)
                  .HasColumnName("ObraId");
-            e.Property(o => o.Nome).HasMaxLength(200).IsRequired();
-            e.Property(o => o.Endereco).HasMaxLength(300).IsRequired();
-            e.Property(o => o.Cidade).HasMaxLength(100).IsRequired();
-            e.Property(o => o.Estado).HasMaxLength(2).IsRequired();
-            e.Property(o => o.Cep).HasMaxLength(9);
+            e.Property(o => o.LocalObra).HasMaxLength(300).IsRequired();
             e.Property(o => o.NumeroArt).HasMaxLength(50).IsRequired();
             e.HasOne(o => o.Proprietario)
              .WithMany(p => p.Obras)
              .HasForeignKey(o => o.ProprietarioId)
              .OnDelete(DeleteBehavior.Restrict);
-            e.HasOne(o => o.ProfissionalResponsavel)
+            e.HasOne(o => o.Profissional)
              .WithMany(p => p.ObrasComoResponsavel)
-             .HasForeignKey(o => o.ProfissionalResponsavelId)
+             .HasForeignKey(o => o.ProfissionalId)
              .OnDelete(DeleteBehavior.Restrict);
             e.HasOne(o => o.UsuarioCriador)
              .WithMany()

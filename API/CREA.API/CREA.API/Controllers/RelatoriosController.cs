@@ -35,7 +35,7 @@ public class RelatoriosController(
 
         var bytes = RelatorioObraPdfComposer.Generate(relatorio,
             Path.Combine(env.ContentRootPath, "uploads", "assinaturas"));
-        var safeName = string.Join("_", relatorio.NomeObra.Split(Path.GetInvalidFileNameChars(), StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+        var safeName = string.Join("_", relatorio.LocalObra.Split(Path.GetInvalidFileNameChars(), StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
             .Trim();
         if (string.IsNullOrEmpty(safeName))
             safeName = "obra";
@@ -65,7 +65,6 @@ public class RelatoriosController(
             {
                 Id = r.Id,
                 ObraId = r.ObraId,
-                NomeObra = obra.Nome,
                 NumeroSequencial = r.NumeroSequencial,
                 Data = r.Data,
                 Atividades = r.Atividades,
@@ -101,10 +100,7 @@ public class RelatoriosController(
         return new RelatorioObraDto
         {
             ObraId = obra.Id,
-            NomeObra = obra.Nome,
-            Endereco = obra.Endereco,
-            Cidade = obra.Cidade,
-            Estado = obra.Estado,
+            LocalObra = obra.LocalObra,
             Proprietario = obra.Proprietario?.Nome ?? string.Empty,
             TelefoneProprietario = string.IsNullOrWhiteSpace(obra.Proprietario?.Telefone)
                 ? null
@@ -113,15 +109,13 @@ public class RelatoriosController(
             NumeroCaderneta = obra.NumeroCaderneta,
             NumeroArt = obra.NumeroArt,
             NumeroRT = obra.NumeroRT,
-            TipoObra = obra.TipoObra,
             TipoEdificacao = obra.TipoEdificacao,
             AtividadeTecnica = obra.AtividadeTecnica,
             DirecaoTecnica = obra.DirecaoTecnica,
             Status = obra.Status,
             DataInicio = obra.DataInicio,
-            DataPrevisaoTermino = obra.DataPrevisaoTermino,
-            NomeProfissionalResponsavel = obra.ProfissionalResponsavel?.Nome ?? string.Empty,
-            NumeroRegistroProfissional = obra.ProfissionalResponsavel?.NumeroRegistro ?? string.Empty,
+            NomeProfissional = obra.Profissional?.Nome ?? string.Empty,
+            NumeroRegistroProfissional = obra.Profissional?.NumeroRegistro ?? string.Empty,
             TotalRelatoVisita = registros.Count,
             TotalAnexos = anexos.Count,
             PossuiTermoConclusao = termo is not null,

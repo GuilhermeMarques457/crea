@@ -56,7 +56,7 @@ export class ProprietarioFormComponent implements OnInit {
     cpf: ['', [cpfDigitsValidator(true)]],
     email: ['', [Validators.maxLength(200)]],
     telefone: ['', [phoneBrDigitsValidator(true)]],
-    usuarioId: ['', [Validators.required]],
+    usuarioId: ['', []],
   });
 
   ngOnInit() {
@@ -110,8 +110,11 @@ export class ProprietarioFormComponent implements OnInit {
       cpf: raw.cpf.trim() || undefined,
       email: raw.email.trim() || undefined,
       telefone: raw.telefone.trim() || undefined,
-      usuarioId: raw.usuarioId,
+      usuarioId: raw.usuarioId.trim() || undefined,
     };
+
+    console.log(dto);
+
     const msg = this.isEdit() ? 'Proprietário atualizado!' : 'Proprietário cadastrado!';
     const onOk = () => {
       this.toast.success(msg);

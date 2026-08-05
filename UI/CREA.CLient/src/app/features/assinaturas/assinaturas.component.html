@@ -98,7 +98,9 @@
         </span>
       </div>
     </div>
-
+    <a mat-button [routerLink]="['/obras', p.obraId]" class="w-full shrink-0 sm:w-auto">
+      <mat-icon>open_in_new</mat-icon> Ver obra
+    </a>
     <button mat-flat-button color="primary" class="w-full shrink-0 sm:w-auto" (click)="assinar(p)">
       <mat-icon>draw</mat-icon> Assinar
     </button>
@@ -143,6 +145,9 @@
               <span><strong>Em:</strong> {{ m.dataAssinatura | date: 'dd/MM/yyyy HH:mm' }}</span>
             </div>
           </div>
+          <a mat-button [routerLink]="['/obras', m.obraId]" class="w-full shrink-0 sm:w-auto">
+            <mat-icon>open_in_new</mat-icon> Ver obra
+          </a>
           <button
             mat-stroked-button
             class="w-full shrink-0 sm:w-auto"
@@ -189,11 +194,7 @@
               <span><strong>Em:</strong> {{ m.dataAssinatura | date: 'dd/MM/yyyy HH:mm' }}</span>
             </div>
           </div>
-          <a
-            mat-stroked-button
-            [routerLink]="['/obras', m.obraId]"
-            class="w-full shrink-0 sm:w-auto"
-          >
+          <a mat-button [routerLink]="['/obras', m.obraId]" class="w-full shrink-0 sm:w-auto">
             <mat-icon>open_in_new</mat-icon> Ver obra
           </a>
         </div>

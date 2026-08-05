@@ -19,7 +19,6 @@ import {
   ObraDto,
   RelatorioObraDto,
   STATUS_OBRA_LABELS,
-  TIPO_OBRA_LABELS,
   TIPO_EDIFICACAO_LABELS,
   ATIVIDADE_TECNICA_LABELS,
   POSICAO_OBRA_LABELS,
@@ -59,7 +58,6 @@ export class RelatoriosComponent implements OnInit {
 
   form = this.fb.nonNullable.group({ obraId: ['', Validators.required] });
 
-  tipoLabel = () => (this.relatorio() ? TIPO_OBRA_LABELS[this.relatorio()!.tipoObra] : '');
   tipoEdificacaoLabel = () =>
     this.relatorio()?.tipoEdificacao
       ? TIPO_EDIFICACAO_LABELS[this.relatorio()!.tipoEdificacao!]

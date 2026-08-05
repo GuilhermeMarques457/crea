@@ -18,8 +18,6 @@ import {
   ProprietarioDto,
   ObraDto,
   CreateObraDto,
-  TipoObra,
-  TIPO_OBRA_LABELS,
   TipoEdificacao,
   TIPO_EDIFICACAO_LABELS,
   AtividadeTecnica,
@@ -64,10 +62,6 @@ export class ObraFormComponent implements OnInit {
   proprietarios = signal<ProprietarioDto[]>([]);
   private editId: string | null = null;
 
-  tipoObraOptions = Object.entries(TIPO_OBRA_LABELS).map(([v, l]) => ({
-    value: Number(v) as TipoObra,
-    label: l,
-  }));
   tipoEdificacaoOptions = Object.entries(TIPO_EDIFICACAO_LABELS).map(([v, l]) => ({
     value: Number(v) as TipoEdificacao,
     label: l,
@@ -78,35 +72,32 @@ export class ObraFormComponent implements OnInit {
   }));
 
   form = this.fb.nonNullable.group({
-    nome: ['', [Validators.required, Validators.maxLength(200)]],
-    endereco: ['', [Validators.required, Validators.maxLength(300)]],
-    cidade: ['', [Validators.required, Validators.maxLength(100)]],
-    estado: ['', [Validators.required, Validators.maxLength(2)]],
-    cep: [''],
+    localObra: ['', [Validators.required, Validators.maxLength(300)]],
     proprietarioId: ['', Validators.required],
     empresa: [''],
     numeroCaderneta: [''],
     numeroArt: ['', [Validators.required, Validators.maxLength(50)]],
     numeroRT: [''],
-    tipoObra: [TipoObra.Residencial, Validators.required],
     tipoEdificacao: [null as TipoEdificacao | null],
     atividadeTecnica: [null as AtividadeTecnica | null],
     direcaoTecnica: [false],
     dataInicio: [null as any, Validators.required],
-    dataPrevisaoTermino: [null as any],
-    descricao: [''],
     areaConstruir: [null as number | null],
     areaRegularizar: [null as number | null],
     areaAmpliar: [null as number | null],
     areaReformar: [null as number | null],
     areaTotalEdificada: [null as number | null],
     valorRecibo: [null as number | null],
-    profissionalResponsavelId: ['', Validators.required],
+    profissionalId: ['', Validators.required],
   });
 
   ngOnInit() {
-    this.profissionalService.listar().subscribe((p: ProfissionalDto[]) => this.profissionais.set(p));
-    this.proprietarioService.listar().subscribe((list: ProprietarioDto[]) => this.proprietarios.set(list));
+    this.profissionalService
+      .listar()
+      .subscribe((p: ProfissionalDto[]) => this.profissionais.set(p));
+    this.proprietarioService
+      .listar()
+      .subscribe((list: ProprietarioDto[]) => this.proprietarios.set(list));
     this.editId = this.route.snapshot.paramMap.get('id');
     if (this.editId) {
       this.isEdit.set(true);
@@ -114,7 +105,6 @@ export class ObraFormComponent implements OnInit {
         this.form.patchValue({
           ...obra,
           dataInicio: moment(obra.dataInicio),
-          dataPrevisaoTermino: obra.dataPrevisaoTermino ? moment(obra.dataPrevisaoTermino) : null,
           tipoEdificacao: obra.tipoEdificacao ?? null,
           atividadeTecnica: obra.atividadeTecnica ?? null,
           areaConstruir: obra.areaConstruir ?? null,
@@ -138,9 +128,6 @@ export class ObraFormComponent implements OnInit {
     const dto: CreateObraDto = {
       ...val,
       dataInicio: val.dataInicio!.toISOString(),
-      dataPrevisaoTermino: val.dataPrevisaoTermino
-        ? val.dataPrevisaoTermino.toISOString()
-        : undefined,
       tipoEdificacao: val.tipoEdificacao ?? undefined,
       atividadeTecnica: val.atividadeTecnica ?? undefined,
       areaConstruir: val.areaConstruir ?? undefined,

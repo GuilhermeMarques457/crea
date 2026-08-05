@@ -23,7 +23,9 @@
     </div>
 
     <mat-card>
-      <mat-card-header class="flex flex-col gap-3 px-4 pt-5 pb-0 sm:flex-row sm:items-center sm:px-6">
+      <mat-card-header
+        class="flex flex-col gap-3 px-4 pt-5 pb-0 sm:flex-row sm:items-center sm:px-6"
+      >
         <mat-card-title class="text-lg font-semibold text-slate-800">Obras Recentes</mat-card-title>
         <div class="sm:ml-auto">
           <a mat-button color="primary" routerLink="/obras">Ver todas</a>
@@ -42,8 +44,11 @@
                 <mat-icon class="text-blue-600 text-lg">construction</mat-icon>
               </div>
               <div class="min-w-0 flex-1">
-                <p class="font-medium text-slate-800 truncate">{{ obra.nome }}</p>
-                <p class="text-sm text-slate-500">{{ obra.cidade }}/{{ obra.estado }}</p>
+                <p class="font-medium text-slate-800 truncate">
+                  {{ obra.localObra }}
+                </p>
+
+                <p class="text-sm text-slate-500">Caderneta {{ obra.numeroCaderneta }}</p>
               </div>
               <app-status-badge [status]="obra.status" />
               <p class="ml-auto shrink-0 text-xs text-slate-400 sm:ml-2">

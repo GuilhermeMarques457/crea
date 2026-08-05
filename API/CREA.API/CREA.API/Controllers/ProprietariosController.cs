@@ -34,15 +34,20 @@ public class ProprietariosController(
     [Authorize(Roles = "Administrador")]
     public async Task<ActionResult<ProprietarioDto>> Create([FromBody] CreateProprietarioDto dto)
     {
-        var usuario = await usuarioRepository.GetByIdAsync(dto.UsuarioId);
-        if (usuario is null)
-            return BadRequest(new { mensagem = "Usuário não encontrado." });
-        if (usuario.TipoUsuario != TipoUsuario.Proprietario)
-            return BadRequest(new { mensagem = "O usuário selecionado não é do tipo Proprietário." });
+        if (dto.UsuarioId.HasValue)
+        {
+            var usuario = await usuarioRepository.GetByIdAsync(dto.UsuarioId.Value);
+            if (usuario is null)
+                return BadRequest(new { mensagem = "Usuário não encontrado." });
 
-        var jaVinculado = await proprietarioRepository.GetByUsuarioIdAsync(dto.UsuarioId);
-        if (jaVinculado is not null)
-            return Conflict(new { mensagem = "Este usuário já está vinculado a outro proprietário." });
+            if (usuario.TipoUsuario != TipoUsuario.Proprietario)
+                return BadRequest(new { mensagem = "O usuário selecionado não é do tipo Proprietário." });
+
+
+            var jaVinculado = await proprietarioRepository.GetByUsuarioIdAsync(dto.UsuarioId.Value);
+            if (jaVinculado is not null)
+                return Conflict(new { mensagem = "Este usuário já está vinculado a outro proprietário." });
+        }
 
         var entity = new Proprietario
         {
@@ -64,15 +69,20 @@ public class ProprietariosController(
         var p = await proprietarioRepository.GetByIdAsync(id);
         if (p is null) return NotFound();
 
-        var usuario = await usuarioRepository.GetByIdAsync(dto.UsuarioId);
-        if (usuario is null)
-            return BadRequest(new { mensagem = "Usuário não encontrado." });
-        if (usuario.TipoUsuario != TipoUsuario.Proprietario)
-            return BadRequest(new { mensagem = "O usuário selecionado não é do tipo Proprietário." });
+        if (dto.UsuarioId.HasValue)
+        {
+            var usuario = await usuarioRepository.GetByIdAsync(dto.UsuarioId.Value);
+            if (usuario is null)
+                return BadRequest(new { mensagem = "Usuário não encontrado." });
 
-        var jaVinculado = await proprietarioRepository.GetByUsuarioIdAsync(dto.UsuarioId);
-        if (jaVinculado is not null && jaVinculado.Id != id)
-            return Conflict(new { mensagem = "Este usuário já está vinculado a outro proprietário." });
+            if (usuario.TipoUsuario != TipoUsuario.Proprietario)
+                return BadRequest(new { mensagem = "O usuário selecionado não é do tipo Proprietário." });
+
+            var jaVinculado = await proprietarioRepository.GetByUsuarioIdAsync(dto.UsuarioId.Value);
+            if (jaVinculado is not null && jaVinculado.Id != id)
+                return Conflict(new { mensagem = "Este usuário já está vinculado a outro proprietário." });
+        }
+
 
         p.Nome = dto.Nome;
         p.Cpf = dto.Cpf ?? string.Empty;

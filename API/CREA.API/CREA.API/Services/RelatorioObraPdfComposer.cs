@@ -34,8 +34,7 @@ public static class RelatorioObraPdfComposer
         container.Background(Colors.Blue.Darken4).Padding(16).Column(col =>
         {
             col.Item().Text("Relatório completo da obra").FontSize(9).FontColor(Colors.Grey.Lighten3);
-            col.Item().Text(r.NomeObra).Bold().FontSize(16).FontColor(Colors.White);
-            col.Item().Text($"{r.Endereco} — {r.Cidade}/{r.Estado}").FontSize(9).FontColor(Colors.Grey.Lighten3);
+            col.Item().Text($"{r.LocalObra}").FontSize(9).FontColor(Colors.Grey.Lighten3);
         });
     }
 
@@ -62,7 +61,7 @@ public static class RelatorioObraPdfComposer
             col.Item().Column(block =>
             {
                 block.Spacing(4);
-                block.Item().Element(c => DrawKeyRow(c,"Nome", r.NomeProfissionalResponsavel));
+                block.Item().Element(c => DrawKeyRow(c,"Nome", r.NomeProfissional));
                 block.Item().Element(c => DrawKeyRow(c,"Registro", r.NumeroRegistroProfissional));
             });
 
@@ -141,13 +140,10 @@ public static class RelatorioObraPdfComposer
             block.Item().Element(c => DrawKeyRow(c,"ART", r.NumeroArt));
             if (!string.IsNullOrWhiteSpace(r.NumeroRT))
                 block.Item().Element(c => DrawKeyRow(c,"Nº R.T.", r.NumeroRT!));
-            block.Item().Element(c => DrawKeyRow(c,"Tipo obra", TipoObraPt(r.TipoObra)));
             block.Item().Element(c => DrawKeyRow(c,"Tipo edificação", r.TipoEdificacao.HasValue ? TipoEdificacaoPt(r.TipoEdificacao.Value) : "—"));
             block.Item().Element(c => DrawKeyRow(c,"Atividade técnica", r.AtividadeTecnica.HasValue ? AtividadeTecnicaPt(r.AtividadeTecnica.Value) : "—"));
             block.Item().Element(c => DrawKeyRow(c,"Direção técnica", r.DirecaoTecnica ? "Sim" : "Não"));
             block.Item().Element(c => DrawKeyRow(c,"Início", r.DataInicio.ToString("dd/MM/yyyy")));
-            if (r.DataPrevisaoTermino.HasValue)
-                block.Item().Element(c => DrawKeyRow(c,"Previsão término", r.DataPrevisaoTermino.Value.ToString("dd/MM/yyyy")));
         });
     }
 
@@ -261,16 +257,6 @@ public static class RelatorioObraPdfComposer
         Add(reg.ServicosComplementares, "Complementares");
         return list;
     }
-
-    private static string TipoObraPt(TipoObra t) => t switch
-    {
-        TipoObra.Residencial => "Residencial",
-        TipoObra.Comercial => "Comercial",
-        TipoObra.Industrial => "Industrial",
-        TipoObra.Infraestrutura => "Infraestrutura",
-        TipoObra.Outro => "Outro",
-        _ => t.ToString()
-    };
 
     private static string TipoEdificacaoPt(TipoEdificacao t) => t switch
     {

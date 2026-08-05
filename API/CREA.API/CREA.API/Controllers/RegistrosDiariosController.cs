@@ -135,7 +135,6 @@ public class RelatoVisitaController(
         {
             Id = r.Id,
             ObraId = r.ObraId,
-            NomeObra = r.Obra?.Nome ?? string.Empty,
             NumeroSequencial = r.NumeroSequencial,
             Data = r.Data,
             Atividades = r.Atividades,

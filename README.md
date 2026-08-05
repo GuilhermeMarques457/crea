@@ -258,7 +258,6 @@ API/CREA.API/
 │   │   └── LogAuditoria.cs         # Trilha de auditoria
 │   └── Enums/
 │       ├── StatusObra.cs
-│       ├── TipoObra.cs
 │       ├── TipoEdificacao.cs
 │       ├── AtividadeTecnica.cs
 │       ├── PosicaoObra.cs

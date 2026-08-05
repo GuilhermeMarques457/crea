@@ -7,7 +7,6 @@ public class RelatoVisitaDto
 {
     public Guid Id { get; set; }
     public Guid ObraId { get; set; }
-    public string NomeObra { get; set; } = string.Empty;
     public int NumeroSequencial { get; set; }
     public DateTime Data { get; set; }
     public string Atividades { get; set; } = string.Empty;

@@ -43,8 +43,8 @@ public class AssinaturaRepository(ApplicationDbContext context)
         if (tipoUsuario == TipoUsuario.ResponsavelTecnico)
         {
             var obrasProfissional = await context.Obras
-                .Include(o => o.ProfissionalResponsavel)
-                .Where(o => o.Ativo && o.ProfissionalResponsavel.UsuarioId == usuarioId)
+                .Include(o => o.Profissional)
+                .Where(o => o.Ativo && o.Profissional.UsuarioId == usuarioId)
                 .ToListAsync();
 
             foreach (var obra in obrasProfissional)
@@ -60,16 +60,15 @@ public class AssinaturaRepository(ApplicationDbContext context)
                         EntidadeId = obra.Id,
                         ObraId = obra.Id,
                         TipoAssinante = TipoAssinante.Profissional,
-                        Titulo = obra.Nome,
-                        Subtitulo = "Assinatura do profissional responsável",
+                        Titulo = "Assinatura do profissional responsável",
                         CriadoEm = obra.CriadoEm
                     });
                 }
             }
 
             var relatos = await context.RelatosVisita
-                .Include(r => r.Obra).ThenInclude(o => o.ProfissionalResponsavel)
-                .Where(r => r.Ativo && r.Obra.ProfissionalResponsavel.UsuarioId == usuarioId)
+                .Include(r => r.Obra).ThenInclude(o => o.Profissional)
+                .Where(r => r.Ativo && r.Obra.Profissional.UsuarioId == usuarioId)
                 .ToListAsync();
 
             foreach (var relato in relatos)
@@ -85,8 +84,7 @@ public class AssinaturaRepository(ApplicationDbContext context)
                         EntidadeId = relato.Id,
                         ObraId = relato.ObraId,
                         TipoAssinante = TipoAssinante.Profissional,
-                        Titulo = relato.Obra.Nome,
-                        Subtitulo = $"Relato de visita #{relato.NumeroSequencial}",
+                        Titulo = $"Relato de visita #{relato.NumeroSequencial}",
                         CriadoEm = relato.CriadoEm
                     });
                 }
@@ -109,8 +107,7 @@ public class AssinaturaRepository(ApplicationDbContext context)
                         EntidadeId = termo.Id,
                         ObraId = termo.ObraId,
                         TipoAssinante = TipoAssinante.Profissional,
-                        Titulo = termo.Obra.Nome,
-                        Subtitulo = $"Termo de conclusão nº {termo.NumeroTermo}",
+                        Titulo = $"Termo de conclusão nº {termo.NumeroTermo}",
                         CriadoEm = termo.CriadoEm
                     });
                 }
@@ -133,8 +130,7 @@ public class AssinaturaRepository(ApplicationDbContext context)
                         EntidadeId = obra.Id,
                         ObraId = obra.Id,
                         TipoAssinante = TipoAssinante.UsuarioCrea,
-                        Titulo = obra.Nome,
-                        Subtitulo = "Assinatura CREA",
+                        Titulo = "Assinatura CREA",
                         CriadoEm = obra.CriadoEm
                     });
                 }
@@ -165,8 +161,7 @@ public class AssinaturaRepository(ApplicationDbContext context)
                         EntidadeId = relato.Id,
                         ObraId = relato.ObraId,
                         TipoAssinante = TipoAssinante.Proprietario,
-                        Titulo = relato.Obra.Nome,
-                        Subtitulo = $"Relato de visita #{relato.NumeroSequencial}",
+                        Titulo = $"Relato de visita #{relato.NumeroSequencial}",
                         CriadoEm = relato.CriadoEm
                     });
                 }
@@ -190,8 +185,7 @@ public class AssinaturaRepository(ApplicationDbContext context)
                         EntidadeId = termo.Id,
                         ObraId = termo.ObraId,
                         TipoAssinante = TipoAssinante.Proprietario,
-                        Titulo = termo.Obra.Nome,
-                        Subtitulo = $"Termo de conclusão nº {termo.NumeroTermo}",
+                        Titulo = $"Termo de conclusão nº {termo.NumeroTermo}",
                         CriadoEm = termo.CriadoEm
                     });
                 }
@@ -249,24 +243,21 @@ public class AssinaturaRepository(ApplicationDbContext context)
         foreach (var a in assinaturas)
         {
             string titulo = string.Empty;
-            string? subtitulo = null;
             Guid obraId = Guid.Empty;
 
             if (a.TipoEntidade == TipoEntidadeAssinatura.Obra && obras.TryGetValue(a.EntidadeId, out var obra))
             {
-                titulo = obra.Nome;
+                titulo = $"Obra #{obra.NumeroCaderneta} - {obra.LocalObra}";
                 obraId = obra.Id;
             }
             else if (a.TipoEntidade == TipoEntidadeAssinatura.RelatoVisita && relatos.TryGetValue(a.EntidadeId, out var relato))
             {
-                titulo = relato.Obra.Nome;
-                subtitulo = $"Relato de visita #{relato.NumeroSequencial}";
+                titulo = $"Relato de visita #{relato.NumeroSequencial}";
                 obraId = relato.ObraId;
             }
             else if (a.TipoEntidade == TipoEntidadeAssinatura.TermoConclusao && termos.TryGetValue(a.EntidadeId, out var termo))
             {
-                titulo = termo.Obra.Nome;
-                subtitulo = $"Termo de conclusão nº {termo.NumeroTermo}";
+                titulo = $"Termo de conclusão nº {termo.NumeroTermo}";
                 obraId = termo.ObraId;
             }
 
@@ -282,7 +273,6 @@ public class AssinaturaRepository(ApplicationDbContext context)
                 ObraId = obraId,
                 TipoAssinante = a.TipoAssinante,
                 Titulo = titulo,
-                Subtitulo = subtitulo,
                 DataAssinatura = a.DataAssinatura,
                 TotalmenteAssinado = totalmenteAssinado,
             });

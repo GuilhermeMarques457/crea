@@ -25,7 +25,6 @@ import {
   TipoAssinante,
   TipoEdificacao,
   TipoEntidadeAssinatura,
-  TipoObra,
   TipoUsuario,
 } from '../../../shared/models/api.models';
 import { EntidadeAnexosDialogComponent } from '../../../shared/components/entidade-anexos-dialog/entidade-anexos-dialog.component';
@@ -69,22 +68,17 @@ function makeUser(overrides: Partial<LoginResponseDto> = {}): LoginResponseDto {
 function makeObra(overrides: Partial<ObraDto> = {}): ObraDto {
   return {
     id: 'obra-1',
-    nome: 'Residencial Aurora',
-    endereco: 'Rua Central, 123',
-    cidade: 'Curitiba',
-    estado: 'PR',
+    localObra: 'Rua Central, 123',
     proprietarioId: 'prop-1',
     nomeProprietario: 'Maria Souza',
     telefoneProprietario: '(41) 99999-0000',
     numeroArt: 'ART-123',
-    tipoObra: TipoObra.Residencial,
     tipoEdificacao: TipoEdificacao.Residencial,
     direcaoTecnica: true,
     status: StatusObra.EmAndamento,
     dataInicio: '2026-01-10T12:00:00.000Z',
-    dataPrevisaoTermino: '2026-12-10T12:00:00.000Z',
-    profissionalResponsavelId: 'prof-1',
-    nomeProfissionalResponsavel: 'Eng. Ada',
+    profissionalId: 'prof-1',
+    nomeProfissional: 'Eng. Ada',
     usuarioCriadorId: 'user-1',
     ativo: true,
     criadoEm: '2026-01-01T12:00:00.000Z',
@@ -114,7 +108,6 @@ function makeRegistro(overrides: Partial<RelatoVisitaDto> = {}): RelatoVisitaDto
   return {
     id: 'registro-1',
     obraId: 'obra-1',
-    nomeObra: 'Residencial Aurora',
     numeroSequencial: 7,
     data: '2026-03-10T12:00:00.000Z',
     atividades: 'Concretagem da laje',
@@ -162,7 +155,6 @@ function makeTermo(overrides: Partial<TermoConclusaoDto> = {}): TermoConclusaoDt
   return {
     id: 'termo-1',
     obraId: 'obra-1',
-    nomeObra: 'Residencial Aurora',
     numeroTermo: 1,
     dataConclusao: '2026-05-10T12:00:00.000Z',
     descricao: 'Obra concluida conforme projeto.',
@@ -191,23 +183,29 @@ function setup(options: SetupOptions = {}) {
   );
 
   const obraService = {
-    obter: vi.fn().mockReturnValue(
-      options.obraError ? throwError(() => new Error('obra not found')) : of(obra),
-    ),
-    atualizarStatus: vi.fn().mockReturnValue(
-      options.statusError ? throwError(() => new Error('status failed')) : of(undefined),
-    ),
+    obter: vi
+      .fn()
+      .mockReturnValue(
+        options.obraError ? throwError(() => new Error('obra not found')) : of(obra),
+      ),
+    atualizarStatus: vi
+      .fn()
+      .mockReturnValue(
+        options.statusError ? throwError(() => new Error('status failed')) : of(undefined),
+      ),
   };
   const registroService = {
     porObra: vi.fn().mockReturnValue(of(registros)),
   };
   const anexoService = {
     porObra: vi.fn().mockReturnValue(of(anexos)),
-    upload: vi.fn().mockReturnValue(
-      options.uploadError
-        ? throwError(() => new Error('upload failed'))
-        : of(options.uploadResult ?? makeAnexo({ id: 'anexo-upload', obraId: obra.id })),
-    ),
+    upload: vi
+      .fn()
+      .mockReturnValue(
+        options.uploadError
+          ? throwError(() => new Error('upload failed'))
+          : of(options.uploadResult ?? makeAnexo({ id: 'anexo-upload', obraId: obra.id })),
+      ),
   };
   const termoService = {
     porObra: vi

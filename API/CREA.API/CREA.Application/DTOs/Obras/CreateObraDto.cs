@@ -6,23 +6,8 @@ namespace CREA.Application.DTOs.Obras;
 public class CreateObraDto
 {
     [Required]
-    [MaxLength(200)]
-    public string Nome { get; set; } = string.Empty;
-
-    [Required]
     [MaxLength(300)]
-    public string Endereco { get; set; } = string.Empty;
-
-    [Required]
-    [MaxLength(100)]
-    public string Cidade { get; set; } = string.Empty;
-
-    [Required]
-    [MaxLength(2)]
-    public string Estado { get; set; } = string.Empty;
-
-    [MaxLength(9)]
-    public string Cep { get; set; } = string.Empty;
+    public string LocalObra { get; set; } = string.Empty;
 
     [Required]
     public Guid ProprietarioId { get; set; }
@@ -40,9 +25,6 @@ public class CreateObraDto
     [MaxLength(50)]
     public string? NumeroRT { get; set; }
 
-    [Required]
-    public TipoObra TipoObra { get; set; }
-
     public TipoEdificacao? TipoEdificacao { get; set; }
 
     public AtividadeTecnica? AtividadeTecnica { get; set; }
@@ -52,10 +34,6 @@ public class CreateObraDto
     [Required]
     public DateTime DataInicio { get; set; }
 
-    public DateTime? DataPrevisaoTermino { get; set; }
-
-    public string? Descricao { get; set; }
-
     public decimal? AreaConstruir { get; set; }
     public decimal? AreaRegularizar { get; set; }
     public decimal? AreaAmpliar { get; set; }
@@ -64,5 +42,5 @@ public class CreateObraDto
     public decimal? ValorRecibo { get; set; }
 
     [Required]
-    public Guid ProfissionalResponsavelId { get; set; }
+    public Guid ProfissionalId { get; set; }
 }

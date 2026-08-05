@@ -6,7 +6,6 @@ public class TermoConclusaoDto
 {
     public Guid Id { get; set; }
     public Guid ObraId { get; set; }
-    public string NomeObra { get; set; } = string.Empty;
     public int NumeroTermo { get; set; }
     public DateTime DataConclusao { get; set; }
     public string Descricao { get; set; } = string.Empty;

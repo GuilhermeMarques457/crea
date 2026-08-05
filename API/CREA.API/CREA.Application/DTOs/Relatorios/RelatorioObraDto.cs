@@ -7,24 +7,19 @@ namespace CREA.Application.DTOs.Relatorios;
 public class RelatorioObraDto
 {
     public Guid ObraId { get; set; }
-    public string NomeObra { get; set; } = string.Empty;
-    public string Endereco { get; set; } = string.Empty;
-    public string Cidade { get; set; } = string.Empty;
-    public string Estado { get; set; } = string.Empty;
+    public string LocalObra { get; set; } = string.Empty;
     public string Proprietario { get; set; } = string.Empty;
     public string? TelefoneProprietario { get; set; }
     public string? Empresa { get; set; }
     public string? NumeroCaderneta { get; set; }
     public string NumeroArt { get; set; } = string.Empty;
     public string? NumeroRT { get; set; }
-    public TipoObra TipoObra { get; set; }
     public TipoEdificacao? TipoEdificacao { get; set; }
     public AtividadeTecnica? AtividadeTecnica { get; set; }
     public bool DirecaoTecnica { get; set; }
     public StatusObra Status { get; set; }
     public DateTime DataInicio { get; set; }
-    public DateTime? DataPrevisaoTermino { get; set; }
-    public string NomeProfissionalResponsavel { get; set; } = string.Empty;
+    public string NomeProfissional { get; set; } = string.Empty;
     public string NumeroRegistroProfissional { get; set; } = string.Empty;
     public int TotalRelatoVisita { get; set; }
     public int TotalAnexos { get; set; }

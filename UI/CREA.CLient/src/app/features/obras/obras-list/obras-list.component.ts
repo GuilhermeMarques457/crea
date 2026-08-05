@@ -12,12 +12,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatDialog } from '@angular/material/dialog';
 import { DatePipe } from '@angular/common';
 import { ObraService } from '../../../core/services/obra.service';
-import {
-  ObraDto,
-  StatusObra,
-  STATUS_OBRA_LABELS,
-  TIPO_OBRA_LABELS,
-} from '../../../shared/models/api.models';
+import { ObraDto, StatusObra, STATUS_OBRA_LABELS } from '../../../shared/models/api.models';
 import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
 import { StatusBadgeComponent } from '../../../shared/components/status-badge/status-badge.component';
 import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
@@ -43,7 +38,7 @@ import { ToastService } from '../../../core/services/toast.service';
     StatusBadgeComponent,
     EmptyStateComponent,
   ],
-  templateUrl: `./obra-list.component.html`,
+  templateUrl: `./obras-list.component.html`,
 })
 export class ObrasListComponent implements OnInit {
   private readonly obraService = inject(ObraService);
@@ -65,14 +60,12 @@ export class ObrasListComponent implements OnInit {
       const q = this.search.toLowerCase();
       const matchSearch =
         !q ||
-        o.nome.toLowerCase().includes(q) ||
-        o.cidade.toLowerCase().includes(q) ||
+        o.localObra?.toLocaleLowerCase().includes(q) ||
+        o.numeroCaderneta?.toLowerCase().includes(q) ||
         o.nomeProprietario.toLowerCase().includes(q);
       const matchStatus = this.filterStatus === null || o.status === this.filterStatus;
       return matchSearch && matchStatus;
     });
-
-  tipoLabel = (obra: ObraDto) => TIPO_OBRA_LABELS[obra.tipoObra];
 
   ngOnInit() {
     this.obraService.listarPorPermissaoUsuario().subscribe({
@@ -89,7 +82,7 @@ export class ObrasListComponent implements OnInit {
       .open(ConfirmDialogComponent, {
         data: {
           title: 'Excluir Obra',
-          message: `Deseja excluir a obra "${obra.nome}"? Esta ação não pode ser desfeita.`,
+          message: `Deseja excluir a obra "${obra.numeroCaderneta}"? Esta ação não pode ser desfeita.`,
           confirmLabel: 'Excluir',
         },
       })

@@ -24,7 +24,6 @@ import {
   AssinaturaDto,
   StatusObra,
   STATUS_OBRA_LABELS,
-  TIPO_OBRA_LABELS,
   TIPO_EDIFICACAO_LABELS,
   ATIVIDADE_TECNICA_LABELS,
   POSICAO_OBRA_LABELS,
@@ -95,7 +94,6 @@ export class ObraDetailComponent implements OnInit {
   assinaturasObra = signal<AssinaturaDto[]>([]);
   userType = computed(() => this.auth.currentUser()?.tipoUsuario);
 
-  tipoLabel = () => (this.obra() ? TIPO_OBRA_LABELS[this.obra()!.tipoObra] : '');
   tipoEdificacaoLabel = () =>
     this.obra()?.tipoEdificacao ? TIPO_EDIFICACAO_LABELS[this.obra()!.tipoEdificacao!] : '–';
   atividadeTecnicaLabel = () =>

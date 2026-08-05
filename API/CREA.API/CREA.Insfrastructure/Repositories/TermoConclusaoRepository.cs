@@ -11,7 +11,7 @@ public class TermoConclusaoRepository(ApplicationDbContext context) : Repository
         await _dbSet
             .AsSplitQuery()
             .Include(t => t.Obra)
-                .ThenInclude(o => o.ProfissionalResponsavel)
+                .ThenInclude(o => o.Profissional)
             .Include(t => t.Obra)
                 .ThenInclude(o => o.Proprietario)
             .FirstOrDefaultAsync(t => t.ObraId == obraId && t.Ativo);
@@ -20,7 +20,7 @@ public class TermoConclusaoRepository(ApplicationDbContext context) : Repository
         await _dbSet
             .AsSplitQuery()
             .Include(t => t.Obra)
-            .ThenInclude(o => o.ProfissionalResponsavel)
+            .ThenInclude(o => o.Profissional)
             .Include(t => t.Obra)
             .ThenInclude(o => o.Proprietario)
             .FirstOrDefaultAsync(t => t.Id == termoId && t.Ativo);

@@ -17,7 +17,5 @@ public class CreateProprietarioDto
     [MaxLength(20)]
     public string? Telefone { get; set; }
 
-    /// <summary>Usuário do sistema do tipo Proprietário vinculado a este proprietário.</summary>
-    [Required]
-    public Guid UsuarioId { get; set; }
+    public Guid? UsuarioId { get; set; }
 }

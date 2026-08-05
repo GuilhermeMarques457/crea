@@ -143,31 +143,24 @@ namespace CREA.Infrastructure.Migrations
                 columns: table => new
                 {
                     ObraId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Nome = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    Endereco = table.Column<string>(type: "nvarchar(300)", maxLength: 300, nullable: false),
-                    Cidade = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Estado = table.Column<string>(type: "nvarchar(2)", maxLength: 2, nullable: false),
-                    Cep = table.Column<string>(type: "nvarchar(9)", maxLength: 9, nullable: false),
+                    LocalObra = table.Column<string>(type: "nvarchar(300)", maxLength: 300, nullable: false),
                     ProprietarioId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Empresa = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     NumeroCaderneta = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     NumeroArt = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     NumeroRT = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    TipoObra = table.Column<int>(type: "int", nullable: false),
                     TipoEdificacao = table.Column<int>(type: "int", nullable: true),
                     AtividadeTecnica = table.Column<int>(type: "int", nullable: true),
                     DirecaoTecnica = table.Column<bool>(type: "bit", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
                     DataInicio = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    DataPrevisaoTermino = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Descricao = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     AreaConstruir = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
                     AreaRegularizar = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
                     AreaAmpliar = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
                     AreaReformar = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
                     AreaTotalEdificada = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
                     ValorRecibo = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
-                    ProfissionalResponsavelId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ProfissionalId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UsuarioCriadorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CriadoEm = table.Column<DateTime>(type: "datetime2", nullable: false),
                     AtualizadoEm = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -177,8 +170,8 @@ namespace CREA.Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_Obras", x => x.ObraId);
                     table.ForeignKey(
-                        name: "FK_Obras_Profissionais_ProfissionalResponsavelId",
-                        column: x => x.ProfissionalResponsavelId,
+                        name: "FK_Obras_Profissionais_ProfissionalId",
+                        column: x => x.ProfissionalId,
                         principalTable: "Profissionais",
                         principalColumn: "ProfissionalId",
                         onDelete: ReferentialAction.Restrict);
@@ -340,9 +333,9 @@ namespace CREA.Infrastructure.Migrations
                 column: "UsuarioId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Obras_ProfissionalResponsavelId",
+                name: "IX_Obras_ProfissionalId",
                 table: "Obras",
-                column: "ProfissionalResponsavelId");
+                column: "ProfissionalId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Obras_ProprietarioId",

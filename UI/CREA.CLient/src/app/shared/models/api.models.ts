@@ -17,13 +17,7 @@ export enum TipoAssinante {
   UsuarioCrea = 2,
   Proprietario = 3,
 }
-export enum TipoObra {
-  Residencial = 1,
-  Comercial = 2,
-  Industrial = 3,
-  Infraestrutura = 4,
-  Outro = 5,
-}
+
 export enum StatusObra {
   EmAndamento = 1,
   Concluida = 2,
@@ -62,14 +56,6 @@ export const POSICAO_OBRA_LABELS: Record<PosicaoObra, string> = {
   [PosicaoObra.EmDesacordoComProjeto]: 'Em desacordo com o projeto',
   [PosicaoObra.EmAndamento]: 'Em andamento',
   [PosicaoObra.Paralisada]: 'Paralisada',
-};
-
-export const TIPO_OBRA_LABELS: Record<TipoObra, string> = {
-  [TipoObra.Residencial]: 'Residencial',
-  [TipoObra.Comercial]: 'Comercial',
-  [TipoObra.Industrial]: 'Industrial',
-  [TipoObra.Infraestrutura]: 'Infraestrutura',
-  [TipoObra.Outro]: 'Outro',
 };
 
 export const STATUS_OBRA_LABELS: Record<StatusObra, string> = {
@@ -124,11 +110,7 @@ export interface UsuarioDto {
 // Obras
 export interface ObraDto {
   id: string;
-  nome: string;
-  endereco: string;
-  cidade: string;
-  estado: string;
-  cep?: string;
+  localObra: string;
   proprietarioId: string;
   nomeProprietario: string;
   telefoneProprietario?: string;
@@ -136,51 +118,41 @@ export interface ObraDto {
   numeroCaderneta?: string;
   numeroArt: string;
   numeroRT?: string;
-  tipoObra: TipoObra;
   tipoEdificacao?: TipoEdificacao;
   atividadeTecnica?: AtividadeTecnica;
   direcaoTecnica: boolean;
   status: StatusObra;
   dataInicio: string;
-  dataPrevisaoTermino?: string;
-  descricao?: string;
   areaConstruir?: number;
   areaRegularizar?: number;
   areaAmpliar?: number;
   areaReformar?: number;
   areaTotalEdificada?: number;
   valorRecibo?: number;
-  profissionalResponsavelId: string;
-  nomeProfissionalResponsavel: string;
+  profissionalId: string;
+  nomeProfissional: string;
   usuarioCriadorId: string;
   ativo: boolean;
   criadoEm: string;
 }
 export interface CreateObraDto {
-  nome: string;
-  endereco: string;
-  cidade: string;
-  estado: string;
-  cep?: string;
+  localObra?: string;
   proprietarioId: string;
   empresa?: string;
   numeroCaderneta?: string;
   numeroArt: string;
   numeroRT?: string;
-  tipoObra: TipoObra;
   tipoEdificacao?: TipoEdificacao;
   atividadeTecnica?: AtividadeTecnica;
   direcaoTecnica: boolean;
   dataInicio: string;
-  dataPrevisaoTermino?: string;
-  descricao?: string;
   areaConstruir?: number;
   areaRegularizar?: number;
   areaAmpliar?: number;
   areaReformar?: number;
   areaTotalEdificada?: number;
   valorRecibo?: number;
-  profissionalResponsavelId: string;
+  profissionalId: string;
 }
 
 // Profissionais
@@ -226,14 +198,13 @@ export interface CreateProprietarioDto {
   cpf?: string;
   email?: string;
   telefone?: string;
-  usuarioId: string;
+  usuarioId?: string;
 }
 
 // Relato de Visita
 export interface RelatoVisitaDto {
   id: string;
   obraId: string;
-  nomeObra: string;
   numeroSequencial: number;
   data: string;
   atividades: string;
@@ -349,7 +320,6 @@ export interface AnexoDto {
 export interface TermoConclusaoDto {
   id: string;
   obraId: string;
-  nomeObra: string;
   numeroTermo: number;
   dataConclusao: string;
   descricao: string;
@@ -380,24 +350,19 @@ export interface CreateTermoConclusaoDto {
 // Relatório
 export interface RelatorioObraDto {
   obraId: string;
-  nomeObra: string;
-  endereco: string;
-  cidade: string;
-  estado: string;
+  localObra: string;
   proprietario: string;
   telefoneProprietario?: string;
   empresa?: string;
   numeroCaderneta?: string;
   numeroArt: string;
   numeroRT?: string;
-  tipoObra: TipoObra;
   tipoEdificacao?: TipoEdificacao;
   atividadeTecnica?: AtividadeTecnica;
   direcaoTecnica: boolean;
   status: StatusObra;
   dataInicio: string;
-  dataPrevisaoTermino?: string;
-  nomeProfissionalResponsavel: string;
+  nomeProfissional: string;
   numeroRegistroProfissional: string;
   totalRelatoVisita: number;
   totalAnexos: number;

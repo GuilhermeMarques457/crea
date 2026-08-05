@@ -3,8 +3,8 @@
     <div class="flex justify-center py-16"><mat-spinner /></div>
   } @else if (obra()) {
     <app-page-header
-      [title]="obra()!.nome"
-      [subtitle]="obra()!.cidade + '/' + obra()!.estado"
+      [title]="obra()!.localObra!"
+      [subtitle]="obra()!.numeroCaderneta"
       icon="construction"
     >
       <div
@@ -25,10 +25,6 @@
             <div>
               <p class="text-xs text-slate-500 uppercase tracking-wide">Status</p>
               <app-status-badge [status]="obra()!.status" class="mt-1" />
-            </div>
-            <div>
-              <p class="text-xs text-slate-500 uppercase tracking-wide">Tipo</p>
-              <p class="font-medium text-slate-800">{{ tipoLabel() }}</p>
             </div>
             <div>
               <p class="text-xs text-slate-500 uppercase tracking-wide">Proprietário</p>
@@ -77,15 +73,9 @@
                 {{ obra()!.dataInicio | date: 'dd/MM/yyyy' }}
               </p>
             </div>
-            <div>
-              <p class="text-xs text-slate-500 uppercase tracking-wide">Previsão Término</p>
-              <p class="font-medium text-slate-800">
-                {{ (obra()!.dataPrevisaoTermino | date: 'dd/MM/yyyy') ?? '–' }}
-              </p>
-            </div>
             <div class="sm:col-span-2">
-              <p class="text-xs text-slate-500 uppercase tracking-wide">Endereço</p>
-              <p class="font-medium text-slate-800">{{ obra()!.endereco }}</p>
+              <p class="text-xs text-slate-500 uppercase tracking-wide">Local Obra</p>
+              <p class="font-medium text-slate-800">{{ obra()!.localObra }}</p>
             </div>
             @if (obra()!.areaTotalEdificada) {
               <div class="sm:col-span-2">
@@ -135,7 +125,7 @@
               <mat-icon class="text-blue-600">engineering</mat-icon>
             </div>
             <div>
-              <p class="font-semibold text-slate-800">{{ obra()!.nomeProfissionalResponsavel }}</p>
+              <p class="font-semibold text-slate-800">{{ obra()!.nomeProfissional }}</p>
             </div>
           </div>
           <mat-divider class="mb-4" />
