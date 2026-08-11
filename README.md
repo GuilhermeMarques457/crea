@@ -396,3 +396,6 @@ Para produção, substitua os valores do `appsettings.json` por variáveis de am
 https://nodejs.org/en/download
 npm.cmd i
 npx.cmd ng serve
+Update-Database -Verbose
+"DefaultConnection": "Server=(local);Database=CREA;Trusted_Connection=True;TrustServerCertificate=True;"
+
