@@ -391,3 +391,8 @@ Para produção, substitua os valores do `appsettings.json` por variáveis de am
 | `Jwt__ExpiracaoHoras`                  | Tempo de expiração do token em horas                     |
 
 > As chaves JWT e strings de conexão **nunca devem ser versionadas** em repositórios públicos. Use `dotnet user-secrets` localmente ou variáveis de ambiente no servidor de produção.
+
+
+https://nodejs.org/en/download
+npm.cmd i
+npx.cmd ng serve
