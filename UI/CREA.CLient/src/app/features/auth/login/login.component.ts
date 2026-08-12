@@ -7,9 +7,10 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatDialog } from '@angular/material/dialog';
 import { AuthService } from '../../../core/services/auth.service';
-import { ToastService } from '../../../core/services/toast.service';
 import { TipoUsuario } from '../../../shared/models/api.models';
+import { ForgotPasswordDialogComponent } from './forgot-password-dialog/forgot-password-dialog.component';
 
 @Component({
   selector: 'app-login',
@@ -30,7 +31,7 @@ export class LoginComponent {
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
-  private readonly toast = inject(ToastService);
+  private readonly dialog = inject(MatDialog);
 
   loading = signal(false);
   showPassword = signal(false);
@@ -40,6 +41,13 @@ export class LoginComponent {
     email: ['', [Validators.required, Validators.email]],
     senha: ['', Validators.required],
   });
+
+  openForgotPassword() {
+    this.dialog.open(ForgotPasswordDialogComponent, {
+      width: '420px',
+      data: { email: this.form.controls.email.value },
+    });
+  }
 
   submit() {
     if (this.form.invalid) {

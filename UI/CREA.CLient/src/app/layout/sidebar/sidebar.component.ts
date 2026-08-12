@@ -6,9 +6,11 @@ import { filter } from 'rxjs/operators';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatBadgeModule } from '@angular/material/badge';
+import { MatDialog } from '@angular/material/dialog';
 import { AuthService } from '../../core/services/auth.service';
 import { NotificacaoService } from '../../core/services/notificacao.service';
 import { TipoUsuario } from '../../shared/models/api.models';
+import { ChangePasswordDialogComponent } from '../../shared/components/change-password-dialog/change-password-dialog.component';
 
 interface NavItem {
   label: string;
@@ -77,6 +79,7 @@ const NAV_ITEMS: NavItem[] = [
 export class SidebarComponent implements OnInit {
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly dialog = inject(MatDialog);
   private readonly destroyRef = inject(DestroyRef);
   readonly notificacaoService = inject(NotificacaoService);
 
@@ -115,6 +118,10 @@ export class SidebarComponent implements OnInit {
 
   closeMobileMenu(): void {
     this.mobileMenuOpen.set(false);
+  }
+
+  openChangePassword() {
+    this.dialog.open(ChangePasswordDialogComponent, { width: '420px' });
   }
 
   logout() {

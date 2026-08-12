@@ -37,6 +37,34 @@ public class AuthController(IUsuarioRepository usuarioRepository, IConfiguration
         });
     }
 
+    [HttpPost("esqueci-senha")]
+    [AllowAnonymous]
+    public async Task<IActionResult> EsqueciSenha([FromBody] EsqueciSenhaDto dto)
+    {
+        _ = await usuarioRepository.GetByEmailAsync(dto.Email);
+        return Ok(new
+        {
+            mensagem = "Se o e-mail estiver cadastrado, você receberá instruções para redefinir sua senha."
+        });
+    }
+
+    [HttpPost("trocar-senha")]
+    [Authorize]
+    public async Task<IActionResult> TrocarSenha([FromBody] TrocarSenhaDto dto)
+    {
+        var usuarioId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var usuario = await usuarioRepository.GetByIdAsync(usuarioId);
+        if (usuario is null) return NotFound();
+
+        if (!VerificarSenha(dto.SenhaAtual, usuario.SenhaHash))
+            return BadRequest(new { mensagem = "Senha atual incorreta." });
+
+        usuario.SenhaHash = HashSenha(dto.NovaSenha);
+        await usuarioRepository.UpdateAsync(usuario);
+
+        return Ok(new { mensagem = "Senha alterada com sucesso." });
+    }
+
     [HttpPost("registrar")]
     [AllowAnonymous]
     public async Task<ActionResult<UsuarioDto>> Registrar([FromBody] CreateUsuarioDto dto)

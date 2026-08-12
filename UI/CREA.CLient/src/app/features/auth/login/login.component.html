@@ -150,6 +150,16 @@
               }
             </mat-form-field>
 
+            <div class="flex justify-end -mt-1">
+              <button
+                type="button"
+                class="text-sm font-medium text-blue-600 hover:text-blue-700 hover:underline"
+                (click)="openForgotPassword()"
+              >
+                Esqueci minha senha
+              </button>
+            </div>
+
             @if (error()) {
               <div
                 class="flex gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800"

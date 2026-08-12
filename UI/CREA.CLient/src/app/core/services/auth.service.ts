@@ -5,6 +5,8 @@ import { tap } from 'rxjs/operators';
 import {
   LoginDto,
   LoginResponseDto,
+  EsqueciSenhaDto,
+  TrocarSenhaDto,
   CreateUsuarioDto,
   UsuarioDto,
 } from '../../shared/models/api.models';
@@ -19,6 +21,20 @@ export class AuthService {
   readonly session = this._session.asReadonly();
   readonly isAuthenticated = computed(() => !!this._session());
   readonly currentUser = computed(() => this._session());
+
+  esqueciSenha(dto: EsqueciSenhaDto) {
+    return this.http.post<{ mensagem: string }>(
+      `${environment.apiUrl}/api/Auth/esqueci-senha`,
+      dto,
+    );
+  }
+
+  trocarSenha(dto: TrocarSenhaDto) {
+    return this.http.post<{ mensagem: string }>(
+      `${environment.apiUrl}/api/Auth/trocar-senha`,
+      dto,
+    );
+  }
 
   login(dto: LoginDto) {
     return this.http.post<LoginResponseDto>(`${environment.apiUrl}/api/Auth/login`, dto).pipe(

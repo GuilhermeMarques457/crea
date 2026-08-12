@@ -78,6 +78,13 @@ export interface LoginDto {
   email: string;
   senha: string;
 }
+export interface EsqueciSenhaDto {
+  email: string;
+}
+export interface TrocarSenhaDto {
+  senhaAtual: string;
+  novaSenha: string;
+}
 export interface LoginResponseDto {
   token: string;
   expiracao: string;

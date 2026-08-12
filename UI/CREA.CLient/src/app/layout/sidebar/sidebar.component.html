@@ -83,6 +83,14 @@
     </div>
     <button
       type="button"
+      (click)="openChangePassword()"
+      class="mb-1 flex w-full cursor-pointer items-center gap-2 rounded-lg border-0 bg-transparent px-3 py-2 text-sm text-slate-400 transition-colors hover:bg-slate-800 hover:text-white"
+    >
+      <mat-icon class="h-5 w-5 text-lg">lock</mat-icon>
+      Trocar senha
+    </button>
+    <button
+      type="button"
       (click)="logout()"
       class="flex w-full cursor-pointer items-center gap-2 rounded-lg border-0 bg-transparent px-3 py-2 text-sm text-slate-400 transition-colors hover:bg-slate-800 hover:text-white"
     >

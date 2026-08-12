@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CREA.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260805125433_Initial")]
+    [Migration("20260812120526_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -536,15 +536,10 @@ namespace CREA.Infrastructure.Migrations
                     b.Property<string>("Observacoes")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("ProfissionalId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
 
                     b.HasIndex("ObraId")
                         .IsUnique();
-
-                    b.HasIndex("ProfissionalId");
 
                     b.ToTable("TermosConclusao");
                 });
@@ -700,10 +695,6 @@ namespace CREA.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("CREA.Domain.Entities.Profissional", null)
-                        .WithMany("TermosConclusao")
-                        .HasForeignKey("ProfissionalId");
-
                     b.Navigation("Obra");
                 });
 
@@ -719,8 +710,6 @@ namespace CREA.Infrastructure.Migrations
             modelBuilder.Entity("CREA.Domain.Entities.Profissional", b =>
                 {
                     b.Navigation("ObrasComoResponsavel");
-
-                    b.Navigation("TermosConclusao");
                 });
 
             modelBuilder.Entity("CREA.Domain.Entities.Proprietario", b =>

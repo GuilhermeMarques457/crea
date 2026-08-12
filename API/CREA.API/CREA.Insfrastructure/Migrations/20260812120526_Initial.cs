@@ -247,7 +247,6 @@ namespace CREA.Infrastructure.Migrations
                     DeclaracaoTexto = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LocalDeclaracao = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DataDeclaracao = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    ProfissionalId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CriadoEm = table.Column<DateTime>(type: "datetime2", nullable: false),
                     AtualizadoEm = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Ativo = table.Column<bool>(type: "bit", nullable: false)
@@ -261,11 +260,6 @@ namespace CREA.Infrastructure.Migrations
                         principalTable: "Obras",
                         principalColumn: "ObraId",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_TermosConclusao_Profissionais_ProfissionalId",
-                        column: x => x.ProfissionalId,
-                        principalTable: "Profissionais",
-                        principalColumn: "ProfissionalId");
                 });
 
             migrationBuilder.CreateTable(
@@ -380,11 +374,6 @@ namespace CREA.Infrastructure.Migrations
                 table: "TermosConclusao",
                 column: "ObraId",
                 unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_TermosConclusao_ProfissionalId",
-                table: "TermosConclusao",
-                column: "ProfissionalId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Usuarios_Email",
