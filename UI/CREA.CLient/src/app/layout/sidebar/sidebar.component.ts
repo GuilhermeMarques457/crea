@@ -22,23 +22,6 @@ interface NavItem {
 
 const NAV_ITEMS: NavItem[] = [
   {
-    label: 'Dashboard',
-    icon: 'dashboard',
-    route: '/dashboard',
-    roles: [TipoUsuario.Admin, TipoUsuario.ResponsavelTecnico, TipoUsuario.Operacional],
-  },
-  {
-    label: 'Obras',
-    icon: 'construction',
-    route: '/obras',
-    roles: [
-      TipoUsuario.Admin,
-      TipoUsuario.ResponsavelTecnico,
-      TipoUsuario.Operacional,
-      TipoUsuario.UsuarioCrea,
-    ],
-  },
-  {
     label: 'Profissionais',
     icon: 'engineering',
     route: '/profissionais',
@@ -50,21 +33,7 @@ const NAV_ITEMS: NavItem[] = [
     route: '/proprietarios',
     roles: [TipoUsuario.Admin],
   },
-  {
-    label: 'Assinaturas',
-    icon: 'draw',
-    route: '/assinaturas',
-    roles: [TipoUsuario.ResponsavelTecnico, TipoUsuario.UsuarioCrea, TipoUsuario.Proprietario],
-    badge: true,
-  },
-  {
-    label: 'Relatórios',
-    icon: 'assessment',
-    route: '/relatorios',
-    roles: [TipoUsuario.Admin, TipoUsuario.ResponsavelTecnico, TipoUsuario.Operacional],
-  },
   { label: 'Usuários', icon: 'group', route: '/usuarios', roles: [TipoUsuario.Admin] },
-  { label: 'Auditoria', icon: 'security', route: '/auditoria', roles: [TipoUsuario.Admin] },
 ];
 
 @Component({
