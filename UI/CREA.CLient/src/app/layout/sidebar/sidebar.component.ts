@@ -22,6 +22,17 @@ interface NavItem {
 
 const NAV_ITEMS: NavItem[] = [
   {
+    label: 'Obras',
+    icon: 'construction',
+    route: '/obras',
+    roles: [
+      TipoUsuario.Admin,
+      TipoUsuario.ResponsavelTecnico,
+      TipoUsuario.Operacional,
+      TipoUsuario.UsuarioCrea,
+    ],
+  },
+  {
     label: 'Profissionais',
     icon: 'engineering',
     route: '/profissionais',
