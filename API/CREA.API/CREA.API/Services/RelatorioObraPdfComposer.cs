@@ -182,12 +182,6 @@ public static class RelatorioObraPdfComposer
                 row.RelativeItem().Text($"#{reg.NumeroSequencial} — {reg.Data:dd/MM/yyyy}").SemiBold();
                 row.AutoItem().Text($"{reg.TotalAssinaturas} assinatura(s)").FontSize(9).FontColor(Colors.Blue.Darken1);
             });
-            col.Item().Element(c => DrawKeyRowMultiline(c,"Atividades", reg.Atividades));
-            col.Item().Element(c => DrawKeyRow(c,"Equipe", reg.EquipePresente));
-            if (!string.IsNullOrWhiteSpace(reg.CondicaoClimatica))
-                col.Item().Element(c => DrawKeyRow(c,"Clima", reg.CondicaoClimatica!));
-            if (!string.IsNullOrWhiteSpace(reg.Observacoes))
-                col.Item().Element(c => DrawKeyRowMultiline(c,"Observações", reg.Observacoes!));
             if (reg.PosicaoObra.HasValue)
                 col.Item().Element(c => DrawKeyRow(c,"Posição da obra", PosicaoObraPt(reg.PosicaoObra.Value)));
             if (!string.IsNullOrWhiteSpace(reg.DecisoesTecnicas))

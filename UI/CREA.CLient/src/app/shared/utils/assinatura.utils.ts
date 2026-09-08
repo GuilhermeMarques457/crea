@@ -64,3 +64,18 @@ export function possuiAssinatura(
 ): boolean {
   return assinaturas.some((a) => a.tipoAssinante === tipo);
 }
+
+export function montarLinkAssinatura(
+  origin: string,
+  tipoEntidade: TipoEntidadeAssinatura,
+  obraId: string,
+  entidadeId: string,
+): string {
+  if (tipoEntidade === TipoEntidadeAssinatura.Obra) {
+    return `${origin}/obras/${obraId}?assinar=obra`;
+  }
+  if (tipoEntidade === TipoEntidadeAssinatura.RelatoVisita) {
+    return `${origin}/obras/${obraId}?assinar=registro&r=${entidadeId}`;
+  }
+  return `${origin}/obras/${obraId}?assinar=termo`;
+}

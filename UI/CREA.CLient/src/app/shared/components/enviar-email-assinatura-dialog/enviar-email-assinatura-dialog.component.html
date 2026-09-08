@@ -1,0 +1,43 @@
+<h2 mat-dialog-title class="flex items-center gap-2">
+  <mat-icon class="text-blue-600">email</mat-icon>
+  Enviar e-mail de assinatura
+</h2>
+
+<mat-dialog-content>
+  @if (loading()) {
+    <div class="flex justify-center py-6"><mat-spinner diameter="36" /></div>
+  } @else if (erro()) {
+    <p class="text-slate-600">{{ erro() }}</p>
+  } @else {
+    <p class="text-slate-600 mb-3">
+      Será enviado um e-mail para <strong>{{ emailsResumo() }}</strong> avisando sobre a assinatura
+      pendente de <strong>{{ preview()?.titulo }}</strong>.
+    </p>
+    <p class="text-slate-600 mb-3">
+      A mensagem terá um botão com o link de assinatura. Depois do login, a pessoa será
+      redirecionada automaticamente para esta tela.
+    </p>
+    <ul class="text-sm text-slate-500 list-disc pl-5 space-y-1">
+      @for (d of preview()?.destinatarios ?? []; track d.email) {
+        <li>{{ d.nome }} ({{ labels[d.tipoAssinante] }}) — {{ d.email }}</li>
+      }
+    </ul>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button type="button" [mat-dialog-close]="false" [disabled]="sending()">
+    Cancelar
+  </button>
+  @if (!loading() && !erro()) {
+    <button
+      mat-flat-button
+      color="primary"
+      type="button"
+      (click)="confirmar()"
+      [disabled]="sending()"
+    >
+      {{ sending() ? 'Enviando...' : 'Enviar e-mail' }}
+    </button>
+  }
+</mat-dialog-actions>

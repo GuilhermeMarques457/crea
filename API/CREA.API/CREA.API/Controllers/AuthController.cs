@@ -15,7 +15,7 @@ namespace CREA.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class AuthController(IUsuarioRepository usuarioRepository, IConfiguration configuration) : ControllerBase
+public class AuthController(IUsuarioRepository usuarioRepository, IProfissionalRepository profissionalRepository, IConfiguration configuration) : ControllerBase
 {
     [HttpPost("login")]
     [AllowAnonymous]
@@ -31,6 +31,7 @@ public class AuthController(IUsuarioRepository usuarioRepository, IConfiguration
             Token = token,
             Expiracao = DateTime.Now.AddHours(GetExpiracaoHoras()),
             UsuarioId = usuario.Id,
+            ProfissionalId = usuario.TipoUsuario == TipoUsuario.ResponsavelTecnico ? (await profissionalRepository.GetByUsuarioIdAsync(usuario.Id))!.Id : null,
             Nome = usuario.Nome,
             Email = usuario.Email,
             TipoUsuario = usuario.TipoUsuario

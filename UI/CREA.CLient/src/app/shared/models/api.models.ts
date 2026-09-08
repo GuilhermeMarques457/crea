@@ -1,9 +1,8 @@
 export enum TipoUsuario {
-  Operacional = 1,
-  ResponsavelTecnico = 2,
-  Admin = 3,
-  UsuarioCrea = 4,
-  Proprietario = 5,
+  ResponsavelTecnico = 1,
+  Admin = 2,
+  UsuarioCrea = 3,
+  Proprietario = 4,
 }
 
 export enum TipoEntidadeAssinatura {
@@ -68,7 +67,6 @@ export const STATUS_OBRA_LABELS: Record<StatusObra, string> = {
 export const TIPO_USUARIO_LABELS: Record<TipoUsuario, string> = {
   [TipoUsuario.Admin]: 'Administrador',
   [TipoUsuario.ResponsavelTecnico]: 'Responsável Técnico',
-  [TipoUsuario.Operacional]: 'Operacional',
   [TipoUsuario.UsuarioCrea]: 'Usuário CREA',
   [TipoUsuario.Proprietario]: 'Proprietário',
 };
@@ -89,6 +87,7 @@ export interface LoginResponseDto {
   token: string;
   expiracao: string;
   usuarioId: string;
+  profissionalId: string | null;
   nome: string;
   email: string;
   tipoUsuario: TipoUsuario;
@@ -214,10 +213,6 @@ export interface RelatoVisitaDto {
   obraId: string;
   numeroSequencial: number;
   data: string;
-  atividades: string;
-  equipePresente: string;
-  condicaoClimatica?: string;
-  observacoes?: string;
   servicosPreliminar: boolean;
   fundacao: boolean;
   alvenarias: boolean;
@@ -242,10 +237,6 @@ export interface RelatoVisitaDto {
 export interface CreateRelatoVisitaDto {
   obraId: string;
   data: string;
-  atividades: string;
-  equipePresente: string;
-  condicaoClimatica?: string;
-  observacoes?: string;
   servicosPreliminar: boolean;
   fundacao: boolean;
   alvenarias: boolean;
@@ -306,6 +297,23 @@ export interface MinhaAssinaturaDto {
   subtitulo?: string;
   dataAssinatura: string;
   totalmenteAssinado: boolean;
+}
+
+export interface DestinatarioAssinaturaEmailDto {
+  nome: string;
+  email: string;
+  tipoAssinante: TipoAssinante;
+}
+
+export interface PreviewEmailAssinaturaDto {
+  titulo: string;
+  destinatarios: DestinatarioAssinaturaEmailDto[];
+}
+
+export interface EnviarEmailAssinaturaDto {
+  tipoEntidade: TipoEntidadeAssinatura;
+  entidadeId: string;
+  linkAssinatura?: string;
 }
 
 // Anexos

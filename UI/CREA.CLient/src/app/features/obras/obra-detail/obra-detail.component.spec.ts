@@ -28,6 +28,7 @@ import {
   TipoUsuario,
 } from '../../../shared/models/api.models';
 import { EntidadeAnexosDialogComponent } from '../../../shared/components/entidade-anexos-dialog/entidade-anexos-dialog.component';
+import { EnviarEmailAssinaturaDialogComponent } from '../../../shared/components/enviar-email-assinatura-dialog/enviar-email-assinatura-dialog.component';
 import { SignaturePadDialogComponent } from '../../../shared/components/signature-pad-dialog/signature-pad-dialog.component';
 import { SignatureViewDialogComponent } from '../../../shared/components/signature-view-dialog/signature-view-dialog.component';
 import { ObraDetailComponent } from './obra-detail.component';
@@ -286,14 +287,6 @@ function setup(options: SetupOptions = {}) {
   };
 }
 
-function mockClipboard(writeText = vi.fn().mockResolvedValue(undefined)) {
-  Object.defineProperty(navigator, 'clipboard', {
-    configurable: true,
-    value: { writeText },
-  });
-  return writeText;
-}
-
 describe('ObraDetailComponent', () => {
   afterEach(() => {
     TestBed.resetTestingModule();
@@ -486,26 +479,30 @@ describe('ObraDetailComponent', () => {
     });
   });
 
-  it('copies assinatura links and reports clipboard success or failure', async () => {
+  it('opens the signature email dialog with the generated assinatura link', () => {
     const { component, mocks } = setup();
-    const writeText = mockClipboard();
 
-    component.copiarLink('registro', 'registro-1');
-    await Promise.resolve();
+    component.enviarEmail('registro', 'registro-1');
 
-    expect(writeText).toHaveBeenCalledWith(
-      `${window.location.origin}/obras/obra-1?assinar=registro&r=registro-1`,
-    );
-    expect(mocks.toast.success).toHaveBeenCalledWith('Link de assinatura copiado!');
+    expect(mocks.dialog.open).toHaveBeenCalledWith(EnviarEmailAssinaturaDialogComponent, {
+      width: '520px',
+      data: {
+        tipoEntidade: TipoEntidadeAssinatura.RelatoVisita,
+        entidadeId: 'registro-1',
+        linkAssinatura: `${window.location.origin}/obras/obra-1?assinar=registro&r=registro-1`,
+      },
+    });
 
-    const failingWriteText = mockClipboard(vi.fn().mockRejectedValue(new Error('denied')));
-    component.copiarLink('obra');
-    await Promise.resolve();
+    component.enviarEmail('obra');
 
-    expect(failingWriteText).toHaveBeenCalledWith(
-      `${window.location.origin}/obras/obra-1?assinar=obra`,
-    );
-    expect(mocks.toast.error).toHaveBeenCalledWith('N\u00e3o foi poss\u00edvel copiar o link.');
+    expect(mocks.dialog.open).toHaveBeenCalledWith(EnviarEmailAssinaturaDialogComponent, {
+      width: '520px',
+      data: {
+        tipoEntidade: TipoEntidadeAssinatura.Obra,
+        entidadeId: 'obra-1',
+        linkAssinatura: `${window.location.origin}/obras/obra-1?assinar=obra`,
+      },
+    });
   });
 
   it('opens the registro attachments dialog with the selected registro', () => {

@@ -15,12 +15,17 @@ import { ToastService } from '../../core/services/toast.service';
 import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
 import { PageHeaderComponent } from '../../shared/components/page-header/page-header.component';
 import { SignaturePadDialogComponent } from '../../shared/components/signature-pad-dialog/signature-pad-dialog.component';
+import { EnviarEmailAssinaturaDialogComponent } from '../../shared/components/enviar-email-assinatura-dialog/enviar-email-assinatura-dialog.component';
 import {
   MinhaAssinaturaDto,
   PendenteAssinaturaDto,
   TipoEntidadeAssinatura,
 } from '../../shared/models/api.models';
-import { labelTipoAssinante, TIPO_ENTIDADE_LABELS } from '../../shared/utils/assinatura.utils';
+import {
+  labelTipoAssinante,
+  montarLinkAssinatura,
+  TIPO_ENTIDADE_LABELS,
+} from '../../shared/utils/assinatura.utils';
 
 @Component({
   selector: 'app-assinaturas',
@@ -125,20 +130,20 @@ export class AssinaturasComponent implements OnInit {
     return null;
   }
 
-  copiarLink(p: PendenteAssinaturaDto | MinhaAssinaturaDto): void {
-    const obraId = p.obraId;
-    let url = `${window.location.origin}`;
-    if (p.tipoEntidade === TipoEntidadeAssinatura.Obra) {
-      url += `/obras/${obraId}?assinar=obra`;
-    } else if (p.tipoEntidade === TipoEntidadeAssinatura.RelatoVisita) {
-      url += `/obras/${obraId}?assinar=registro&r=${p.entidadeId}`;
-    } else {
-      url += `/obras/${obraId}?assinar=termo`;
-    }
-    navigator.clipboard.writeText(url).then(
-      () => this.toast.success('Link de assinatura copiado!'),
-      () => this.toast.error('Não foi possível copiar o link.'),
-    );
+  enviarEmail(p: PendenteAssinaturaDto | MinhaAssinaturaDto): void {
+    this.dialog.open(EnviarEmailAssinaturaDialogComponent, {
+      width: '520px',
+      data: {
+        tipoEntidade: p.tipoEntidade,
+        entidadeId: p.entidadeId,
+        linkAssinatura: montarLinkAssinatura(
+          window.location.origin,
+          p.tipoEntidade,
+          p.obraId,
+          p.entidadeId,
+        ),
+      },
+    });
   }
 
   assinar(pendente: PendenteAssinaturaDto) {

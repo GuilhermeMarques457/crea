@@ -33,6 +33,7 @@ import { SignaturePadDialogComponent } from '../../../shared/components/signatur
 import { SignatureViewDialogComponent } from '../../../shared/components/signature-view-dialog/signature-view-dialog.component';
 import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
 import { ToastService } from '../../../core/services/toast.service';
+import { NotificacaoService } from '../../../core/services/notificacao.service';
 import {
   labelTipoAssinante,
   tipoAssinanteDoUsuario,
@@ -68,6 +69,7 @@ export class RelatoVisitaFormComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly toast = inject(ToastService);
+  private readonly notificacaoService = inject(NotificacaoService);
   private readonly auth = inject(AuthService);
   private readonly dialog = inject(MatDialog);
   private readonly anexoService = inject(AnexoService);
@@ -96,11 +98,7 @@ export class RelatoVisitaFormComponent implements OnInit {
   }));
 
   form = this.fb.nonNullable.group({
-    data: [null as any, Validators.required],
-    atividades: ['', Validators.required],
-    equipePresente: ['', [Validators.required, Validators.maxLength(500)]],
-    condicaoClimatica: [''],
-    observacoes: [''],
+    data: [moment() as any, Validators.required],
     servicosPreliminar: [false],
     fundacao: [false],
     alvenarias: [false],
@@ -234,6 +232,7 @@ export class RelatoVisitaFormComponent implements OnInit {
         next: () => {
           this.arquivosPendentes.set([]);
           this.toast.success('Registro salvo!');
+          this.notificacaoService.carregarMeusPendentes();
           this.voltar();
         },
         error: onErr,
@@ -270,6 +269,7 @@ export class RelatoVisitaFormComponent implements OnInit {
         .subscribe({
           next: () => {
             this.toast.success('Assinatura registrada!');
+            this.notificacaoService.carregarMeusPendentes();
             this.assinaturaService
               .porEntidade(TipoEntidadeAssinatura.RelatoVisita, this.editId!)
               .subscribe((list) => this.assinaturas.set(list));

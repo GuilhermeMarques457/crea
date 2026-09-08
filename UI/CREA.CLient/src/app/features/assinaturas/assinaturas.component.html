@@ -107,10 +107,10 @@
     <button
       mat-stroked-button
       class="w-full shrink-0 sm:w-auto"
-      matTooltip="Copiar link para enviar a quem precisa assinar"
-      (click)="copiarLink(p)"
+      matTooltip="Enviar e-mail com o link para quem precisa assinar"
+      (click)="enviarEmail(p)"
     >
-      <mat-icon>link</mat-icon> Copiar link
+      <mat-icon>email</mat-icon> Enviar e-mail
     </button>
   </div>
 </ng-template>
@@ -122,7 +122,7 @@
       Aguardando outros assinarem ({{ minhasAguardando().length }})
     </h2>
     <p class="text-sm text-slate-500 mb-4">
-      Você já assinou. Copie o link e envie à próxima pessoa que precisa assinar.
+      Você já assinou. Envie o e-mail à próxima pessoa que precisa assinar.
     </p>
     <div class="space-y-3">
       @for (m of minhasAguardando(); track m.entidadeId + '-' + m.tipoAssinante) {
@@ -151,10 +151,10 @@
           <button
             mat-stroked-button
             class="w-full shrink-0 sm:w-auto"
-            matTooltip="Copiar link para enviar à próxima pessoa que precisa assinar"
-            (click)="copiarLink(m)"
+            matTooltip="Enviar e-mail com o link para a próxima pessoa que precisa assinar"
+            (click)="enviarEmail(m)"
           >
-            <mat-icon>link</mat-icon> Copiar link
+            <mat-icon>email</mat-icon> Enviar e-mail
           </button>
         </div>
       }

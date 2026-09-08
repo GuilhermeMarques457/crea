@@ -2,9 +2,8 @@ namespace CREA.Domain.Enums;
 
 public enum TipoUsuario
 {
-    Operacional = 1,
-    ResponsavelTecnico = 2,
-    Administrador = 3,
-    UsuarioCrea = 4,
-    Proprietario = 5
+    ResponsavelTecnico = 1,
+    Administrador = 2,
+    UsuarioCrea = 3,
+    Proprietario = 4
 }

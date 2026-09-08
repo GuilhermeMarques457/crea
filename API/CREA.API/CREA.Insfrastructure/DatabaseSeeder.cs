@@ -48,16 +48,6 @@ public static class DatabaseSeeder
             CriadoEm = DateTime.Now
         };
 
-        var usuarioOperacional = new Usuario
-        {
-            Id = Guid.NewGuid(),
-            Nome = "João Operacional",
-            Email = "joao@crea.com",
-            SenhaHash = HashSenha("Crea@123"),
-            TipoUsuario = TipoUsuario.Operacional,
-            CriadoEm = DateTime.Now
-        };
-
         var usuarioArquiteta = new Usuario
         {
             Id = Guid.NewGuid(),
@@ -89,7 +79,7 @@ public static class DatabaseSeeder
         };
 
         await context.Usuarios.AddRangeAsync(
-            usuarioAdmin, usuarioEngenheiro, usuarioOperacional, usuarioArquiteta, usuarioCrea, usuarioProprietarioTech);
+            usuarioAdmin, usuarioEngenheiro, usuarioArquiteta, usuarioCrea, usuarioProprietarioTech);
         await context.SaveChangesAsync();
 
         // ----------------------------------------------------------------
@@ -186,7 +176,7 @@ public static class DatabaseSeeder
             AreaConstruir = 180.00m,
             AreaTotalEdificada = 180.00m,
             ValorRecibo = 350000.00m,
-            UsuarioCriadorId = usuarioEngenheiro.Id,
+            UsuarioCriadorId = usuarioAdmin.Id,
             CriadoEm = DateTime.Now
         };
 
@@ -208,7 +198,7 @@ public static class DatabaseSeeder
             AreaTotalEdificada = 9600.00m,
             ValorRecibo = 12000000.00m,
             ProfissionalId = profissionalCarlos.Id,
-            UsuarioCriadorId = usuarioEngenheiro.Id,
+            UsuarioCriadorId = usuarioAdmin.Id,
             CriadoEm = DateTime.Now
         };
 
@@ -230,7 +220,7 @@ public static class DatabaseSeeder
             AreaTotalEdificada = 350.00m,
             ValorRecibo = 180000.00m,
             ProfissionalId = profissionalAna.Id,
-            UsuarioCriadorId = usuarioArquiteta.Id,
+            UsuarioCriadorId = usuarioAdmin.Id,
             CriadoEm = DateTime.Now.AddMonths(-12)
         };
 
@@ -247,15 +237,11 @@ public static class DatabaseSeeder
                 ObraId = obraResidencial.Id,
                 NumeroSequencial = 1,
                 Data = DateTime.Now.AddDays(-10),
-                Atividades = "Concretagem do radier da fundação. Foram utilizados 12m³ de concreto fck25. Nivelamento e acabamento da superfície.",
-                EquipePresente = "3 pedreiros, 2 serventes, 1 mestre de obras",
-                CondicaoClimatica = "Ensolarado, 28°C",
-                Observacoes = "Serviço concluído conforme projeto. Aguardar cura de 28 dias antes de iniciar alvenaria.",
                 ServicosPreliminar = true,
                 Fundacao = true,
                 PosicaoObra = PosicaoObra.DeAcordoComProjeto,
                 DecisoesTecnicas = "Aguardar cura do concreto por 28 dias antes de iniciar alvenaria.",
-                UsuarioId = usuarioOperacional.Id,
+                UsuarioId = usuarioAdmin.Id,
                 CriadoEm = DateTime.Now.AddDays(-10)
             },
             new()
@@ -263,14 +249,10 @@ public static class DatabaseSeeder
                 ObraId = obraResidencial.Id,
                 NumeroSequencial = 2,
                 Data = DateTime.Now.AddDays(-7),
-                Atividades = "Início da alvenaria do pavimento térreo. Levantamento dos blocos da sala e cozinha. Assentamento de 320 blocos cerâmicos.",
-                EquipePresente = "4 pedreiros, 3 serventes, 1 mestre de obras",
-                CondicaoClimatica = "Parcialmente nublado, 25°C",
-                Observacoes = "Verificar alinhamento das paredes antes de continuar amanhã.",
                 Alvenarias = true,
                 PosicaoObra = PosicaoObra.DeAcordoComProjeto,
                 DecisoesTecnicas = "Conferir prumo e nível das paredes no próximo dia.",
-                UsuarioId = usuarioOperacional.Id,
+                UsuarioId = usuarioAdmin.Id,
                 CriadoEm = DateTime.Now.AddDays(-7)
             },
             new()
@@ -278,15 +260,11 @@ public static class DatabaseSeeder
                 ObraId = obraResidencial.Id,
                 NumeroSequencial = 3,
                 Data = DateTime.Now.AddDays(-3),
-                Atividades = "Continuação da alvenaria. Levantamento das paredes dos quartos. Passagem de eletrodutos conforme projeto elétrico.",
-                EquipePresente = "4 pedreiros, 3 serventes, 1 eletricista, 1 mestre de obras",
-                CondicaoClimatica = "Ensolarado, 30°C",
-                Observacoes = "Eletricista confirmou passagem conforme projeto aprovado.",
                 Alvenarias = true,
                 EsquadriasInstalacoesEletricasHidraulicas = true,
                 PosicaoObra = PosicaoObra.EmAndamento,
                 DecisoesTecnicas = "Prosseguir com instalações elétricas conforme projeto aprovado.",
-                UsuarioId = usuarioOperacional.Id,
+                UsuarioId = usuarioAdmin.Id,
                 CriadoEm = DateTime.Now.AddDays(-3)
             },
             new()
@@ -294,14 +272,10 @@ public static class DatabaseSeeder
                 ObraId = obraComercial.Id,
                 NumeroSequencial = 1,
                 Data = DateTime.Now.AddDays(-5),
-                Atividades = "Concretagem das lajes do 3º pavimento. Utilização de 45m³ de concreto bombeado fck30. Instalação de forma e escoramento.",
-                EquipePresente = "6 pedreiros, 4 serventes, 2 armadores, 1 encarregado",
-                CondicaoClimatica = "Ensolarado, 27°C",
-                Observacoes = "Concretagem realizada sem intercorrências. Cura iniciada às 16h.",
                 Superestrutura = true,
                 PosicaoObra = PosicaoObra.DeAcordoComProjeto,
                 DecisoesTecnicas = "Manter escoramento por no mínimo 21 dias. Iniciar cura úmida.",
-                UsuarioId = usuarioOperacional.Id,
+                UsuarioId = usuarioAdmin.Id,
                 CriadoEm = DateTime.Now.AddDays(-5)
             },
             new()
@@ -309,15 +283,11 @@ public static class DatabaseSeeder
                 ObraId = obraComercial.Id,
                 NumeroSequencial = 2,
                 Data = DateTime.Now.AddDays(-2),
-                Atividades = "Instalação de pilares metálicos do 4º andar. Soldagem e grauteamento. Inspeção de qualidade realizada.",
-                EquipePresente = "3 soldadores, 2 ajudantes, 1 engenheiro fiscal",
-                CondicaoClimatica = "Nublado, 22°C",
-                Observacoes = "Ensaio de solda aprovado pelo engenheiro fiscal.",
                 Superestrutura = true,
                 ServicosComplementares = true,
                 PosicaoObra = PosicaoObra.EmAndamento,
                 DecisoesTecnicas = "Solicitar laudo de ensaio de solda ao laboratório.",
-                UsuarioId = usuarioOperacional.Id,
+                UsuarioId = usuarioAdmin.Id,
                 CriadoEm = DateTime.Now.AddDays(-2)
             }
         };

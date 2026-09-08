@@ -66,10 +66,6 @@ public class RelatoVisitaController(
             ObraId = dto.ObraId,
             NumeroSequencial = proximoNumero,
             Data = dto.Data,
-            Atividades = dto.Atividades,
-            EquipePresente = dto.EquipePresente,
-            CondicaoClimatica = dto.CondicaoClimatica,
-            Observacoes = dto.Observacoes,
             ServicosPreliminar = dto.ServicosPreliminar,
             Fundacao = dto.Fundacao,
             Alvenarias = dto.Alvenarias,
@@ -96,10 +92,6 @@ public class RelatoVisitaController(
         if (registro is null) return NotFound();
 
         registro.Data = dto.Data;
-        registro.Atividades = dto.Atividades;
-        registro.EquipePresente = dto.EquipePresente;
-        registro.CondicaoClimatica = dto.CondicaoClimatica;
-        registro.Observacoes = dto.Observacoes;
         registro.ServicosPreliminar = dto.ServicosPreliminar;
         registro.Fundacao = dto.Fundacao;
         registro.Alvenarias = dto.Alvenarias;
@@ -137,10 +129,6 @@ public class RelatoVisitaController(
             ObraId = r.ObraId,
             NumeroSequencial = r.NumeroSequencial,
             Data = r.Data,
-            Atividades = r.Atividades,
-            EquipePresente = r.EquipePresente,
-            CondicaoClimatica = r.CondicaoClimatica,
-            Observacoes = r.Observacoes,
             ServicosPreliminar = r.ServicosPreliminar,
             Fundacao = r.Fundacao,
             Alvenarias = r.Alvenarias,

@@ -1,4 +1,6 @@
 using System.Text;
+using CREA.API.Services;
+using CREA.Application.Interfaces;
 using CREA.Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -34,6 +36,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 });
 
 builder.Services.AddInfrastructure();
+builder.Services.AddHttpClient<IEmailService, BrevoEmailService>();
+builder.Services.AddScoped<AssinaturaConviteService>();
 
 var jwtKey = builder.Configuration["Jwt:Key"]!;
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

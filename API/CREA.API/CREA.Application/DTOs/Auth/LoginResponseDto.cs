@@ -7,6 +7,7 @@ public class LoginResponseDto
     public string Token { get; set; } = string.Empty;
     public DateTime Expiracao { get; set; }
     public Guid UsuarioId { get; set; }
+    public Guid? ProfissionalId { get; set; }
     public string Nome { get; set; } = string.Empty;
     public string Email { get; set; } = string.Empty;
     public TipoUsuario TipoUsuario { get; set; }

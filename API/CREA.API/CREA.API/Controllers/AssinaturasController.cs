@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using CREA.API.Helpers;
+using CREA.API.Services;
 using CREA.Application.DTOs.Assinaturas;
 using CREA.Application.Helpers;
 using CREA.Application.Interfaces.Repositories;
@@ -20,7 +21,8 @@ public class AssinaturasController(
     IRelatoVisitaRepository relatoVisitaRepository,
     ITermoConclusaoRepository termoConclusaoRepository,
     IProfissionalRepository profissionalRepository,
-    IProprietarioRepository proprietarioRepository) : ControllerBase
+    IProprietarioRepository proprietarioRepository,
+    AssinaturaConviteService assinaturaConviteService) : ControllerBase
 {
     [HttpGet("por-entidade")]
     public async Task<ActionResult<IEnumerable<AssinaturaDto>>> GetPorEntidade(
@@ -69,6 +71,40 @@ public class AssinaturasController(
         var bytes = await System.IO.File.ReadAllBytesAsync(caminho);
         var contentType = assinatura.ImagemAssinatura.EndsWith(".png") ? "image/png" : "image/jpeg";
         return File(bytes, contentType);
+    }
+
+    [HttpGet("destinatarios-email")]
+    public async Task<ActionResult<PreviewEmailAssinaturaDto>> GetDestinatariosEmail(
+        [FromQuery] TipoEntidadeAssinatura tipoEntidade,
+        [FromQuery] Guid entidadeId)
+    {
+        var email = User.FindFirstValue(ClaimTypes.Email)!;
+
+        var preview = await assinaturaConviteService.ObterPreviewAsync(tipoEntidade, entidadeId, email);
+        if (preview is null)
+            return NotFound(new { mensagem = "Entidade não encontrada." });
+
+        return Ok(preview);
+    }
+
+    [HttpPost("enviar-email")]
+    public async Task<IActionResult> EnviarEmail([FromBody] EnviarEmailAssinaturaDto dto)
+    {
+        try
+        {
+            dto.EmailUsuarioLogado = User.FindFirstValue(ClaimTypes.Email)!;
+            var (encontrado, erro) = await assinaturaConviteService.EnviarAsync(dto);
+            if (!encontrado)
+                return NotFound(new { mensagem = "Entidade não encontrada." });
+            if (erro is not null)
+                return BadRequest(new { mensagem = erro });
+
+            return Ok(new { mensagem = "E-mail de assinatura enviado." });
+        }
+        catch (InvalidOperationException ex)
+        {
+            return StatusCode(StatusCodes.Status502BadGateway, new { mensagem = ex.Message });
+        }
     }
 
     [HttpPost]

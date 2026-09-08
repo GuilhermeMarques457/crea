@@ -25,7 +25,7 @@ const NAV_ITEMS: NavItem[] = [
     label: 'Dashboard',
     icon: 'dashboard',
     route: '/dashboard',
-    roles: [TipoUsuario.Admin, TipoUsuario.ResponsavelTecnico, TipoUsuario.Operacional],
+    roles: [TipoUsuario.Admin, TipoUsuario.ResponsavelTecnico],
   },
   {
     label: 'Obras',
@@ -34,7 +34,6 @@ const NAV_ITEMS: NavItem[] = [
     roles: [
       TipoUsuario.Admin,
       TipoUsuario.ResponsavelTecnico,
-      TipoUsuario.Operacional,
       TipoUsuario.UsuarioCrea,
     ],
   },
@@ -61,7 +60,7 @@ const NAV_ITEMS: NavItem[] = [
     label: 'Relatórios',
     icon: 'assessment',
     route: '/relatorios',
-    roles: [TipoUsuario.Admin, TipoUsuario.ResponsavelTecnico, TipoUsuario.Operacional],
+    roles: [TipoUsuario.Admin, TipoUsuario.ResponsavelTecnico],
   },
   { label: 'Usuários', icon: 'group', route: '/usuarios', roles: [TipoUsuario.Admin] },
   { label: 'Auditoria', icon: 'security', route: '/auditoria', roles: [TipoUsuario.Admin] },

@@ -3,8 +3,10 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import {
   AssinaturaDto,
   CreateAssinaturaDto,
+  EnviarEmailAssinaturaDto,
   MinhaAssinaturaDto,
   PendenteAssinaturaDto,
+  PreviewEmailAssinaturaDto,
   TipoEntidadeAssinatura,
 } from '../../shared/models/api.models';
 import { environment } from '../../../environments/environment';
@@ -25,6 +27,15 @@ export class AssinaturaService {
   porEntidade(tipoEntidade: TipoEntidadeAssinatura, entidadeId: string) {
     const params = new HttpParams().set('tipoEntidade', tipoEntidade).set('entidadeId', entidadeId);
     return this.http.get<AssinaturaDto[]>(`${this.base}/por-entidade`, { params });
+  }
+
+  destinatariosEmail(tipoEntidade: TipoEntidadeAssinatura, entidadeId: string) {
+    const params = new HttpParams().set('tipoEntidade', tipoEntidade).set('entidadeId', entidadeId);
+    return this.http.get<PreviewEmailAssinaturaDto>(`${this.base}/destinatarios-email`, { params });
+  }
+
+  enviarEmail(dto: EnviarEmailAssinaturaDto) {
+    return this.http.post<{ mensagem: string }>(`${this.base}/enviar-email`, dto);
   }
 
   assinar(dto: CreateAssinaturaDto) {

@@ -43,7 +43,6 @@ export class UsuarioFormComponent implements OnInit {
   private editId: string | null = null;
 
   tiposUsuario = [
-    { value: TipoUsuario.Operacional, label: TIPO_USUARIO_LABELS[TipoUsuario.Operacional] },
     {
       value: TipoUsuario.ResponsavelTecnico,
       label: TIPO_USUARIO_LABELS[TipoUsuario.ResponsavelTecnico],
@@ -57,7 +56,7 @@ export class UsuarioFormComponent implements OnInit {
     nome: ['', [Validators.required, Validators.maxLength(150)]],
     email: ['', [Validators.required, Validators.email]],
     senha: ['', [Validators.required, Validators.minLength(6)]],
-    tipoUsuario: [TipoUsuario.Operacional, Validators.required],
+    tipoUsuario: [null as unknown as TipoUsuario, Validators.required],
     ativo: [true],
   });
 

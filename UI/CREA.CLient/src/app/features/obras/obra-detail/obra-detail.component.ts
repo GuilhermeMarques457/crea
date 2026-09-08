@@ -36,6 +36,7 @@ import { StatusBadgeComponent } from '../../../shared/components/status-badge/st
 import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
 import { SignaturePadDialogComponent } from '../../../shared/components/signature-pad-dialog/signature-pad-dialog.component';
 import { SignatureViewDialogComponent } from '../../../shared/components/signature-view-dialog/signature-view-dialog.component';
+import { EnviarEmailAssinaturaDialogComponent } from '../../../shared/components/enviar-email-assinatura-dialog/enviar-email-assinatura-dialog.component';
 import { ToastService } from '../../../core/services/toast.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { NotificacaoService } from '../../../core/services/notificacao.service';
@@ -45,6 +46,7 @@ import {
 } from '../../../shared/components/entidade-anexos-dialog/entidade-anexos-dialog.component';
 import {
   labelTipoAssinante,
+  montarLinkAssinatura,
   possuiAssinatura,
   tipoAssinanteDoUsuario,
   usuarioPodeAssinarEntidade,
@@ -279,14 +281,34 @@ export class ObraDetailComponent implements OnInit {
     return labelTipoAssinante(tipo);
   }
 
-  copiarLink(tipo: 'obra' | 'registro' | 'termo', registroId?: string): void {
-    const obraId = this.obra()!.id;
-    let url = `${window.location.origin}/obras/${obraId}?assinar=${tipo}`;
-    if (tipo === 'registro' && registroId) url += `&r=${registroId}`;
-    navigator.clipboard.writeText(url).then(
-      () => this.toast.success('Link de assinatura copiado!'),
-      () => this.toast.error('Não foi possível copiar o link.'),
-    );
+  enviarEmail(tipo: 'obra' | 'registro' | 'termo', registroId?: string): void {
+    const obra = this.obra();
+    if (!obra) return;
+
+    const tipoEntidade =
+      tipo === 'obra'
+        ? TipoEntidadeAssinatura.Obra
+        : tipo === 'registro'
+          ? TipoEntidadeAssinatura.RelatoVisita
+          : TipoEntidadeAssinatura.TermoConclusao;
+
+    const entidadeId =
+      tipo === 'registro' ? registroId : tipo === 'termo' ? this.termo()?.id : obra.id;
+    if (!entidadeId) return;
+
+    this.dialog.open(EnviarEmailAssinaturaDialogComponent, {
+      width: '520px',
+      data: {
+        tipoEntidade,
+        entidadeId,
+        linkAssinatura: montarLinkAssinatura(
+          window.location.origin,
+          tipoEntidade,
+          obra.id,
+          entidadeId,
+        ),
+      },
+    });
   }
 
   qtdAnexosRegistro(r: RelatoVisitaDto): number {

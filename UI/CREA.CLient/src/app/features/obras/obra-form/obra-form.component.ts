@@ -1,4 +1,4 @@
-import { Component, signal, inject, OnInit } from '@angular/core';
+import { Component, signal, inject, OnInit, computed } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
@@ -25,8 +25,10 @@ import {
 } from '../../../shared/models/api.models';
 import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
 import { ToastService } from '../../../core/services/toast.service';
+import { NotificacaoService } from '../../../core/services/notificacao.service';
 import { Location } from '@angular/common';
 import moment from 'moment';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-obra-form',
@@ -51,11 +53,14 @@ export class ObraFormComponent implements OnInit {
   private readonly obraService = inject(ObraService);
   private readonly profissionalService = inject(ProfissionalService);
   private readonly proprietarioService = inject(ProprietarioService);
+  private readonly auth = inject(AuthService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly toast = inject(ToastService);
+  private readonly notificacaoService = inject(NotificacaoService);
   private readonly location = inject(Location);
 
+  isProfissional = computed(() => this.auth.currentUser()?.profissionalId != null);
   isEdit = signal(false);
   saving = signal(false);
   profissionais = signal<ProfissionalDto[]>([]);
@@ -81,17 +86,23 @@ export class ObraFormComponent implements OnInit {
     tipoEdificacao: [null as TipoEdificacao | null],
     atividadeTecnica: [null as AtividadeTecnica | null],
     direcaoTecnica: [false],
-    dataInicio: [null as any, Validators.required],
+    dataInicio: [moment() as any, Validators.required],
     areaConstruir: [null as number | null],
     areaRegularizar: [null as number | null],
     areaAmpliar: [null as number | null],
     areaReformar: [null as number | null],
     areaTotalEdificada: [null as number | null],
     valorRecibo: [null as number | null],
-    profissionalId: ['', Validators.required],
+    profissionalId: [this.auth.currentUser()?.profissionalId ?? null as any, Validators.required],
   });
 
   ngOnInit() {
+    const profissionalId = this.auth.currentUser()?.profissionalId;
+
+    if (profissionalId) {
+      this.form.controls.profissionalId.disable();
+    }
+    
     this.profissionalService
       .listar()
       .subscribe((p: ProfissionalDto[]) => this.profissionais.set(p));
@@ -139,6 +150,9 @@ export class ObraFormComponent implements OnInit {
     };
     const onSuccess = () => {
       this.toast.success(this.isEdit() ? 'Obra atualizada!' : 'Obra cadastrada!');
+      if (!this.isEdit()) {
+        this.notificacaoService.carregarMeusPendentes();
+      }
       this.router.navigate(['/obras']);
     };
     const onError = () => {

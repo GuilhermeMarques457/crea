@@ -11,18 +11,6 @@ public class CreateRelatoVisitaDto
     [Required]
     public DateTime Data { get; set; }
 
-    [Required]
-    public string Atividades { get; set; } = string.Empty;
-
-    [Required]
-    [MaxLength(500)]
-    public string EquipePresente { get; set; } = string.Empty;
-
-    [MaxLength(100)]
-    public string? CondicaoClimatica { get; set; }
-
-    public string? Observacoes { get; set; }
-
     public bool ServicosPreliminar { get; set; }
     public bool Fundacao { get; set; }
     public bool Alvenarias { get; set; }

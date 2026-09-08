@@ -418,10 +418,6 @@ namespace CREA.Infrastructure.Migrations
                     b.Property<bool>("Alvenarias")
                         .HasColumnType("bit");
 
-                    b.Property<string>("Atividades")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<bool>("Ativo")
                         .HasColumnType("bit");
 
@@ -431,9 +427,6 @@ namespace CREA.Infrastructure.Migrations
                     b.Property<bool>("Cobertura")
                         .HasColumnType("bit");
 
-                    b.Property<string>("CondicaoClimatica")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime>("CriadoEm")
                         .HasColumnType("datetime2");
 
@@ -441,10 +434,6 @@ namespace CREA.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("DecisoesTecnicas")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("EquipePresente")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("EsquadriasInstalacoesEletricasHidraulicas")
@@ -458,9 +447,6 @@ namespace CREA.Infrastructure.Migrations
 
                     b.Property<Guid>("ObraId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Observacoes")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("Pintura")
                         .HasColumnType("bit");
