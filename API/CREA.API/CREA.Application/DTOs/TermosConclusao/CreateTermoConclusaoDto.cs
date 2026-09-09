@@ -12,11 +12,6 @@ public class CreateTermoConclusaoDto
     [Required]
     public DateTime DataConclusao { get; set; }
 
-    [Required]
-    public string Descricao { get; set; } = string.Empty;
-
-    public string? Observacoes { get; set; }
-
     public string? DeclaracaoTexto { get; set; }
     public string? LocalDeclaracao { get; set; }
     public DateTime? DataDeclaracao { get; set; }

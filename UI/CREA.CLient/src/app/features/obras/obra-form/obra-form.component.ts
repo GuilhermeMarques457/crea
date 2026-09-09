@@ -29,6 +29,7 @@ import { NotificacaoService } from '../../../core/services/notificacao.service';
 import { Location } from '@angular/common';
 import moment from 'moment';
 import { AuthService } from '../../../core/services/auth.service';
+import { merge } from 'rxjs';
 
 @Component({
   selector: 'app-obra-form',
@@ -81,11 +82,9 @@ export class ObraFormComponent implements OnInit {
     proprietarioId: ['', Validators.required],
     empresa: [''],
     numeroCaderneta: [''],
-    numeroArt: ['', [Validators.required, Validators.maxLength(50)]],
-    numeroRT: [''],
+    numeroRT: ['', [Validators.required, Validators.maxLength(50)]],
     tipoEdificacao: [null as TipoEdificacao | null],
     atividadeTecnica: [null as AtividadeTecnica | null],
-    direcaoTecnica: [false],
     dataInicio: [moment() as any, Validators.required],
     areaConstruir: [null as number | null],
     areaRegularizar: [null as number | null],
@@ -95,6 +94,8 @@ export class ObraFormComponent implements OnInit {
     valorRecibo: [null as number | null],
     profissionalId: [this.auth.currentUser()?.profissionalId ?? null as any, Validators.required],
   });
+
+  
 
   ngOnInit() {
     const profissionalId = this.auth.currentUser()?.profissionalId;
@@ -127,6 +128,32 @@ export class ObraFormComponent implements OnInit {
         });
       });
     }
+
+    merge(
+      this.form.get('areaConstruir')!.valueChanges,
+      this.form.get('areaRegularizar')!.valueChanges,
+      this.form.get('areaAmpliar')!.valueChanges,
+      this.form.get('areaReformar')!.valueChanges
+    ).subscribe(() => {
+      this.calcularAreaTotal();
+    });
+  }
+
+  private calcularAreaTotal(): void {
+    const areaConstruir = Number(this.form.get('areaConstruir')?.value) || 0;
+    const areaRegularizar = Number(this.form.get('areaRegularizar')?.value) || 0;
+    const areaAmpliar = Number(this.form.get('areaAmpliar')?.value) || 0;
+    const areaReformar = Number(this.form.get('areaReformar')?.value) || 0;
+  
+    const total =
+      areaConstruir +
+      areaRegularizar +
+      areaAmpliar +
+      areaReformar;
+  
+    this.form.get('areaTotalEdificada')?.setValue(total, {
+      emitEvent: false
+    });
   }
 
   submit() {

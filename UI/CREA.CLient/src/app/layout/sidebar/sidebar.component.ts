@@ -47,7 +47,7 @@ const NAV_ITEMS: NavItem[] = [
     label: 'Proprietários',
     icon: 'person',
     route: '/proprietarios',
-    roles: [TipoUsuario.Admin],
+    roles: [TipoUsuario.ResponsavelTecnico],
   },
   {
     label: 'Assinaturas',

@@ -10,9 +10,11 @@
       <div
         class="flex w-full min-w-0 flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap sm:justify-end"
       >
-        <button mat-button [routerLink]="['/obras', obra()!.id, 'editar']">
-          <mat-icon>edit</mat-icon> Editar
-        </button>
+        @if (usuarioResponsavelTecnico()) { 
+          <button mat-button [routerLink]="['/obras', obra()!.id, 'editar']">
+            <mat-icon>edit</mat-icon> Editar
+          </button>
+        }
         <button mat-button routerLink="/obras"><mat-icon>arrow_back</mat-icon> Voltar</button>
       </div>
     </app-page-header>
@@ -32,10 +34,6 @@
               @if (obra()!.telefoneProprietario) {
                 <p class="text-xs text-slate-500">{{ obra()!.telefoneProprietario }}</p>
               }
-            </div>
-            <div>
-              <p class="text-xs text-slate-500 uppercase tracking-wide">ART</p>
-              <p class="font-medium text-slate-800">{{ obra()!.numeroArt }}</p>
             </div>
             @if (obra()!.empresa) {
               <div>
@@ -62,10 +60,6 @@
             <div>
               <p class="text-xs text-slate-500 uppercase tracking-wide">Atividade Técnica</p>
               <p class="font-medium text-slate-800">{{ atividadeTecnicaLabel() }}</p>
-            </div>
-            <div>
-              <p class="text-xs text-slate-500 uppercase tracking-wide">Direção Técnica</p>
-              <p class="font-medium text-slate-800">{{ obra()!.direcaoTecnica ? 'Sim' : 'Não' }}</p>
             </div>
             <div>
               <p class="text-xs text-slate-500 uppercase tracking-wide">Início</p>
@@ -134,7 +128,7 @@
             @for (s of statusOptions; track s.value) {
               <button
                 mat-stroked-button
-                [disabled]="obra()!.status === s.value"
+                [disabled]="obra()!.status === s.value || !usuarioResponsavelTecnico()"
                 (click)="mudarStatus(s.value)"
                 class="text-xs"
               >
@@ -153,14 +147,16 @@
         <mat-tab label="Relato de Visita ({{ registros().length }})">
           <div class="p-4 md:p-5">
             <div class="mb-4 flex flex-col gap-2 sm:flex-row sm:justify-end">
-              <a
-                mat-flat-button
-                color="primary"
-                class="w-full sm:w-auto"
-                [routerLink]="['/obras', obra()!.id, 'registros', 'novo']"
-              >
-                <mat-icon>add</mat-icon> Novo Registro
-              </a>
+              @if (usuarioResponsavelTecnico()) {
+                <a
+                  mat-flat-button
+                  color="primary"
+                  class="w-full sm:w-auto"
+                  [routerLink]="['/obras', obra()!.id, 'registros', 'novo']"
+                >
+                  <mat-icon>add</mat-icon> Novo Registro
+                </a>
+              }
             </div>
             @if (registros().length === 0) {
               <app-empty-state icon="edit_note" message="Sem relato de visita" />
@@ -193,9 +189,11 @@
                         <span class="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">
                           {{ r.totalAssinaturas }} assinatura(s)
                         </span>
+                        @if (usuarioResponsavelTecnico()) {
                         <a mat-icon-button [routerLink]="['/registros', r.id, 'editar']">
                           <mat-icon class="text-lg">edit</mat-icon>
                         </a>
+                        }
                       </div>
                     </div>
                     @if (posicaoObraLabel(r)) {
@@ -299,7 +297,7 @@
             }
 
             @if (podeAssinarObra()) {
-              <button mat-flat-button color="primary" (click)="assinarObra()">
+              <button mat-flat-button color="primary" class="me-3" (click)="assinarObra()">
                 <mat-icon>draw</mat-icon> Assinar obra
               </button>
             }
@@ -316,12 +314,14 @@
         <!-- Anexos -->
         <mat-tab label="Anexos ({{ anexos().length }})">
           <div class="p-4 md:p-5">
+            @if (usuarioResponsavelTecnico()) {
             <div class="mb-4 flex justify-center rounded-xl border border-slate-400 p-6 sm:p-12">
               <label mat-flat-button color="primary" class="cursor-pointer">
                 <mat-icon>upload</mat-icon> Upload
                 <input type="file" class="hidden" (change)="uploadAnexo($event)" />
               </label>
             </div>
+            }
             @if (anexos().length === 0) {
               <app-empty-state icon="attach_file" message="Sem anexos" />
             } @else {
@@ -440,14 +440,14 @@
                   </div>
                 }
 
-                @if (podeAssinarTermo()) {
-                  <div class="mt-4">
-                    <button mat-flat-button color="primary" (click)="assinarTermo()">
-                      <mat-icon>draw</mat-icon> Assinar Termo
-                    </button>
-                  </div>
-                }
-                <div class="mt-3">
+                <div class="flex flex-wrap gap-2">
+                  @if (podeAssinarTermo()) {
+                    <div class="mt-4">
+                      <button mat-flat-button color="primary" (click)="assinarTermo()">
+                        <mat-icon>draw</mat-icon> Assinar Termo
+                      </button>
+                    </div>
+                  }
                   <button
                     mat-stroked-button
                     matTooltip="Enviar e-mail com o link para quem precisa assinar"
@@ -463,14 +463,16 @@
                 message="Sem termo de conclusão"
                 description="Emita o termo ao concluir a obra"
               >
-                <a
-                  mat-flat-button
-                  color="primary"
-                  class="mt-4"
-                  [routerLink]="['/obras', obra()!.id, 'termo']"
-                >
-                  <mat-icon>add</mat-icon> Emitir Termo
-                </a>
+                @if (usuarioResponsavelTecnico()) {
+                  <a
+                    mat-flat-button
+                    color="primary"
+                    class="mt-4"
+                    [routerLink]="['/obras', obra()!.id, 'termo']"
+                  >
+                    <mat-icon>add</mat-icon> Emitir Termo
+                  </a>
+                }
               </app-empty-state>
             }
           </div>

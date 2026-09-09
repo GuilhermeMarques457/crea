@@ -78,7 +78,6 @@ public class ApplicationDbContext(
             e.Property(u => u.Id)
                  .HasColumnName("ObraId");
             e.Property(o => o.LocalObra).HasMaxLength(300).IsRequired();
-            e.Property(o => o.NumeroArt).HasMaxLength(50).IsRequired();
             e.HasOne(o => o.Proprietario)
              .WithMany(p => p.Obras)
              .HasForeignKey(o => o.ProprietarioId)

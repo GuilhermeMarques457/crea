@@ -34,7 +34,7 @@ public class ObraRepository(ApplicationDbContext context) : Repository<Obra>(con
         await _dbSet
             .Include(o => o.Proprietario)
             .Include(o => o.Profissional)
-            .Where(o => o.UsuarioCriadorId == usuarioId && o.Ativo)
+            .Where(o => (o.UsuarioCriadorId == usuarioId || o.Profissional.UsuarioId == usuarioId)  && o.Ativo)
             .ToListAsync();
 
     public async Task<IEnumerable<Obra>> ListWithDetailsAsync() =>

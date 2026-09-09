@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CREA.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260902190311_Initial")]
+    [Migration("20260909005656_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -245,9 +245,6 @@ namespace CREA.Infrastructure.Migrations
                     b.Property<DateTime>("DataInicio")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool>("DirecaoTecnica")
-                        .HasColumnType("bit");
-
                     b.Property<string>("Empresa")
                         .HasColumnType("nvarchar(max)");
 
@@ -255,11 +252,6 @@ namespace CREA.Infrastructure.Migrations
                         .IsRequired()
                         .HasMaxLength(300)
                         .HasColumnType("nvarchar(300)");
-
-                    b.Property<string>("NumeroArt")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("NumeroCaderneta")
                         .HasColumnType("nvarchar(max)");
@@ -506,10 +498,6 @@ namespace CREA.Infrastructure.Migrations
                     b.Property<string>("DeclaracaoTexto")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Descricao")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("LocalDeclaracao")
                         .HasColumnType("nvarchar(max)");
 
@@ -518,9 +506,6 @@ namespace CREA.Infrastructure.Migrations
 
                     b.Property<Guid>("ObraId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Observacoes")
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 

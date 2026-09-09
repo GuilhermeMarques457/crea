@@ -44,11 +44,6 @@
             <input matInput formControlName="numeroCaderneta" />
           </mat-form-field>
           <mat-form-field appearance="outline">
-            <mat-label>Número ART</mat-label>
-            <input matInput formControlName="numeroArt" />
-            <mat-error>ART é obrigatória</mat-error>
-          </mat-form-field>
-          <mat-form-field appearance="outline">
             <mat-label>Nº R.T.</mat-label>
             <input matInput formControlName="numeroRT" />
           </mat-form-field>
@@ -79,11 +74,6 @@
             </mat-select>
             <mat-error>Profissional é obrigatório</mat-error>
           </mat-form-field>
-          <div class="flex items-center md:col-span-2">
-            <mat-checkbox formControlName="direcaoTecnica" color="primary"
-              >Direção Técnica</mat-checkbox
-            >
-          </div>
           <mat-form-field appearance="outline">
             <mat-label>Data de Início</mat-label>
             <input matInput [matDatepicker]="dpInicio" formControlName="dataInicio" />
@@ -117,7 +107,7 @@
           </mat-form-field>
           <mat-form-field appearance="outline">
             <mat-label>Área Total Edificada</mat-label>
-            <input matInput type="number" formControlName="areaTotalEdificada" />
+            <input matInput type="number" readonly formControlName="areaTotalEdificada" />
             <span matTextSuffix>m²</span>
           </mat-form-field>
           <mat-form-field appearance="outline">

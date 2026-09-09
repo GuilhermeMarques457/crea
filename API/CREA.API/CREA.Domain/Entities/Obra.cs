@@ -11,11 +11,9 @@ public class Obra : BaseEntity
 
     public string? Empresa { get; set; }
     public string? NumeroCaderneta { get; set; }
-    public string NumeroArt { get; set; } = string.Empty;
     public string? NumeroRT { get; set; }
     public TipoEdificacao? TipoEdificacao { get; set; }
     public AtividadeTecnica? AtividadeTecnica { get; set; }
-    public bool DirecaoTecnica { get; set; }
     public StatusObra Status { get; set; } = StatusObra.EmAndamento;
     public DateTime DataInicio { get; set; }
 

@@ -2,7 +2,8 @@ namespace CREA.Domain.Enums;
 
 public enum AtividadeTecnica
 {
-    Execucao = 1,
-    Fiscalizacao = 2,
-    Projeto = 3
+    DirecaoTecnica = 1,
+    Execucao = 2,
+    Fiscalizacao = 3,
+    Projeto = 4
 }

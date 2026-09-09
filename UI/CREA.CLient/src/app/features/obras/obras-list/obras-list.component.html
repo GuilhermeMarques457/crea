@@ -1,8 +1,10 @@
 <div class="page-container">
   <app-page-header title="Obras" subtitle="Gerencie todas as obras cadastradas" icon="construction">
+    @if (usuarioResponsavelTecnico()) {
     <a mat-flat-button color="primary" routerLink="/obras/nova">
       <mat-icon>add</mat-icon> Nova Obra
     </a>
+  }
   </app-page-header>
 
   <mat-card class="mb-4">
@@ -67,12 +69,14 @@
                 <a mat-menu-item [routerLink]="['/obras', obra.id]">
                   <mat-icon>visibility</mat-icon> Ver detalhes
                 </a>
-                <a mat-menu-item [routerLink]="['/obras', obra.id, 'editar']">
+                @if (usuarioResponsavelTecnico()) {
+                  <a mat-menu-item [routerLink]="['/obras', obra.id, 'editar']">
                   <mat-icon>edit</mat-icon> Editar
                 </a>
                 <button mat-menu-item (click)="confirmarExcluir(obra)" class="text-red-600">
                   <mat-icon class="text-red-600">delete</mat-icon> Excluir
                 </button>
+              }
               </mat-menu>
             </div>
 

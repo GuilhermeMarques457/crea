@@ -29,9 +29,10 @@ export enum TipoEdificacao {
   Industrial = 3,
 }
 export enum AtividadeTecnica {
-  Execucao = 1,
-  Fiscalizacao = 2,
-  Projeto = 3,
+  AtividadeTecnica = 1,
+  Execucao = 2,
+  Fiscalizacao = 3,
+  Projeto = 4,
 }
 export enum PosicaoObra {
   DeAcordoComProjeto = 1,
@@ -46,6 +47,7 @@ export const TIPO_EDIFICACAO_LABELS: Record<TipoEdificacao, string> = {
   [TipoEdificacao.Industrial]: 'Industrial',
 };
 export const ATIVIDADE_TECNICA_LABELS: Record<AtividadeTecnica, string> = {
+  [AtividadeTecnica.AtividadeTecnica]: 'Atividade Técnica',
   [AtividadeTecnica.Execucao]: 'Execução',
   [AtividadeTecnica.Fiscalizacao]: 'Fiscalização',
   [AtividadeTecnica.Projeto]: 'Projeto',
@@ -122,11 +124,9 @@ export interface ObraDto {
   telefoneProprietario?: string;
   empresa?: string;
   numeroCaderneta?: string;
-  numeroArt: string;
   numeroRT?: string;
   tipoEdificacao?: TipoEdificacao;
   atividadeTecnica?: AtividadeTecnica;
-  direcaoTecnica: boolean;
   status: StatusObra;
   dataInicio: string;
   areaConstruir?: number;
@@ -146,11 +146,9 @@ export interface CreateObraDto {
   proprietarioId: string;
   empresa?: string;
   numeroCaderneta?: string;
-  numeroArt: string;
   numeroRT?: string;
   tipoEdificacao?: TipoEdificacao;
   atividadeTecnica?: AtividadeTecnica;
-  direcaoTecnica: boolean;
   dataInicio: string;
   areaConstruir?: number;
   areaRegularizar?: number;
@@ -355,8 +353,6 @@ export interface CreateTermoConclusaoDto {
   obraId: string;
   numeroTermo?: number;
   dataConclusao: string;
-  descricao: string;
-  observacoes?: string;
   declaracaoTexto?: string;
   localDeclaracao?: string;
   dataDeclaracao?: string;

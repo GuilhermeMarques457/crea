@@ -86,6 +86,8 @@ export class ObraDetailComponent implements OnInit {
   private readonly notificacaoService = inject(NotificacaoService);
   private readonly dialog = inject(MatDialog);
 
+  usuarioResponsavelTecnico = computed(() => this.auth.currentUser()?.tipoUsuario === TipoUsuario.ResponsavelTecnico);
+
   readonly TipoAssinante = TipoAssinante;
 
   loading = signal(true);

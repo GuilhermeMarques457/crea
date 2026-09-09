@@ -15,7 +15,6 @@ namespace CREA.API.Controllers;
 public class TermosConclusaoController(
     ITermoConclusaoRepository termoConclusaoRepository,
     IObraRepository obraRepository,
-    IProfissionalRepository profissionalRepository,
     IAssinaturaRepository assinaturaRepository) : ControllerBase
 {
     [HttpGet("{id:guid}")]
@@ -49,8 +48,6 @@ public class TermosConclusaoController(
             ObraId = dto.ObraId,
             NumeroTermo = dto.NumeroTermo,
             DataConclusao = dto.DataConclusao,
-            Descricao = dto.Descricao,
-            Observacoes = dto.Observacoes,
             DeclaracaoTexto = dto.DeclaracaoTexto,
             LocalDeclaracao = dto.LocalDeclaracao,
             DataDeclaracao = dto.DataDeclaracao,
@@ -86,8 +83,6 @@ public class TermosConclusaoController(
             ObraId = t.ObraId,
             NumeroTermo = t.NumeroTermo,
             DataConclusao = t.DataConclusao,
-            Descricao = t.Descricao,
-            Observacoes = t.Observacoes,
             DeclaracaoTexto = t.DeclaracaoTexto,
             LocalDeclaracao = t.LocalDeclaracao,
             DataDeclaracao = t.DataDeclaracao,

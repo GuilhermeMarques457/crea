@@ -18,10 +18,6 @@ public class CreateObraDto
     [MaxLength(20)]
     public string? NumeroCaderneta { get; set; }
 
-    [Required]
-    [MaxLength(50)]
-    public string NumeroArt { get; set; } = string.Empty;
-
     [MaxLength(50)]
     public string? NumeroRT { get; set; }
 
@@ -29,7 +25,6 @@ public class CreateObraDto
 
     public AtividadeTecnica? AtividadeTecnica { get; set; }
 
-    public bool DirecaoTecnica { get; set; }
 
     [Required]
     public DateTime DataInicio { get; set; }

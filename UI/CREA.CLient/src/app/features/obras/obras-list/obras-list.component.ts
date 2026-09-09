@@ -1,4 +1,4 @@
-import { Component, signal, inject, OnInit } from '@angular/core';
+import { Component, signal, inject, OnInit, computed } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -12,12 +12,13 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatDialog } from '@angular/material/dialog';
 import { DatePipe } from '@angular/common';
 import { ObraService } from '../../../core/services/obra.service';
-import { ObraDto, StatusObra, STATUS_OBRA_LABELS } from '../../../shared/models/api.models';
+import { ObraDto, StatusObra, STATUS_OBRA_LABELS, TipoUsuario } from '../../../shared/models/api.models';
 import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
 import { StatusBadgeComponent } from '../../../shared/components/status-badge/status-badge.component';
 import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
 import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
 import { ToastService } from '../../../core/services/toast.service';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-obras-list',
@@ -44,6 +45,9 @@ export class ObrasListComponent implements OnInit {
   private readonly obraService = inject(ObraService);
   private readonly dialog = inject(MatDialog);
   private readonly toast = inject(ToastService);
+  private readonly auth = inject(AuthService);
+
+  usuarioResponsavelTecnico = computed(() => this.auth.currentUser()?.tipoUsuario === TipoUsuario.ResponsavelTecnico);
 
   loading = signal(true);
   obras = signal<ObraDto[]>([]);

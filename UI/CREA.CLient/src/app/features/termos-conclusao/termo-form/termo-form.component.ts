@@ -47,8 +47,6 @@ export class TermoFormComponent implements OnInit {
 
   form = this.fb.nonNullable.group({
     dataConclusao: [moment() as any, Validators.required],
-    descricao: ['', Validators.required],
-    observacoes: [''],
     numeroTermo: [null as number | null],
     declaracaoTexto: [
       'Nós, abaixo assinados, proprietário e profissional responsável, pela execução da obra acima apontada declaramos que temos ainda conhecimento na íntegra das sanções prescritas nas Legislações Federal, Estadual e Municipal vigentes.',

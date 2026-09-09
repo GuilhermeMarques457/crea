@@ -71,11 +71,9 @@ public class ObrasController(
             Empresa = dto.Empresa,
             NumeroCaderneta = dto.NumeroCaderneta,
             ProfissionalId = dto.ProfissionalId,
-            NumeroArt = dto.NumeroArt,
             NumeroRT = dto.NumeroRT,
             TipoEdificacao = dto.TipoEdificacao,
             AtividadeTecnica = dto.AtividadeTecnica,
-            DirecaoTecnica = dto.DirecaoTecnica,
             DataInicio = dto.DataInicio,
             AreaConstruir = dto.AreaConstruir,
             AreaRegularizar = dto.AreaRegularizar,
@@ -107,11 +105,9 @@ public class ObrasController(
         obra.ProprietarioId = dto.ProprietarioId;
         obra.Empresa = dto.Empresa;
         obra.NumeroCaderneta = dto.NumeroCaderneta;
-        obra.NumeroArt = dto.NumeroArt;
         obra.NumeroRT = dto.NumeroRT;
         obra.TipoEdificacao = dto.TipoEdificacao;
         obra.AtividadeTecnica = dto.AtividadeTecnica;
-        obra.DirecaoTecnica = dto.DirecaoTecnica;
         obra.DataInicio = dto.DataInicio;
         obra.AreaConstruir = dto.AreaConstruir;
         obra.AreaRegularizar = dto.AreaRegularizar;
@@ -156,11 +152,9 @@ public class ObrasController(
             : o.Proprietario!.Telefone,
         Empresa = o.Empresa,
         NumeroCaderneta = o.NumeroCaderneta,
-        NumeroArt = o.NumeroArt,
         NumeroRT = o.NumeroRT,
         TipoEdificacao = o.TipoEdificacao,
         AtividadeTecnica = o.AtividadeTecnica,
-        DirecaoTecnica = o.DirecaoTecnica,
         Status = o.Status,
         DataInicio = o.DataInicio,
         AreaConstruir = o.AreaConstruir,
