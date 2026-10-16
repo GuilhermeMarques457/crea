@@ -36,7 +36,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 });
 
 builder.Services.AddInfrastructure();
-builder.Services.AddHttpClient<IEmailService, BrevoEmailService>();
+builder.Services.AddHttpClient<IEmailService, MailjetEmailService>();
 builder.Services.AddScoped<AssinaturaConviteService>();
 
 var jwtKey = builder.Configuration["Jwt:Key"]!;
@@ -94,4 +94,3 @@ if (app.Environment.IsDevelopment())
     await DatabaseSeeder.SeedAsync(app.Services, app.Logger);
 
 app.Run();
-

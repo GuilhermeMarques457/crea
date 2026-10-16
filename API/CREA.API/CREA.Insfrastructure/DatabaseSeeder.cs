@@ -126,7 +126,7 @@ public static class DatabaseSeeder
             Id = Guid.NewGuid(),
             Nome = "Roberto Silva",
             Cpf = string.Empty,
-            Email = string.Empty,
+            Email = "teste@gmail.com",
             Telefone = "(11) 98765-4321",
             CriadoEm = DateTime.Now
         };
@@ -136,7 +136,7 @@ public static class DatabaseSeeder
             Id = Guid.NewGuid(),
             Nome = "Construtora Alpha Ltda",
             Cpf = string.Empty,
-            Email = string.Empty,
+            Email = "teste@gmail.com",
             Telefone = "(11) 3333-4444",
             CriadoEm = DateTime.Now
         };
