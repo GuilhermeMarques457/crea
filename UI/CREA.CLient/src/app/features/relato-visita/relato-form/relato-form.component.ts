@@ -29,13 +29,14 @@ import {
   TipoUsuario,
 } from '../../../shared/models/api.models';
 import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
-import { SignaturePadDialogComponent } from '../../../shared/components/signature-pad-dialog/signature-pad-dialog.component';
+import { SignatureConfirmationDialogComponent } from '../../../shared/components/signature-confirmation-dialog/signature-confirmation-dialog.component';
 import { SignatureViewDialogComponent } from '../../../shared/components/signature-view-dialog/signature-view-dialog.component';
 import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
 import { ToastService } from '../../../core/services/toast.service';
 import { NotificacaoService } from '../../../core/services/notificacao.service';
 import {
   labelTipoAssinante,
+  nomeCurtoAssinatura,
   tipoAssinanteDoUsuario,
   usuarioPodeAssinarEntidade,
 } from '../../../shared/utils/assinatura.utils';
@@ -253,17 +254,18 @@ export class RelatoVisitaFormComponent implements OnInit {
 
   assinar() {
     if (!this.editId) return;
-    const dialogRef = this.dialog.open(SignaturePadDialogComponent, {
+    const nomeAssinatura = nomeCurtoAssinatura(this.auth.currentUser()?.nome);
+    const dialogRef = this.dialog.open(SignatureConfirmationDialogComponent, {
       width: '560px',
       disableClose: true,
+      data: { nomeAssinatura },
     });
-    dialogRef.afterClosed().subscribe((arquivo: File | null) => {
-      if (!arquivo) return;
+    dialogRef.afterClosed().subscribe((confirmado: boolean | undefined) => {
+      if (!confirmado) return;
       this.assinaturaService
         .assinar({
           tipoEntidade: TipoEntidadeAssinatura.RelatoVisita,
           entidadeId: this.editId!,
-          imagemAssinatura: arquivo,
           navegador: typeof navigator !== 'undefined' ? navigator.userAgent : undefined,
         })
         .subscribe({
@@ -286,7 +288,9 @@ export class RelatoVisitaFormComponent implements OnInit {
         nomeUsuario: a.nomeUsuario,
         tipoAssinante: labelTipoAssinante(a.tipoAssinante),
         dataAssinatura: a.dataAssinatura,
-        imagemAssinatura: a.urlImagemAssinatura,
+        imagemAssinatura: a.imagemAssinatura ? a.urlImagemAssinatura : null,
+        hashAssinatura: a.hashAssinatura,
+        ipAssinante: a.ipAssinante,
       },
     });
   }

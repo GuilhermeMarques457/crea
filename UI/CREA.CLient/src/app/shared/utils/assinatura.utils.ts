@@ -22,6 +22,12 @@ export function labelTipoAssinante(tipo: TipoAssinante | string | number): strin
   return TIPO_ASSINANTE_LABELS[n as TipoAssinante] ?? String(tipo);
 }
 
+export function nomeCurtoAssinatura(nome: string | null | undefined): string {
+  const partes = (nome ?? '').trim().split(/\s+/).filter(Boolean);
+  if (partes.length < 2) return partes[0] ?? '';
+  return `${partes[0]} ${partes[partes.length - 1]}`;
+}
+
 export function tipoAssinanteDoUsuario(tipoUsuario: TipoUsuario): TipoAssinante | null {
   switch (tipoUsuario) {
     case TipoUsuario.ResponsavelTecnico:

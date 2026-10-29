@@ -12,7 +12,7 @@ public class AssinaturaDto
     public string NomeUsuario { get; set; } = string.Empty;
     public string HashAssinatura { get; set; } = string.Empty;
     public DateTime DataAssinatura { get; set; }
-    public string UrlImagemAssinatura { get; set; } = string.Empty;
+    public string? UrlImagemAssinatura { get; set; }
     public string IpAssinante { get; set; } = string.Empty;
     public string UserAgent { get; set; } = string.Empty;
     public string? Navegador { get; set; }

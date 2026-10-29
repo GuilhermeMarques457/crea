@@ -111,7 +111,6 @@ namespace CREA.Infrastructure.Migrations
                         .HasColumnType("nvarchar(64)");
 
                     b.Property<string>("ImagemAssinatura")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("IpAssinante")

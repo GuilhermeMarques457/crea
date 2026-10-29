@@ -113,6 +113,8 @@ public class TermosConclusaoController(
         Navegador = a.Navegador,
         SistemaOperacional = a.SistemaOperacional,
         Dispositivo = a.Dispositivo,
-        UrlImagemAssinatura = $"{request.Scheme}://{request.Host}/api/assinaturas/imagem/{a.Id}",
+        UrlImagemAssinatura = a.ImagemAssinatura is null
+            ? null
+            : $"{request.Scheme}://{request.Host}/api/assinaturas/imagem/{a.Id}",
     };
 }

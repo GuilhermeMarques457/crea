@@ -150,7 +150,6 @@ public class ApplicationDbContext(
         {
             e.HasKey(a => a.Id);
             e.Property(a => a.Id).HasColumnName("AssinaturaId");
-            e.Property(a => a.ImagemAssinatura).IsRequired();
             e.Property(a => a.HashAssinatura).HasMaxLength(64).IsRequired();
             e.Property(a => a.IpAssinante).HasMaxLength(45).IsRequired();
             e.Property(a => a.UserAgent).HasMaxLength(512);

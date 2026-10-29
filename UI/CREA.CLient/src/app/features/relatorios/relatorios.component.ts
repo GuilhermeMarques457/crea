@@ -138,7 +138,9 @@ export class RelatoriosComponent implements OnInit {
         nomeUsuario: a.nomeUsuario,
         tipoAssinante: labelTipoAssinante(a.tipoAssinante),
         dataAssinatura: a.dataAssinatura,
-        imagemAssinatura: a.urlImagemAssinatura,
+        imagemAssinatura: a.imagemAssinatura ? a.urlImagemAssinatura : null,
+        hashAssinatura: a.hashAssinatura,
+        ipAssinante: a.ipAssinante,
       },
     });
   }

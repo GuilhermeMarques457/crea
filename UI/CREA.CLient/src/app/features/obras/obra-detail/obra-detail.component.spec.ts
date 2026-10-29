@@ -29,7 +29,7 @@ import {
 } from '../../../shared/models/api.models';
 import { EntidadeAnexosDialogComponent } from '../../../shared/components/entidade-anexos-dialog/entidade-anexos-dialog.component';
 import { EnviarEmailAssinaturaDialogComponent } from '../../../shared/components/enviar-email-assinatura-dialog/enviar-email-assinatura-dialog.component';
-import { SignaturePadDialogComponent } from '../../../shared/components/signature-pad-dialog/signature-pad-dialog.component';
+import { SignatureConfirmationDialogComponent } from '../../../shared/components/signature-confirmation-dialog/signature-confirmation-dialog.component';
 import { SignatureViewDialogComponent } from '../../../shared/components/signature-view-dialog/signature-view-dialog.component';
 import { ObraDetailComponent } from './obra-detail.component';
 
@@ -50,7 +50,7 @@ interface SetupOptions {
   statusError?: boolean;
   uploadResult?: AnexoDto;
   uploadError?: boolean;
-  dialogResult?: File | null;
+  dialogResult?: boolean | null;
   signatureResult?: AssinaturaDto;
 }
 
@@ -59,7 +59,7 @@ function makeUser(overrides: Partial<LoginResponseDto> = {}): LoginResponseDto {
     token: 'token',
     expiracao: '2026-12-31T23:59:59.000Z',
     usuarioId: 'user-1',
-    nome: 'Ada',
+    nome: 'Ada Lovelace',
     email: 'ada@example.com',
     tipoUsuario: TipoUsuario.ResponsavelTecnico,
     ...overrides,
@@ -98,7 +98,7 @@ function makeAssinatura(overrides: Partial<AssinaturaDto> = {}): AssinaturaDto {
     entidadeId: 'obra-1',
     tipoAssinante: TipoAssinante.Profissional,
     usuarioId: 'user-1',
-    nomeUsuario: 'Ada',
+    nomeUsuario: 'Ada Lovelace',
     hashAssinatura: 'hash',
     dataAssinatura: '2026-02-10T12:00:00.000Z',
     urlImagemAssinatura: 'https://example.com/signature.png',
@@ -230,7 +230,7 @@ function setup(options: SetupOptions = {}) {
   };
   const dialog = {
     open: vi.fn(
-      (): DialogRefStub<File | null> => ({
+      (): DialogRefStub<boolean | null> => ({
         afterClosed: () => of(options.dialogResult ?? null),
       }),
     ),
@@ -408,22 +408,21 @@ describe('ObraDetailComponent', () => {
     expect(mocks.anexoService.upload).not.toHaveBeenCalled();
   });
 
-  it('registers a signature after the pad dialog returns a file', () => {
-    const file = new File(['signature'], 'signature.png', { type: 'image/png' });
+  it('registers a typed signature after confirmation', () => {
     const onSuccess = vi.fn();
-    const { component, mocks } = setup({ dialogResult: file });
+    const { component, mocks } = setup({ dialogResult: true });
 
     component.assinarEntidade(TipoEntidadeAssinatura.Obra, 'obra-1', onSuccess);
 
-    expect(mocks.dialog.open).toHaveBeenCalledWith(SignaturePadDialogComponent, {
+    expect(mocks.dialog.open).toHaveBeenCalledWith(SignatureConfirmationDialogComponent, {
       width: '560px',
       disableClose: true,
+      data: { nomeAssinatura: 'Ada Lovelace' },
     });
     expect(mocks.assinaturaService.assinar).toHaveBeenCalledWith(
       expect.objectContaining({
         tipoEntidade: TipoEntidadeAssinatura.Obra,
         entidadeId: 'obra-1',
-        imagemAssinatura: file,
       }),
     );
     expect(mocks.toast.success).toHaveBeenCalledWith('Assinatura registrada com sucesso!');
@@ -431,7 +430,7 @@ describe('ObraDetailComponent', () => {
     expect(onSuccess).toHaveBeenCalled();
   });
 
-  it('does not register a signature when the pad dialog is cancelled', () => {
+  it('does not register a signature when confirmation is cancelled', () => {
     const { component, mocks } = setup({ dialogResult: null });
 
     component.assinarEntidade(TipoEntidadeAssinatura.Obra, 'obra-1');
@@ -440,9 +439,8 @@ describe('ObraDetailComponent', () => {
   });
 
   it('refreshes the obra signatures after signing the obra', () => {
-    const file = new File(['signature'], 'signature.png', { type: 'image/png' });
     const signature = makeAssinatura({ id: 'assinatura-refresh' });
-    const { component, mocks } = setup({ dialogResult: file });
+    const { component, mocks } = setup({ dialogResult: true });
     mocks.assinaturaService.porEntidade.mockReturnValue(of([signature]));
 
     component.assinarObra();
@@ -451,17 +449,15 @@ describe('ObraDetailComponent', () => {
   });
 
   it('auto-opens a registro signature request from query parameters when the user can sign it', () => {
-    const file = new File(['signature'], 'signature.png', { type: 'image/png' });
     const { mocks } = setup({
       queryParams: { assinar: 'registro', r: 'registro-1' },
-      dialogResult: file,
+      dialogResult: true,
     });
 
     expect(mocks.assinaturaService.assinar).toHaveBeenCalledWith(
       expect.objectContaining({
         tipoEntidade: TipoEntidadeAssinatura.RelatoVisita,
         entidadeId: 'registro-1',
-        imagemAssinatura: file,
       }),
     );
   });
@@ -475,10 +471,12 @@ describe('ObraDetailComponent', () => {
     expect(mocks.dialog.open).toHaveBeenCalledWith(SignatureViewDialogComponent, {
       width: '480px',
       data: {
-        nomeUsuario: 'Ada',
+        nomeUsuario: 'Ada Lovelace',
         tipoAssinante: 'CREA',
         dataAssinatura: '2026-02-10T12:00:00.000Z',
         imagemAssinatura: 'https://example.com/signature.png',
+        hashAssinatura: 'hash',
+        ipAssinante: '127.0.0.1',
       },
     });
   });

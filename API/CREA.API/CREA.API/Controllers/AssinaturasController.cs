@@ -43,7 +43,6 @@ public class AssinaturasController(
         var usuarioId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         var usuario = await usuarioRepository.GetByIdAsync(usuarioId);
         if (usuario is null) return Unauthorized();
-
         var pendentes = await assinaturaRepository.GetPendentesParaUsuarioAsync(usuarioId, usuario.TipoUsuario);
         return Ok(pendentes);
     }
@@ -62,14 +61,14 @@ public class AssinaturasController(
     public async Task<IActionResult> GetImagem(Guid id)
     {
         var assinatura = await assinaturaRepository.GetByIdAsync(id);
-        if (assinatura is null) return NotFound();
+        if (assinatura?.ImagemAssinatura is not { Length: > 0 } nomeArquivo) return NotFound();
 
-        var caminho = Path.Combine(Directory.GetCurrentDirectory(), "uploads", "assinaturas", assinatura.ImagemAssinatura);
+        var caminho = Path.Combine(Directory.GetCurrentDirectory(), "uploads", "assinaturas", nomeArquivo);
         if (!System.IO.File.Exists(caminho))
             return NotFound(new { mensagem = "Imagem não encontrada no servidor." });
 
         var bytes = await System.IO.File.ReadAllBytesAsync(caminho);
-        var contentType = assinatura.ImagemAssinatura.EndsWith(".png") ? "image/png" : "image/jpeg";
+        var contentType = nomeArquivo.EndsWith(".png") ? "image/png" : "image/jpeg";
         return File(bytes, contentType);
     }
 
@@ -109,18 +108,13 @@ public class AssinaturasController(
 
     [HttpPost]
     [Authorize(Roles = "ResponsavelTecnico,UsuarioCrea,Proprietario")]
-    public async Task<ActionResult<AssinaturaDto>> Assinar([FromForm] CreateAssinaturaDto dto)
+    public async Task<ActionResult<AssinaturaDto>> Assinar([FromBody] CreateAssinaturaDto dto)
     {
-        if (dto.ImagemAssinatura is null || dto.ImagemAssinatura.Length == 0)
-            return BadRequest(new { mensagem = "A imagem da assinatura é obrigatória." });
-
-        var tiposImagemPermitidos = new[] { "image/jpeg", "image/png", "image/gif", "image/webp" };
-        if (!tiposImagemPermitidos.Contains(dto.ImagemAssinatura.ContentType))
-            return BadRequest(new { mensagem = "Tipo de imagem não permitido. Use JPEG, PNG, GIF ou WebP." });
-
         var usuarioId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         var usuario = await usuarioRepository.GetByIdAsync(usuarioId);
         if (usuario is null) return Unauthorized();
+        if (usuario.Nome.Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).Length < 2)
+            return BadRequest(new { mensagem = "Cadastre seu nome e sobrenome antes de assinar." });
 
         if (!TryObterTipoAssinante(usuario.TipoUsuario, out var tipoAssinante))
             return Forbid();
@@ -136,17 +130,11 @@ public class AssinaturasController(
             return Conflict(new { mensagem = "Esta assinatura já foi registrada." });
 
         var dataAssinatura = DateTime.Now;
-        var hash = AssinaturaHashGerador.Gerar(dto.TipoEntidade, dto.EntidadeId, usuarioId, tipoAssinante, dataAssinatura);
         var ip = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "desconhecido";
+        var hash = AssinaturaHashGerador.Gerar(
+            dto.TipoEntidade, dto.EntidadeId, usuarioId, tipoAssinante, usuario.Nome, ip, dataAssinatura);
         var userAgent = Request.Headers.UserAgent.ToString();
         var (navegadorUa, sistemaUa, dispositivoUa) = UserAgentInfo.Parse(userAgent);
-
-        var nomeArquivo = $"{Guid.NewGuid()}{Path.GetExtension(dto.ImagemAssinatura.FileName)}";
-        var pasta = Path.Combine(Directory.GetCurrentDirectory(), "uploads", "assinaturas");
-        Directory.CreateDirectory(pasta);
-        var caminhoArquivo = Path.Combine(pasta, nomeArquivo);
-        await using (var stream = new FileStream(caminhoArquivo, FileMode.Create))
-            await dto.ImagemAssinatura.CopyToAsync(stream);
 
         var assinatura = new Assinatura
         {
@@ -156,12 +144,12 @@ public class AssinaturasController(
             UsuarioId = usuarioId,
             HashAssinatura = hash,
             DataAssinatura = dataAssinatura,
-            ImagemAssinatura = nomeArquivo,
+            ImagemAssinatura = null,
             IpAssinante = ip,
             UserAgent = userAgent.Length > 512 ? userAgent[..512] : userAgent,
             Navegador = navegadorUa,
-            SistemaOperacional = dto.SistemaOperacional ?? sistemaUa,
-            Dispositivo = dto.Dispositivo ?? dispositivoUa
+            SistemaOperacional = sistemaUa,
+            Dispositivo = dispositivoUa
         };
 
         await assinaturaRepository.AddAsync(assinatura);
@@ -270,7 +258,9 @@ public class AssinaturasController(
         NomeUsuario = a.Usuario?.Nome ?? string.Empty,
         HashAssinatura = a.HashAssinatura,
         DataAssinatura = a.DataAssinatura,
-        UrlImagemAssinatura = $"{request.Scheme}://{request.Host}/api/assinaturas/imagem/{a.Id}",
+        UrlImagemAssinatura = a.ImagemAssinatura is null
+            ? null
+            : $"{request.Scheme}://{request.Host}/api/assinaturas/imagem/{a.Id}",
         IpAssinante = a.IpAssinante,
         UserAgent = a.UserAgent,
         Navegador = a.Navegador,

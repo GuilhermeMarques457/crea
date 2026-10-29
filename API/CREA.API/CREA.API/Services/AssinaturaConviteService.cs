@@ -44,7 +44,7 @@ public class AssinaturaConviteService(
         var titulo = contexto.Value.Titulo;
         foreach (var destinatario in destinatarios)
         {
-            var html = MontarHtml(destinatario.Nome, titulo, link);
+            var html = MontarHtml(destinatario.Nome, NomeCurtoAssinatura(destinatario.Nome), titulo, link);
             await emailService.EnviarAsync(
                 destinatario.Email,
                 destinatario.Nome,
@@ -196,9 +196,16 @@ public class AssinaturaConviteService(
         return $"Obra {caderneta}{obra.LocalObra}";
     }
 
-    private static string MontarHtml(string nome, string titulo, string link)
+    private static string NomeCurtoAssinatura(string nome)
+    {
+        var partes = nome.Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        return partes.Length < 2 ? nome : $"{partes[0]} {partes[^1]}";
+    }
+
+    private static string MontarHtml(string nome, string nomeAssinatura, string titulo, string link)
     {
         var nomeHtml = WebUtility.HtmlEncode(nome);
+        var nomeAssinaturaHtml = WebUtility.HtmlEncode(nomeAssinatura);
         var tituloHtml = WebUtility.HtmlEncode(titulo);
         var linkHtml = WebUtility.HtmlEncode(link);
 
@@ -236,18 +243,14 @@ public class AssinaturaConviteService(
                                 <td style="padding:16px 20px;font-size:15px;line-height:1.5;font-weight:bold;color:#1e293b;">{tituloHtml}</td>
                               </tr>
                             </table>
-                            <p style="margin:0 0 24px;font-size:15px;line-height:1.6;color:#475569;">Acesse o sistema para revisar o documento e concluir a assinatura. Se necessário, entre com sua conta para continuar.</p>
+                            <p style="margin:0 0 24px;font-size:15px;line-height:1.6;color:#475569;">Revise o documento e confirme a assinatura como <strong>{nomeAssinaturaHtml}</strong>. Se necessário, entre com sua conta para continuar.</p>
                             <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin:0 auto 28px;">
                               <tr>
                                 <td align="center" bgcolor="#1565c0" style="border-radius:8px;">
-                                  <a href="{linkHtml}" style="display:inline-block;padding:14px 28px;border:1px solid #1565c0;border-radius:8px;color:#ffffff;font-size:15px;font-weight:bold;text-decoration:none;">Acessar documento</a>
+                                  <a href="{linkHtml}" style="display:inline-block;padding:14px 28px;border:1px solid #1565c0;border-radius:8px;color:#ffffff;font-size:15px;font-weight:bold;text-decoration:none;">Assinar como {nomeAssinaturaHtml}</a>
                                 </td>
                               </tr>
                             </table>
-                            <p style="margin:0 0 8px;font-size:13px;line-height:1.5;color:#64748b;">Se o botão não funcionar, copie e cole este endereço no navegador:</p>
-                            <p style="margin:0;word-break:break-all;font-size:13px;line-height:1.5;">
-                              <a href="{linkHtml}" style="color:#1565c0;text-decoration:underline;">{linkHtml}</a>
-                            </p>
                           </td>
                         </tr>
                         <tr>

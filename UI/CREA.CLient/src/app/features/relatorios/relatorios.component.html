@@ -246,16 +246,14 @@
                       <span class="text-slate-500">{{
                         a.dataAssinatura | date: 'dd/MM/yyyy HH:mm'
                       }}</span>
-                      @if (a.imagemAssinatura) {
-                        <button
-                          mat-icon-button
-                          class="!w-10 !h-10"
-                          (click)="verAssinatura(a)"
-                          matTooltip="Ver assinatura"
-                        >
-                          <mat-icon class="text-blue-600 !text-md">draw</mat-icon>
-                        </button>
-                      }
+                      <button
+                        mat-icon-button
+                        class="!w-10 !h-10"
+                        (click)="verAssinatura(a)"
+                        matTooltip="Ver dados da assinatura"
+                      >
+                        <mat-icon class="text-blue-600 !text-md">verified</mat-icon>
+                      </button>
                     </div>
                   </div>
                 }

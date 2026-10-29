@@ -186,11 +186,9 @@
                       >{{ a.nomeUsuario }} ({{ labelAssinante(a.tipoAssinante) }}) —
                       {{ a.dataAssinatura | date: 'dd/MM/yyyy HH:mm' }}</span
                     >
-                    @if (a.imagemAssinatura) {
-                      <button mat-icon-button type="button" (click)="verAssinatura(a)">
-                        <mat-icon class="text-blue-600">draw</mat-icon>
-                      </button>
-                    }
+                    <button mat-icon-button type="button" (click)="verAssinatura(a)" aria-label="Ver dados da assinatura">
+                      <mat-icon class="text-blue-600">verified</mat-icon>
+                    </button>
                   </div>
                 }
               </div>
@@ -199,7 +197,7 @@
             }
             @if (podeAssinar()) {
               <button mat-flat-button color="primary" type="button" (click)="assinar()">
-                <mat-icon>draw</mat-icon> Assinar relato
+                <mat-icon>verified</mat-icon> Assinar relato
               </button>
             }
           </div>

@@ -149,19 +149,35 @@ public static class RelatorioObraPdfComposer
 
     private static void AssinaturaItem(IContainer container, AssinaturaDto a, string assinaturasPath)
     {
-        container.Border(1).BorderColor(Colors.Grey.Lighten2).Padding(10).Column(col =>
+        var img = ReadImageFile(assinaturasPath, a.ImagemAssinatura);
+        var nomeAssinatura = NomeCurtoAssinatura(a.NomeUsuario);
+        container.Border(1).BorderColor(Colors.Grey.Lighten2).Padding(10).Row(row =>
         {
-            col.Spacing(6);
-            col.Item().Text($"{a.NomeUsuario} ({TipoAssinantePt(a.TipoAssinante)})").SemiBold();
-            col.Item().Text($"Assinado em: {a.DataAssinatura:dd/MM/yyyy HH:mm}").FontSize(9).FontColor(Colors.Grey.Darken1);
-            if (!string.IsNullOrWhiteSpace(a.IpAssinante))
-                col.Item().Text($"IP: {a.IpAssinante}").FontSize(8).FontColor(Colors.Grey.Darken1);
-            if (!string.IsNullOrWhiteSpace(a.Navegador))
-                col.Item().Text($"Navegador: {a.Navegador}").FontSize(8).FontColor(Colors.Grey.Darken1);
-            var img = ReadImageFile(assinaturasPath, a.ImagemAssinatura);
             if (img is { Length: > 0 })
-                col.Item().Width(260).Image(img).FitArea();
+                row.ConstantItem(190).PaddingRight(12).Image(img).FitArea();
+            else
+                row.ConstantItem(190).PaddingRight(12).AlignMiddle().Column(name =>
+                {
+                    name.Item().Text("Assinatura digital").FontSize(8).FontColor(Colors.Grey.Darken1);
+                    name.Item().Text(nomeAssinatura).SemiBold().Italic().FontSize(16);
+                    name.Item().Text(TipoAssinantePt(a.TipoAssinante)).FontSize(8).FontColor(Colors.Grey.Darken1);
+                });
+
+            row.RelativeItem().PaddingLeft(12).BorderLeft(1).BorderColor(Colors.Grey.Lighten2).Column(meta =>
+            {
+                meta.Spacing(4);
+                meta.Item().Text($"Nome: {nomeAssinatura} ({TipoAssinantePt(a.TipoAssinante)})").SemiBold().FontSize(9);
+                meta.Item().Text($"Data e hora: {a.DataAssinatura:dd/MM/yyyy HH:mm:ss}").FontSize(8);
+                meta.Item().Text($"IP: {(string.IsNullOrWhiteSpace(a.IpAssinante) ? "Não disponível" : a.IpAssinante)}").FontSize(8);
+                meta.Item().Text($"Hash: {a.HashAssinatura}").FontSize(7).FontColor(Colors.Grey.Darken1);
+            });
         });
+    }
+
+    private static string NomeCurtoAssinatura(string nome)
+    {
+        var partes = nome.Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        return partes.Length < 2 ? nome : $"{partes[0]} {partes[^1]}";
     }
 
     private static string TipoAssinantePt(TipoAssinante t) => t switch

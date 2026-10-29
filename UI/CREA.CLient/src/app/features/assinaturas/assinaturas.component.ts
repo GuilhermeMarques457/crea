@@ -12,9 +12,10 @@ import { forkJoin } from 'rxjs';
 import { NotificacaoService } from '../../core/services/notificacao.service';
 import { AssinaturaService } from '../../core/services/assinatura.service';
 import { ToastService } from '../../core/services/toast.service';
+import { AuthService } from '../../core/services/auth.service';
 import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
 import { PageHeaderComponent } from '../../shared/components/page-header/page-header.component';
-import { SignaturePadDialogComponent } from '../../shared/components/signature-pad-dialog/signature-pad-dialog.component';
+import { SignatureConfirmationDialogComponent } from '../../shared/components/signature-confirmation-dialog/signature-confirmation-dialog.component';
 import { EnviarEmailAssinaturaDialogComponent } from '../../shared/components/enviar-email-assinatura-dialog/enviar-email-assinatura-dialog.component';
 import {
   MinhaAssinaturaDto,
@@ -24,6 +25,7 @@ import {
 import {
   labelTipoAssinante,
   montarLinkAssinatura,
+  nomeCurtoAssinatura,
   TIPO_ENTIDADE_LABELS,
 } from '../../shared/utils/assinatura.utils';
 
@@ -48,6 +50,7 @@ export class AssinaturasComponent implements OnInit {
   private readonly assinaturaService = inject(AssinaturaService);
   private readonly notificacaoService = inject(NotificacaoService);
   private readonly toast = inject(ToastService);
+  private readonly auth = inject(AuthService);
   private readonly dialog = inject(MatDialog);
 
   readonly TipoEntidadeAssinatura = TipoEntidadeAssinatura;
@@ -147,13 +150,15 @@ export class AssinaturasComponent implements OnInit {
   }
 
   assinar(pendente: PendenteAssinaturaDto) {
-    const dialogRef = this.dialog.open(SignaturePadDialogComponent, {
+    const nomeAssinatura = nomeCurtoAssinatura(this.auth.currentUser()?.nome);
+    const dialogRef = this.dialog.open(SignatureConfirmationDialogComponent, {
       width: '560px',
       disableClose: true,
+      data: { nomeAssinatura },
     });
 
-    dialogRef.afterClosed().subscribe((arquivo: File | null) => {
-      if (!arquivo) return;
+    dialogRef.afterClosed().subscribe((confirmado: boolean | undefined) => {
+      if (!confirmado) return;
 
       const navegador = typeof navigator !== 'undefined' ? navigator.userAgent : undefined;
 
@@ -161,7 +166,6 @@ export class AssinaturasComponent implements OnInit {
         .assinar({
           tipoEntidade: pendente.tipoEntidade,
           entidadeId: pendente.entidadeId,
-          imagemAssinatura: arquivo,
           navegador,
         })
         .subscribe({

@@ -51,7 +51,7 @@ const NAV_ITEMS: NavItem[] = [
   },
   {
     label: 'Assinaturas',
-    icon: 'draw',
+    icon: 'verified',
     route: '/assinaturas',
     roles: [TipoUsuario.ResponsavelTecnico, TipoUsuario.UsuarioCrea, TipoUsuario.Proprietario],
     badge: true,

@@ -231,7 +231,7 @@
                         class="mt-2 !text-xs mr-4"
                         (click)="assinarRegistro(r)"
                       >
-                        <mat-icon class="!text-sm">draw</mat-icon> Assinar relato
+                        <mat-icon class="!text-sm">verified</mat-icon> Assinar relato
                       </button>
                     }
                     <button
@@ -285,11 +285,9 @@
                       {{ a.nomeUsuario }} ({{ labelAssinante(a.tipoAssinante) }}) —
                       {{ a.dataAssinatura | date: 'dd/MM/yyyy HH:mm' }}
                     </span>
-                    @if (a.urlImagemAssinatura) {
-                      <button mat-icon-button (click)="verAssinatura(a)">
-                        <mat-icon class="text-blue-600">draw</mat-icon>
-                      </button>
-                    }
+                    <button mat-icon-button (click)="verAssinatura(a)" aria-label="Ver dados da assinatura">
+                      <mat-icon class="text-blue-600">verified</mat-icon>
+                    </button>
                   </div>
                 }
               </div>
@@ -299,7 +297,7 @@
 
             @if (podeAssinarObra()) {
               <button mat-flat-button color="primary" class="me-3" (click)="assinarObra()">
-                <mat-icon>draw</mat-icon> Assinar obra
+                <mat-icon>verified</mat-icon> Assinar obra
               </button>
             }
             <button
@@ -431,11 +429,9 @@
                           {{ a.nomeUsuario }} ({{ labelAssinante(a.tipoAssinante) }}) —
                           {{ a.dataAssinatura | date: 'dd/MM/yyyy HH:mm' }}
                         </p>
-                        @if (a.imagemAssinatura) {
-                          <button mat-icon-button class="!w-6 !h-6" (click)="verAssinatura(a)">
-                            <mat-icon class="text-blue-600 !text-sm">draw</mat-icon>
-                          </button>
-                        }
+                        <button mat-icon-button class="!w-6 !h-6" (click)="verAssinatura(a)" aria-label="Ver dados da assinatura">
+                          <mat-icon class="text-blue-600 !text-sm">verified</mat-icon>
+                        </button>
                       </div>
                     }
                   </div>
@@ -445,7 +441,7 @@
                   @if (podeAssinarTermo()) {
                     <div class="mt-4">
                       <button mat-flat-button color="primary" (click)="assinarTermo()">
-                        <mat-icon>draw</mat-icon> Assinar Termo
+                        <mat-icon>verified</mat-icon> Assinar Termo
                       </button>
                     </div>
                   }

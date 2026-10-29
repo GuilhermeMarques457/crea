@@ -269,8 +269,8 @@ export interface AssinaturaDto {
   nomeUsuario: string;
   hashAssinatura: string;
   dataAssinatura: string;
-  urlImagemAssinatura: string;
-  imagemAssinatura: string;
+  urlImagemAssinatura?: string | null;
+  imagemAssinatura?: string | null;
   ipAssinante: string;
   userAgent: string;
   navegador?: string;
@@ -281,10 +281,7 @@ export interface AssinaturaDto {
 export interface CreateAssinaturaDto {
   tipoEntidade: TipoEntidadeAssinatura;
   entidadeId: string;
-  imagemAssinatura: File;
   navegador?: string;
-  sistemaOperacional?: string;
-  dispositivo?: string;
 }
 
 export interface PendenteAssinaturaDto {
