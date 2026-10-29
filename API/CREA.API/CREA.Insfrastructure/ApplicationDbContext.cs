@@ -32,8 +32,10 @@ public class ApplicationDbContext(
             e.Property(u => u.Id)
                 .HasColumnName("UsuarioId");
             e.HasIndex(u => u.Email).IsUnique();
+            e.HasIndex(u => u.Cpf).IsUnique().HasFilter("[Cpf] IS NOT NULL AND [Cpf] <> ''");
             e.Property(u => u.Nome).HasMaxLength(150).IsRequired();
             e.Property(u => u.Email).HasMaxLength(200).IsRequired();
+            e.Property(u => u.Cpf).HasMaxLength(14);
             e.Property(u => u.SenhaHash).IsRequired();
         });
 
@@ -78,6 +80,10 @@ public class ApplicationDbContext(
             e.Property(u => u.Id)
                  .HasColumnName("ObraId");
             e.Property(o => o.LocalObra).HasMaxLength(300).IsRequired();
+            e.Property(o => o.Logradouro).HasMaxLength(200).IsRequired();
+            e.Property(o => o.Quadra).HasMaxLength(50).IsRequired();
+            e.Property(o => o.Lote).HasMaxLength(50).IsRequired();
+            e.Property(o => o.Numero).HasDefaultValue(0);
             e.HasOne(o => o.Proprietario)
              .WithMany(p => p.Obras)
              .HasForeignKey(o => o.ProprietarioId)

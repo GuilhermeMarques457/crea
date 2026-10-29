@@ -33,6 +33,7 @@ public static class DatabaseSeeder
             Id = Guid.NewGuid(),
             Nome = "Administrador CREA",
             Email = "admin@crea.com",
+            Cpf = "935.411.347-80",
             SenhaHash = HashSenha("Admin@123"),
             TipoUsuario = TipoUsuario.Administrador,
             CriadoEm = DateTime.Now
@@ -43,6 +44,7 @@ public static class DatabaseSeeder
             Id = Guid.NewGuid(),
             Nome = "Carlos Engenheiro",
             Email = "carlos@crea.com",
+            Cpf = "529.982.247-25",
             SenhaHash = HashSenha("Crea@123"),
             TipoUsuario = TipoUsuario.ResponsavelTecnico,
             CriadoEm = DateTime.Now
@@ -53,6 +55,7 @@ public static class DatabaseSeeder
             Id = Guid.NewGuid(),
             Nome = "Ana Arquiteta",
             Email = "ana@crea.com",
+            Cpf = "111.444.777-35",
             SenhaHash = HashSenha("Crea@123"),
             TipoUsuario = TipoUsuario.ResponsavelTecnico,
             CriadoEm = DateTime.Now
@@ -63,6 +66,7 @@ public static class DatabaseSeeder
             Id = Guid.NewGuid(),
             Nome = "Fiscal CREA",
             Email = "crea@crea.com",
+            Cpf = "168.995.350-09",
             SenhaHash = HashSenha("Crea@123"),
             TipoUsuario = TipoUsuario.UsuarioCrea,
             CriadoEm = DateTime.Now
@@ -73,6 +77,7 @@ public static class DatabaseSeeder
             Id = Guid.NewGuid(),
             Nome = "Tech Solutions S.A.",
             Email = "proprietario.tech@empresa.com",
+            Cpf = "123.456.789-09",
             SenhaHash = HashSenha("Crea@123"),
             TipoUsuario = TipoUsuario.Proprietario,
             CriadoEm = DateTime.Now
@@ -89,7 +94,7 @@ public static class DatabaseSeeder
         {
             Id = Guid.NewGuid(),
             Nome = "Carlos Engenheiro",
-            Cpf = "123.456.789-00",
+            Cpf = "529.982.247-25",
             NumeroRegistro = "CREA-SP 123456",
             TipoRegistro = "CREA",
             Empresa = "Engenharia Silva & Associados Ltda",
@@ -104,7 +109,7 @@ public static class DatabaseSeeder
         {
             Id = Guid.NewGuid(),
             Nome = "Ana Arquiteta",
-            Cpf = "987.654.321-00",
+            Cpf = "111.444.777-35",
             NumeroRegistro = "CAU-SP 654321",
             TipoRegistro = "CAU",
             Empresa = "Arquitetura Moderna S.A.",

@@ -49,13 +49,14 @@ export class ProfissionalFormComponent implements OnInit {
   saving = signal(false);
   loadingUsuarios = signal(true);
   usuariosDisponiveis = signal<UsuarioDto[]>([]);
+  tiposRegistro = ['CREA', 'CAU', 'CFT'];
   private editId: string | null = null;
 
   form = this.fb.nonNullable.group({
     nome: ['', [Validators.required, Validators.maxLength(150)]],
-    cpf: ['', [cpfDigitsValidator(false)]],
+    cpf: ['', [Validators.required, cpfDigitsValidator(false)]],
     numeroRegistro: ['', [Validators.required, Validators.maxLength(20)]],
-    tipoRegistro: ['', [Validators.required, Validators.maxLength(10)]],
+    tipoRegistro: ['CREA', [Validators.required, Validators.maxLength(10)]],
     empresa: [''],
     especialidade: ['', [Validators.required, Validators.maxLength(100)]],
     email: ['', [Validators.required, Validators.email]],

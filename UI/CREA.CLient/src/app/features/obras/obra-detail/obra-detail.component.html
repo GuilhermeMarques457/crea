@@ -3,7 +3,7 @@
     <div class="flex justify-center py-16"><mat-spinner /></div>
   } @else if (obra()) {
     <app-page-header
-      [title]="obra()!.localObra!"
+      [title]="obra()!.logradouro + ', ' + obra()!.numero"
       [subtitle]="obra()!.numeroCaderneta"
       icon="construction"
     >
@@ -69,7 +69,8 @@
             </div>
             <div class="sm:col-span-2">
               <p class="text-xs text-slate-500 uppercase tracking-wide">Local Obra</p>
-              <p class="font-medium text-slate-800">{{ obra()!.localObra }}</p>
+              <p class="font-medium text-slate-800">{{ obra()!.logradouro }}, {{ obra()!.numero }}</p>
+              <p class="text-sm text-slate-500">Quadra {{ obra()!.quadra || '—' }} · Lote {{ obra()!.lote || '—' }}</p>
             </div>
             @if (obra()!.areaTotalEdificada) {
               <div class="sm:col-span-2">

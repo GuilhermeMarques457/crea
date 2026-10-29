@@ -14,6 +14,10 @@ public class UpdateUsuarioDto
     public string Email { get; set; } = string.Empty;
 
     [Required]
+    [MaxLength(14)]
+    public string Cpf { get; set; } = string.Empty;
+
+    [Required]
     public TipoUsuario TipoUsuario { get; set; }
 
     public bool Ativo { get; set; }

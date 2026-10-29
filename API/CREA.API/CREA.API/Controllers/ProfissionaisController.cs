@@ -49,6 +49,10 @@ public class ProfissionaisController(
     [Authorize(Roles = "Administrador")]
     public async Task<ActionResult<ProfissionalDto>> Create([FromBody] CreateProfissionalDto dto)
     {
+        if (!new[] { "CREA", "CAU", "CFT" }.Contains(dto.TipoRegistro.Trim().ToUpperInvariant()))
+            return BadRequest(new { mensagem = "Tipo de registro inválido. Use CREA, CAU ou CFT." });
+        if (await profissionalRepository.GetByCpfAsync(dto.Cpf) is not null)
+            return Conflict(new { mensagem = "CPF já cadastrado." });
         if (await profissionalRepository.NumeroRegistroExisteAsync(dto.NumeroRegistro))
             return Conflict(new { mensagem = "Número de registro já cadastrado." });
 
@@ -59,6 +63,12 @@ public class ProfissionaisController(
                 return BadRequest(new { mensagem = "Usuário não encontrado." });
             if (usuario.TipoUsuario != TipoUsuario.ResponsavelTecnico)
                 return BadRequest(new { mensagem = "O usuário selecionado não é do tipo Responsável Técnico." });
+            if (!string.IsNullOrWhiteSpace(usuario.Cpf) && usuario.Cpf != dto.Cpf)
+                return Conflict(new { mensagem = "O usuário selecionado possui outro CPF cadastrado." });
+            var outroUsuarioComCpf = await usuarioRepository.GetByCpfAsync(dto.Cpf);
+            if (outroUsuarioComCpf is not null && outroUsuarioComCpf.Id != usuario.Id)
+                return Conflict(new { mensagem = "CPF já associado a outro usuário." });
+            usuario.Cpf = dto.Cpf;
             var jaVinculado = await profissionalRepository.GetByUsuarioIdAsync(dto.UsuarioId.Value);
             if (jaVinculado is not null)
                 return Conflict(new { mensagem = "Este usuário já está vinculado a outro profissional." });
@@ -69,7 +79,7 @@ public class ProfissionaisController(
             Nome = dto.Nome,
             Cpf = dto.Cpf,
             NumeroRegistro = dto.NumeroRegistro,
-            TipoRegistro = dto.TipoRegistro,
+            TipoRegistro = dto.TipoRegistro.Trim().ToUpperInvariant(),
             Empresa = dto.Empresa,
             Especialidade = dto.Especialidade,
             Email = dto.Email,
@@ -88,6 +98,12 @@ public class ProfissionaisController(
         var profissional = await profissionalRepository.GetByIdAsync(id);
         if (profissional is null) return NotFound();
 
+        if (!new[] { "CREA", "CAU", "CFT" }.Contains(dto.TipoRegistro.Trim().ToUpperInvariant()))
+            return BadRequest(new { mensagem = "Tipo de registro inválido. Use CREA, CAU ou CFT." });
+        var profissionalCpf = await profissionalRepository.GetByCpfAsync(dto.Cpf);
+        if (profissionalCpf is not null && profissionalCpf.Id != id)
+            return Conflict(new { mensagem = "CPF já cadastrado." });
+
         if (profissional.NumeroRegistro != dto.NumeroRegistro &&
             await profissionalRepository.NumeroRegistroExisteAsync(dto.NumeroRegistro))
             return Conflict(new { mensagem = "Número de registro já em uso." });
@@ -99,6 +115,12 @@ public class ProfissionaisController(
                 return BadRequest(new { mensagem = "Usuário não encontrado." });
             if (usuario.TipoUsuario != TipoUsuario.ResponsavelTecnico)
                 return BadRequest(new { mensagem = "O usuário selecionado não é do tipo Responsável Técnico." });
+            if (!string.IsNullOrWhiteSpace(usuario.Cpf) && usuario.Cpf != dto.Cpf)
+                return Conflict(new { mensagem = "O usuário selecionado possui outro CPF cadastrado." });
+            var outroUsuarioComCpf = await usuarioRepository.GetByCpfAsync(dto.Cpf);
+            if (outroUsuarioComCpf is not null && outroUsuarioComCpf.Id != usuario.Id)
+                return Conflict(new { mensagem = "CPF já associado a outro usuário." });
+            usuario.Cpf = dto.Cpf;
             var jaVinculado = await profissionalRepository.GetByUsuarioIdAsync(dto.UsuarioId.Value);
             if (jaVinculado is not null && jaVinculado.Id != id)
                 return Conflict(new { mensagem = "Este usuário já está vinculado a outro profissional." });
@@ -107,7 +129,7 @@ public class ProfissionaisController(
         profissional.Nome = dto.Nome;
         profissional.Cpf = dto.Cpf;
         profissional.NumeroRegistro = dto.NumeroRegistro;
-        profissional.TipoRegistro = dto.TipoRegistro;
+        profissional.TipoRegistro = dto.TipoRegistro.Trim().ToUpperInvariant();
         profissional.Empresa = dto.Empresa;
         profissional.Especialidade = dto.Especialidade;
         profissional.Email = dto.Email;

@@ -11,12 +11,26 @@
     <mat-card-content class="p-4 md:p-6">
       <form [formGroup]="form" (ngSubmit)="submit()">
         <h3 class="text-base font-semibold text-slate-700 mb-4">Informações Básicas</h3>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-          <mat-form-field appearance="outline" class="md:col-span-2">
-            <mat-label>Local Obra</mat-label>
-            <input matInput formControlName="localObra" />
-            <mat-error>Local Obra é obrigatório</mat-error>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          <mat-form-field appearance="outline" class="md:col-span-3">
+            <mat-label>Logradouro</mat-label>
+            <input matInput formControlName="logradouro" />
+            <mat-error>Logradouro é obrigatório</mat-error>
           </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Quadra</mat-label>
+            <input matInput formControlName="quadra" />
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Lote</mat-label>
+            <input matInput formControlName="lote" />
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Número</mat-label>
+            <input matInput type="number" min="0" formControlName="numero" />
+            <mat-error>Número deve ser zero ou maior</mat-error>
+          </mat-form-field>
+          <input type="hidden" formControlName="localObra" />
         </div>
 
         <h3 class="text-base font-semibold text-slate-700 mb-4">Dados Técnicos</h3>

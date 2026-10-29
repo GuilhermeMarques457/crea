@@ -22,6 +22,7 @@ public class UsuariosController(IUsuarioRepository usuarioRepository) : Controll
             Id = u.Id,
             Nome = u.Nome,
             Email = u.Email,
+            Cpf = u.Cpf,
             TipoUsuario = u.TipoUsuario,
             Ativo = u.Ativo,
             CriadoEm = u.CriadoEm
@@ -40,6 +41,7 @@ public class UsuariosController(IUsuarioRepository usuarioRepository) : Controll
             Id = usuario.Id,
             Nome = usuario.Nome,
             Email = usuario.Email,
+            Cpf = usuario.Cpf,
             TipoUsuario = usuario.TipoUsuario,
             Ativo = usuario.Ativo,
             CriadoEm = usuario.CriadoEm
@@ -56,6 +58,7 @@ public class UsuariosController(IUsuarioRepository usuarioRepository) : Controll
             Id = u.Id,
             Nome = u.Nome,
             Email = u.Email,
+            Cpf = u.Cpf,
             TipoUsuario = u.TipoUsuario,
             Ativo = u.Ativo,
             CriadoEm = u.CriadoEm
@@ -71,9 +74,13 @@ public class UsuariosController(IUsuarioRepository usuarioRepository) : Controll
 
         if (usuario.Email != dto.Email && await usuarioRepository.EmailExisteAsync(dto.Email))
             return Conflict(new { mensagem = "E-mail já em uso." });
+        var usuarioCpf = await usuarioRepository.GetByCpfAsync(dto.Cpf);
+        if (usuarioCpf is not null && usuarioCpf.Id != id)
+            return Conflict(new { mensagem = "CPF já cadastrado." });
 
         usuario.Nome = dto.Nome;
         usuario.Email = dto.Email;
+        usuario.Cpf = dto.Cpf;
         usuario.TipoUsuario = dto.TipoUsuario;
         usuario.Ativo = dto.Ativo;
 

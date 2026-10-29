@@ -11,6 +11,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { AuthService } from '../../../core/services/auth.service';
 import { TipoUsuario } from '../../../shared/models/api.models';
 import { ForgotPasswordDialogComponent } from './forgot-password-dialog/forgot-password-dialog.component';
+import { CpfMaskDirective } from '../../../shared/directives/cpf-mask.directive';
+import { cpfDigitsValidator } from '../../../shared/validators/cpf.validator';
 
 @Component({
   selector: 'app-login',
@@ -23,6 +25,7 @@ import { ForgotPasswordDialogComponent } from './forgot-password-dialog/forgot-p
     MatButtonModule,
     MatIconModule,
     MatProgressSpinnerModule,
+    CpfMaskDirective,
   ],
   templateUrl: './login.component.html',
 })
@@ -38,14 +41,14 @@ export class LoginComponent {
   error = signal('');
 
   form = this.fb.nonNullable.group({
-    email: ['', [Validators.required, Validators.email]],
+    cpf: ['', [Validators.required, cpfDigitsValidator(false)]],
     senha: ['', Validators.required],
   });
 
   openForgotPassword() {
     this.dialog.open(ForgotPasswordDialogComponent, {
       width: '420px',
-      data: { email: this.form.controls.email.value },
+      data: {},
     });
   }
 
@@ -71,7 +74,7 @@ export class LoginComponent {
         }
       },
       error: () => {
-        this.error.set('E-mail ou senha inválidos.');
+        this.error.set('CPF ou senha inválidos.');
         this.loading.set(false);
       },
     });

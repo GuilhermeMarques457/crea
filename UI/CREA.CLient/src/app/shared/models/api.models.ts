@@ -75,7 +75,7 @@ export const TIPO_USUARIO_LABELS: Record<TipoUsuario, string> = {
 
 // Auth
 export interface LoginDto {
-  email: string;
+  cpf: string;
   senha: string;
 }
 export interface EsqueciSenhaDto {
@@ -97,12 +97,14 @@ export interface LoginResponseDto {
 export interface CreateUsuarioDto {
   nome: string;
   email: string;
+  cpf: string;
   senha: string;
   tipoUsuario: TipoUsuario;
 }
 export interface UpdateUsuarioDto {
   nome: string;
   email: string;
+  cpf: string;
   tipoUsuario: TipoUsuario;
   ativo: boolean;
 }
@@ -110,6 +112,7 @@ export interface UsuarioDto {
   id: string;
   nome: string;
   email: string;
+  cpf?: string;
   tipoUsuario: TipoUsuario;
   ativo: boolean;
   criadoEm: string;
@@ -119,6 +122,10 @@ export interface UsuarioDto {
 export interface ObraDto {
   id: string;
   localObra: string;
+  logradouro: string;
+  quadra: string;
+  lote: string;
+  numero: number;
   proprietarioId: string;
   nomeProprietario: string;
   telefoneProprietario?: string;
@@ -143,6 +150,10 @@ export interface ObraDto {
 }
 export interface CreateObraDto {
   localObra?: string;
+  logradouro: string;
+  quadra: string;
+  lote: string;
+  numero: number;
   proprietarioId: string;
   empresa?: string;
   numeroCaderneta?: string;

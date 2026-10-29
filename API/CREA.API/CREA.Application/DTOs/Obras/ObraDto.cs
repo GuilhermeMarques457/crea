@@ -6,6 +6,10 @@ public class ObraDto
 {
     public Guid Id { get; set; }
     public string LocalObra { get; set; } = string.Empty;
+    public string Logradouro { get; set; } = string.Empty;
+    public string Quadra { get; set; } = string.Empty;
+    public string Lote { get; set; } = string.Empty;
+    public int Numero { get; set; }
     public Guid ProprietarioId { get; set; }
     public string NomeProprietario { get; set; } = string.Empty;
     public string? TelefoneProprietario { get; set; }

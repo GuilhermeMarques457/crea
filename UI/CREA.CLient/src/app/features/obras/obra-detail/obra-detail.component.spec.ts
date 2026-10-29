@@ -70,6 +70,10 @@ function makeObra(overrides: Partial<ObraDto> = {}): ObraDto {
   return {
     id: 'obra-1',
     localObra: 'Rua Central, 123',
+    logradouro: 'Rua Central',
+    quadra: '',
+    lote: '',
+    numero: 123,
     proprietarioId: 'prop-1',
     nomeProprietario: 'Maria Souza',
     telefoneProprietario: '(41) 99999-0000',

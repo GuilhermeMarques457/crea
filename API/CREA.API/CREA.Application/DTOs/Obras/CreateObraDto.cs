@@ -10,6 +10,19 @@ public class CreateObraDto
     public string LocalObra { get; set; } = string.Empty;
 
     [Required]
+    [MaxLength(200)]
+    public string Logradouro { get; set; } = string.Empty;
+
+    [MaxLength(50)]
+    public string Quadra { get; set; } = string.Empty;
+
+    [MaxLength(50)]
+    public string Lote { get; set; } = string.Empty;
+
+    [Range(0, int.MaxValue)]
+    public int Numero { get; set; } = 0;
+
+    [Required]
     public Guid ProprietarioId { get; set; }
 
     [MaxLength(200)]

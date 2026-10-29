@@ -78,7 +78,11 @@ export class ObraFormComponent implements OnInit {
   }));
 
   form = this.fb.nonNullable.group({
-    localObra: ['', [Validators.required, Validators.maxLength(300)]],
+    localObra: ['', [Validators.maxLength(300)]],
+    logradouro: ['', [Validators.required, Validators.maxLength(200)]],
+    quadra: ['', [Validators.maxLength(50)]],
+    lote: ['', [Validators.maxLength(50)]],
+    numero: [0, [Validators.required, Validators.min(0)]],
     proprietarioId: ['', Validators.required],
     empresa: [''],
     numeroCaderneta: [''],
@@ -165,6 +169,7 @@ export class ObraFormComponent implements OnInit {
     const val = this.form.getRawValue();
     const dto: CreateObraDto = {
       ...val,
+      localObra: val.localObra.trim() || val.logradouro.trim(),
       dataInicio: val.dataInicio!.toISOString(),
       tipoEdificacao: val.tipoEdificacao ?? undefined,
       atividadeTecnica: val.atividadeTecnica ?? undefined,

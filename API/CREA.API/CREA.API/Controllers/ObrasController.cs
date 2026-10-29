@@ -67,6 +67,10 @@ public class ObrasController(
         var obra = new Obra
         {
             LocalObra = dto.LocalObra,
+            Logradouro = dto.Logradouro,
+            Quadra = dto.Quadra,
+            Lote = dto.Lote,
+            Numero = dto.Numero,
             ProprietarioId = dto.ProprietarioId,
             Empresa = dto.Empresa,
             NumeroCaderneta = dto.NumeroCaderneta,
@@ -102,6 +106,10 @@ public class ObrasController(
             return BadRequest(new { mensagem = "Proprietário não encontrado." });
 
         obra.LocalObra = dto.LocalObra;
+        obra.Logradouro = dto.Logradouro;
+        obra.Quadra = dto.Quadra;
+        obra.Lote = dto.Lote;
+        obra.Numero = dto.Numero;
         obra.ProprietarioId = dto.ProprietarioId;
         obra.Empresa = dto.Empresa;
         obra.NumeroCaderneta = dto.NumeroCaderneta;
@@ -145,6 +153,10 @@ public class ObrasController(
     {
         Id = o.Id,
         LocalObra = o.LocalObra,
+        Logradouro = o.Logradouro,
+        Quadra = o.Quadra,
+        Lote = o.Lote,
+        Numero = o.Numero,
         ProprietarioId = o.ProprietarioId,
         NomeProprietario = o.Proprietario?.Nome ?? string.Empty,
         TelefoneProprietario = string.IsNullOrWhiteSpace(o.Proprietario?.Telefone)

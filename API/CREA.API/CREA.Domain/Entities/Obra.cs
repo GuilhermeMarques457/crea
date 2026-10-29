@@ -5,6 +5,10 @@ namespace CREA.Domain.Entities;
 public class Obra : BaseEntity
 {
     public string LocalObra { get; set; } = string.Empty;
+    public string Logradouro { get; set; } = string.Empty;
+    public string Quadra { get; set; } = string.Empty;
+    public string Lote { get; set; } = string.Empty;
+    public int Numero { get; set; } = 0;
 
     public Guid ProprietarioId { get; set; }
     public Proprietario Proprietario { get; set; } = null!;

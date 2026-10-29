@@ -21,17 +21,23 @@ public class AuthController(IUsuarioRepository usuarioRepository, IProfissionalR
     [AllowAnonymous]
     public async Task<ActionResult<LoginResponseDto>> Login([FromBody] LoginDto dto)
     {
-        var usuario = await usuarioRepository.GetByEmailAsync(dto.Email);
+        var profissional = await profissionalRepository.GetByCpfAsync(dto.Cpf);
+        var usuario = profissional?.UsuarioId is Guid usuarioId
+            ? await usuarioRepository.GetByIdAsync(usuarioId)
+            : await usuarioRepository.GetByCpfAsync(dto.Cpf);
         if (usuario is null || !VerificarSenha(dto.Senha, usuario.SenhaHash))
-            return Unauthorized(new { mensagem = "E-mail ou senha inválidos." });
+            return Unauthorized(new { mensagem = "CPF ou senha inválidos." });
 
+        var profissionalVinculado = usuario.TipoUsuario == TipoUsuario.ResponsavelTecnico
+            ? await profissionalRepository.GetByUsuarioIdAsync(usuario.Id)
+            : null;
         var token = GerarToken(usuario);
         return Ok(new LoginResponseDto
         {
             Token = token,
             Expiracao = DateTime.Now.AddHours(GetExpiracaoHoras()),
             UsuarioId = usuario.Id,
-            ProfissionalId = usuario.TipoUsuario == TipoUsuario.ResponsavelTecnico ? (await profissionalRepository.GetByUsuarioIdAsync(usuario.Id))!.Id : null,
+            ProfissionalId = profissionalVinculado?.Id,
             Nome = usuario.Nome,
             Email = usuario.Email,
             TipoUsuario = usuario.TipoUsuario
@@ -72,11 +78,14 @@ public class AuthController(IUsuarioRepository usuarioRepository, IProfissionalR
     {
         if (await usuarioRepository.EmailExisteAsync(dto.Email))
             return Conflict(new { mensagem = "E-mail já cadastrado." });
+        if (await usuarioRepository.GetByCpfAsync(dto.Cpf) is not null)
+            return Conflict(new { mensagem = "CPF já cadastrado." });
 
         var usuario = new Usuario
         {
             Nome = dto.Nome,
             Email = dto.Email,
+            Cpf = dto.Cpf,
             SenhaHash = HashSenha(dto.Senha),
             TipoUsuario = dto.TipoUsuario
         };
@@ -88,6 +97,7 @@ public class AuthController(IUsuarioRepository usuarioRepository, IProfissionalR
             Id = usuario.Id,
             Nome = usuario.Nome,
             Email = usuario.Email,
+            Cpf = usuario.Cpf,
             TipoUsuario = usuario.TipoUsuario,
             Ativo = usuario.Ativo,
             CriadoEm = usuario.CriadoEm
@@ -107,6 +117,7 @@ public class AuthController(IUsuarioRepository usuarioRepository, IProfissionalR
             Id = usuario.Id,
             Nome = usuario.Nome,
             Email = usuario.Email,
+            Cpf = usuario.Cpf,
             TipoUsuario = usuario.TipoUsuario,
             Ativo = usuario.Ativo,
             CriadoEm = usuario.CriadoEm

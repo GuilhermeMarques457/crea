@@ -14,6 +14,10 @@ public class CreateUsuarioDto
     public string Email { get; set; } = string.Empty;
 
     [Required]
+    [MaxLength(14)]
+    public string Cpf { get; set; } = string.Empty;
+
+    [Required]
     [MinLength(6)]
     public string Senha { get; set; } = string.Empty;
 

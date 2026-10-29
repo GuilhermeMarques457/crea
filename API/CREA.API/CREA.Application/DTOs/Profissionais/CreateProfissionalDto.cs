@@ -18,7 +18,7 @@ public class CreateProfissionalDto
 
     [Required]
     [MaxLength(10)]
-    public string TipoRegistro { get; set; } = string.Empty; // CREA, CAU ou CRT
+    public string TipoRegistro { get; set; } = string.Empty; // CREA, CAU ou CFT
 
     [MaxLength(200)]
     public string? Empresa { get; set; }

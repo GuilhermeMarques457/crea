@@ -13,6 +13,8 @@ import { UsuarioService } from '../../../core/services/usuario.service';
 import { TipoUsuario, TIPO_USUARIO_LABELS } from '../../../shared/models/api.models';
 import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
 import { ToastService } from '../../../core/services/toast.service';
+import { CpfMaskDirective } from '../../../shared/directives/cpf-mask.directive';
+import { cpfDigitsValidator } from '../../../shared/validators/cpf.validator';
 
 @Component({
   selector: 'app-usuario-form',
@@ -28,6 +30,7 @@ import { ToastService } from '../../../core/services/toast.service';
     MatSlideToggleModule,
     MatProgressSpinnerModule,
     PageHeaderComponent,
+    CpfMaskDirective,
   ],
   templateUrl: './usuario-form.component.html',
 })
@@ -55,6 +58,7 @@ export class UsuarioFormComponent implements OnInit {
   form = this.fb.nonNullable.group({
     nome: ['', [Validators.required, Validators.maxLength(150)]],
     email: ['', [Validators.required, Validators.email]],
+    cpf: ['', [Validators.required, cpfDigitsValidator(false)]],
     senha: ['', [Validators.required, Validators.minLength(6)]],
     tipoUsuario: [null as unknown as TipoUsuario, Validators.required],
     ativo: [true],
@@ -70,6 +74,7 @@ export class UsuarioFormComponent implements OnInit {
         this.form.patchValue({
           nome: u.nome,
           email: u.email,
+          cpf: u.cpf || '',
           tipoUsuario: u.tipoUsuario,
           ativo: u.ativo,
         }),
@@ -90,6 +95,7 @@ export class UsuarioFormComponent implements OnInit {
         .atualizar(this.editId!, {
           nome: v.nome,
           email: v.email,
+          cpf: v.cpf,
           tipoUsuario: v.tipoUsuario,
           ativo: v.ativo,
         })
@@ -108,6 +114,7 @@ export class UsuarioFormComponent implements OnInit {
         .criar({
           nome: v.nome,
           email: v.email,
+          cpf: v.cpf,
           senha: v.senha,
           tipoUsuario: v.tipoUsuario,
         })

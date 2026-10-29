@@ -19,6 +19,12 @@
             <mat-error>E-mail inválido</mat-error>
           </mat-form-field>
 
+          <mat-form-field appearance="outline">
+            <mat-label>CPF</mat-label>
+            <input matInput formControlName="cpf" appCpfMask maxlength="14" placeholder="000.000.000-00" />
+            <mat-error>Informe um CPF válido</mat-error>
+          </mat-form-field>
+
           @if (!isEdit()) {
             <mat-form-field appearance="outline">
               <mat-label>Senha</mat-label>

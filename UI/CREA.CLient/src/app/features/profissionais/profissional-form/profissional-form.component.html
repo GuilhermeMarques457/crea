@@ -40,13 +40,17 @@
             <mat-error>E-mail inválido</mat-error>
           </mat-form-field>
           <mat-form-field appearance="outline">
-            <mat-label>Número de Registro (CREA/CAU)</mat-label>
+            <mat-label>Nº do Registro</mat-label>
             <input matInput formControlName="numeroRegistro" />
             <mat-error>Registro é obrigatório</mat-error>
           </mat-form-field>
           <mat-form-field appearance="outline">
             <mat-label>Tipo de Registro</mat-label>
-            <input matInput formControlName="tipoRegistro" placeholder="CREA, CAU ou CRT" />
+            <mat-select formControlName="tipoRegistro">
+              @for (tipo of tiposRegistro; track tipo) {
+                <mat-option [value]="tipo">{{ tipo === 'CFT' ? 'Técnico (CFT)' : tipo === 'CAU' ? 'Arquiteto (CAU)' : 'Engenheiro (CREA)' }}</mat-option>
+              }
+            </mat-select>
             <mat-error>Tipo é obrigatório</mat-error>
           </mat-form-field>
           <mat-form-field appearance="outline" class="md:col-span-2">
